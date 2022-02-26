@@ -5,6 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+/**
+ * Class representing ingredient quantity.
+ *
+ * @author Nikola Presecki
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
