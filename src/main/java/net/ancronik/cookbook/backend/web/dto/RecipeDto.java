@@ -3,8 +3,8 @@ package net.ancronik.cookbook.backend.web.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.RepresentationModel;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -15,9 +15,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeDto extends RepresentationModel<RecipeDto> {
+public class RecipeDto {
 
-    private Integer id;
+    private Long id;
 
     private String title;
 
@@ -35,5 +35,15 @@ public class RecipeDto extends RepresentationModel<RecipeDto> {
 
     private String cookingInstructions;
 
+    private ZonedDateTime dateCreated;
+
+    private ZonedDateTime lastUpdated;
+
     private Integer difficulty;
+
+    private String category;
+
+    private Float rating;
+
+    private String authorId;
 }

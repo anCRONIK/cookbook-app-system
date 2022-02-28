@@ -9,7 +9,7 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
  *
  * @author Nikola Presecki
  */
-//@Configuration
+@Configuration
 public class CassandraConfiguration extends AbstractCassandraConfiguration {
 
        @Value("${spring.data.cassandra.keyspace-name}")

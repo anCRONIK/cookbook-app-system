@@ -1,7 +1,7 @@
 package net.ancronik.cookbook.backend.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Global application configuration class.
@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Nikola Presecki
  */
 @Configuration
-@Transactional
+@EnableTransactionManagement
 public class AppConfig {
+
 }

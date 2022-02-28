@@ -1,8 +1,9 @@
 package net.ancronik.cookbook.backend.web.dto;
 
 import net.ancronik.cookbook.backend.StringTestUtils;
-import org.springframework.util.StringUtils;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,7 +18,7 @@ public class RecipeDtoMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new RecipeDto(
-                    random.nextInt(Integer.MAX_VALUE),
+                    (long) random.nextInt(Integer.MAX_VALUE),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(100)),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)),
                     null, //TODO add url generator
@@ -26,7 +27,12 @@ public class RecipeDtoMockData {
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
                     random.nextInt(600),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
-                    random.nextInt(5)
+                    ZonedDateTime.now(),
+                    null,
+                    random.nextInt(5),
+                    RecipeCategory.values()[random.nextInt(RecipeCategory.values().length)].getCategory(),
+                    random.nextFloat() % 5,
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(10))
             ));
         }
 

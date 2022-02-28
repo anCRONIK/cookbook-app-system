@@ -5,8 +5,10 @@ import lombok.Data;
 @Data
 public class User {
 
-    private final Integer id;
+    private Integer id;
 
-    private final String username;
+    private String username;
+
+    private String email;
 
 }

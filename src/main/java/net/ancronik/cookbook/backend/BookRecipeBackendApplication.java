@@ -13,13 +13,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
  *
  * @author Nikola Presecki
  */
-@SpringBootApplication(exclude = {
-		DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class,
-		CassandraAutoConfiguration.class,
-		CassandraDataAutoConfiguration.class
-})
+@SpringBootApplication
 public class BookRecipeBackendApplication {
 
 	public static void main(String[] args) {
