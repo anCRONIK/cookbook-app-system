@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngredientDto{
+public class IngredientDto {
 
     private String name;
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -18,7 +18,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 ex.getMessage(),
                 ex.getMessage(),
-                ZonedDateTime.now()
+                LocalDateTime.now()
         ));
     }
 

@@ -3,7 +3,7 @@ package net.ancronik.cookbook.backend.web.dto;
 import net.ancronik.cookbook.backend.StringTestUtils;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,17 +21,16 @@ public class RecipeDtoMockData {
                     (long) random.nextInt(Integer.MAX_VALUE),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(100)),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)),
-                    null, //TODO add url generator
+                    random.nextBoolean() ? StringTestUtils.generateRandomUrl() : null,
                     IngredientDtoMockData.generateRandomMockData(random.nextInt(20)),
                     random.nextInt(300),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
                     random.nextInt(600),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
-                    ZonedDateTime.now(),
-                    null,
+                    LocalDateTime.now().minusDays(random.nextInt(100) + 1),
+                    random.nextBoolean() ? LocalDateTime.now() : null,
                     random.nextInt(5),
                     RecipeCategory.values()[random.nextInt(RecipeCategory.values().length)].getCategory(),
-                    random.nextFloat() % 5,
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(10))
             ));
         }

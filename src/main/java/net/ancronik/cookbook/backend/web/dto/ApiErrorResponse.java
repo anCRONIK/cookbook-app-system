@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Response which is returned in case of some API exception which wasn't handled by domain or data layer.
@@ -20,6 +20,6 @@ public class ApiErrorResponse {
 
     private String description;
 
-    private ZonedDateTime timestamp;
+    private LocalDateTime timestamp;
 
 }

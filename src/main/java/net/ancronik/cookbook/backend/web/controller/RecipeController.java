@@ -6,6 +6,7 @@ import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,13 +28,13 @@ public class RecipeController {
     }
 
     @GetMapping(value = {"", "/"})
-    public Page<RecipeDto> getAllRecipes(Pageable pageable) {
-        Page<RecipeDto>  page = recipeService.getAllRecipes(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+    public Slice<RecipeDto> getAllRecipes(Pageable pageable) {
+        Slice<RecipeDto> data = recipeService.getAllRecipes(pageable);
 
-        if(null == page){
+        if (null == data) {
             throw new EmptyDataException("Empty page returned by service");
         }
 
-        return page;
+        return data;
     }
 }

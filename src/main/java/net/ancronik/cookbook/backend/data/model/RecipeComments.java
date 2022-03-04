@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Database model for comments that user's leave on the recipes.
@@ -28,6 +28,6 @@ public class RecipeComments {
     private String text;
     //TODO checks
     @Column("date_created")
-    private ZonedDateTime dateCreated;
+    private LocalDateTime dateCreated;
 
 }

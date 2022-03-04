@@ -8,7 +8,7 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -49,16 +49,16 @@ public class Recipe {
     private String cookingInstructions;
     //TODO not null
     @Column(value = "date_created")
-    private ZonedDateTime dateCreated;
+    private LocalDateTime dateCreated;
     //TODO checks
     @Column(value = "date_last_updated")
-    private ZonedDateTime dateLastUpdated;
+    private LocalDateTime dateLastUpdated;
     @Column(value = "difficulty")
     private RecipeDifficulty difficulty;
 
     private RecipeCategory category;
 
-    private Float rating;
+    // private Float rating; TODO implement later, need to add additional table to save votes and that should be exposed as another endpoint
     //TODO not null
     @Column(value = "author_username")
     private String authorId;
