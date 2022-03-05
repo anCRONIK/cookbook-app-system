@@ -19,4 +19,9 @@ public enum RecipeDifficulty {
     RecipeDifficulty(int difficulty) {
         this.difficulty = difficulty;
     }
+
+    public static RecipeDifficulty parse(Integer difficulty) {
+        return RecipeDifficulty.values()[difficulty];
+    }
+
 }

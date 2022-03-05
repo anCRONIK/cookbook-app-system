@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(EmptyDataException.class)
-    public ResponseEntity<ApiErrorResponse> genericReadExceptionHandler(Throwable ex, WebRequest webRequest) {
+    @ExceptionHandler({EmptyDataException.class, RuntimeException.class})
+    public ResponseEntity<ApiErrorResponse> genericExceptionHandler(Throwable ex, WebRequest webRequest) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 ex.getMessage(),
                 ex.getMessage(),

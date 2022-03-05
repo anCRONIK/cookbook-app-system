@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -47,6 +48,8 @@ public class RecipeControllerTest {
     private ArgumentCaptor<Pageable> pageableCaptor;
 
     private static final String GET_ALL_RECIPES_PATH = "/api/v1/recipes";
+    private static final String GET_RECIPE_BY_ID_PATH_PREFIX = "/api/v1/recipes/";
+    private static final String GET_RECIPES_IN_CATEGORY_PATH_PREFIX = "/api/v1/recipes/category/";
 
     @Test
     @SneakyThrows
@@ -55,7 +58,7 @@ public class RecipeControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
                 .andExpect(status().isBadRequest())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.description").exists())
                 .andExpect(jsonPath("$.timestamp").exists())
@@ -93,7 +96,6 @@ public class RecipeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.sort").exists())
                 .andExpect(jsonPath("$.pageSize").value(1))
                 .andExpect(jsonPath("$.numberOfElements").value(1))
                 .andExpect(jsonPath("$.pageNumber").value(0))
@@ -118,7 +120,6 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.sort").exists())
                 .andExpect(jsonPath("$.pageSize").value(10))
                 .andExpect(jsonPath("$.numberOfElements").value(10))
                 .andExpect(jsonPath("$.pageNumber").value(0))
@@ -144,11 +145,11 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.sort").exists())
                 .andExpect(jsonPath("$.pageSize").value(6))
                 .andExpect(jsonPath("$.numberOfElements").value(6))
                 .andExpect(jsonPath("$.pageNumber").value(2))
                 .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.links.nextPage").doesNotExist())
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(pageableCaptor.capture());
@@ -177,11 +178,10 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.sort").isArray())
-                .andExpect(jsonPath("$.sort[0].property").value("difficulty"))
-                .andExpect(jsonPath("$.sort[0].direction").value("ASC"))
-                .andExpect(jsonPath("$.sort[1].property").value("category"))
-                .andExpect(jsonPath("$.sort[1].direction").value("DESC"))
+                .andExpect(jsonPath("$.links.nextPage").value("http://localhost/api/v1/recipes/?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.self").value("http://localhost/api/v1/recipes/?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.previousPage").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.firstPage").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
                 .andExpect(jsonPath("$.pageSize").value(2))
                 .andExpect(jsonPath("$.numberOfElements").value(2))
                 .andExpect(jsonPath("$.pageNumber").value(1))
@@ -194,6 +194,179 @@ public class RecipeControllerTest {
         Assertions.assertEquals(2, pageable.getPageSize());
         Assertions.assertTrue(pageable.getSort().getOrderFor("category").getDirection().isDescending());
         Assertions.assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isAscending());
+        Assertions.assertNull(pageable.getSort().getOrderFor("rating"));
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void findRecipeById_GivenIdIsNotAANumber_ReturnBadRequest() {
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + "abcd12"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(""))
+                .andReturn();
+
+        verifyNoInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void findRecipeById_RecipeServiceThrowsAnError_ReturnInternalServerError() {
+        when(mockRecipeService.getRecipe(12L)).thenThrow(new RuntimeException("test"));
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
+                .andExpect(status().isBadRequest())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andReturn();
+
+        verify(mockRecipeService).getRecipe(12L);
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void findRecipeById_EntryNotFound_Return404() {
+        when(mockRecipeService.getRecipe(12L)).thenReturn(Optional.empty());
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(mockRecipeService).getRecipe(12L);
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void findRecipeById_EntryFound_ReturnData() {
+        RecipeDto mockData = RecipeDtoMockData.generateRandomMockData(1).get(0);
+
+        when(mockRecipeService.getRecipe(mockData.getId())).thenReturn(Optional.of(mockData));
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + mockData.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(mockData.getId()))
+                .andExpect(jsonPath("$.title").value(mockData.getTitle()))
+                .andReturn();
+
+        verify(mockRecipeService).getRecipe(mockData.getId());
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getAllRecipesForCategory_ServiceReturnsNull_ReturnServerError() {
+        when(mockRecipeService.getAllRecipesForCategory(anyString(), any())).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+"abc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andReturn();
+
+        verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getAllRecipesForCategory_ServiceReturnsEmptyList_ReturnDataToCaller() {
+        when(mockRecipeService.getAllRecipesForCategory(anyString(),any())).thenReturn(Page.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+"abch"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andReturn();
+
+        verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getAllRecipesForCategory_ServiceReturnsOneEntry_ReturnDataToCaller() {
+        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(1);
+        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()),any())).thenReturn(new SliceImpl<>(mockData));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpectAll(createMatchersForData(mockData))
+                .andExpect(jsonPath("$.pageSize").value(1))
+                .andExpect(jsonPath("$.numberOfElements").value(1))
+                .andExpect(jsonPath("$.pageNumber").value(0))
+                .andExpect(jsonPath("$.hasNext").value(false))
+                .andReturn();
+
+        verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getAllRecipesForCategory_ServiceReturnsMultipleData_ReturnDataToCaller() {
+        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(2);
+        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()),any())).thenReturn(new SliceImpl<>(mockData));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpectAll(createMatchersForData(mockData))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.pageNumber").value(0))
+                .andExpect(jsonPath("$.hasNext").value(false))
+                .andReturn();
+
+        verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getAllRecipesForCategory_CallersUsesPagingAndSorting_ProperParametersSentToService() {
+        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(2);
+        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData,
+                PageRequest.of(1, 2, Sort.by(new Sort.Order(Sort.Direction.ASC, "difficulty"),
+                        new Sort.Order(Sort.Direction.DESC, "category"))), true));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory())
+                        .queryParam("page", "1").queryParam("size", "2")
+                        .queryParam("sort", "difficulty,DESC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpectAll(createMatchersForData(mockData))
+                .andExpect(jsonPath("$.links.nextPage").value("http://localhost/api/v1/recipes/?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.self").value("http://localhost/api/v1/recipes/?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.previousPage").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.links.firstPage").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.pageNumber").value(1))
+                .andExpect(jsonPath("$.hasNext").value(true))
+                .andReturn();
+
+        verify(mockRecipeService).getAllRecipesForCategory(eq(mockData.get(0).getCategory()), pageableCaptor.capture());
+        Pageable pageable = pageableCaptor.getValue();
+        Assertions.assertEquals(1, pageable.getPageNumber());
+        Assertions.assertEquals(2, pageable.getPageSize());
+        Assertions.assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isDescending());
         Assertions.assertNull(pageable.getSort().getOrderFor("rating"));
         verifyNoMoreInteractions(mockRecipeService);
     }

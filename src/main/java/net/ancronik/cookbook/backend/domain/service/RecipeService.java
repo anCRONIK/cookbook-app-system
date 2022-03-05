@@ -3,7 +3,8 @@ package net.ancronik.cookbook.backend.domain.service;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+
+import java.util.Optional;
 
 /**
  * Service handling all operations for the {@link net.ancronik.cookbook.backend.data.model.Recipe}.
@@ -20,4 +21,20 @@ public interface RecipeService {
      */
     Slice<RecipeDto> getAllRecipes(Pageable pageable);
 
+    /**
+     * Method for getting specific recipe using id.
+     *
+     * @param id recipe id
+     * @return optional which will contain recipe if exists
+     */
+    Optional<RecipeDto> getRecipe(Long id);
+
+    /**
+     * Method to find all recipes in the given category
+     *
+     * @param category category
+     * @param pageable pageable options
+     * @return slice with data
+     */
+    Slice<RecipeDto> getAllRecipesForCategory(String category, Pageable pageable);
 }

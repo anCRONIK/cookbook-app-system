@@ -4,12 +4,16 @@ import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * Controller handling all operations for the {@link net.ancronik.cookbook.backend.data.model.Recipe}.
@@ -27,7 +31,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Slice<RecipeDto> getAllRecipes(Pageable pageable) {
         Slice<RecipeDto> data = recipeService.getAllRecipes(pageable);
 
@@ -37,4 +41,28 @@ public class RecipeController {
 
         return data;
     }
+
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeDto> findRecipeById(@PathVariable Long id) {
+        Optional<RecipeDto> data = recipeService.getRecipe(id);
+
+        if (data.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(data.get());
+    }
+
+    @GetMapping(value = "/category/{category}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Slice<RecipeDto> getAllRecipesForCategory(@PathVariable String category, Pageable pageable) {
+        Slice<RecipeDto> data = recipeService.getAllRecipesForCategory(category, pageable);
+
+        if (null == data) {
+            throw new EmptyDataException("Empty page returned by service");
+        }
+
+        return data;
+    }
+
 }

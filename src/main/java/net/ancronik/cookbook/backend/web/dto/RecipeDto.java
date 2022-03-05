@@ -2,7 +2,9 @@ package net.ancronik.cookbook.backend.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +17,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeDto {
+@EqualsAndHashCode(callSuper = false)
+public class RecipeDto extends EntityModel<RecipeDto> {
 
     private Long id;
 
@@ -25,6 +28,7 @@ public class RecipeDto {
 
     private String coverImageUrl;
 
+    //FIXME json should have key named "ingredients"
     private List<IngredientDto> ingredientList;
 
     private Integer preparationTime;
