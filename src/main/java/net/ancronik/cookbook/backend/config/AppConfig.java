@@ -3,7 +3,9 @@ package net.ancronik.cookbook.backend.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Global application configuration class.
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
+@EnableWebMvc
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class AppConfig {
 
 

@@ -413,7 +413,7 @@ public class SlicedModel<T> extends CollectionModel<T> {
          * @return metadata
          */
         public static SliceMetadata createFromSlice(Slice<?> slice) {
-            if(0 == slice.getNumberOfElements()){
+            if (0 == slice.getNumberOfElements()) {
                 return null;
             }
             return new SliceMetadata(slice.getSize(), slice.getNumber(), slice.getNumberOfElements(), slice.hasNext());

@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.application;
+package net.ancronik.cookbook.backend.hateoas;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;

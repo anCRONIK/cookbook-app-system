@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -76,9 +77,8 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded").doesNotExist())
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(any());
@@ -94,12 +94,12 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.pageSize").value(1))
-                .andExpect(jsonPath("$.numberOfElements").value(1))
-                .andExpect(jsonPath("$.pageNumber").value(0))
-                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.page.size").value(1))
+                .andExpect(jsonPath("$.page.numberOfElements").value(1))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(any());
@@ -115,15 +115,15 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded.recipes").exists())
+                .andExpect(jsonPath("$._embedded.recipes").isArray())
+                .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.pageSize").value(10))
-                .andExpect(jsonPath("$.numberOfElements").value(10))
-                .andExpect(jsonPath("$.pageNumber").value(0))
-                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.page.size").value(10))
+                .andExpect(jsonPath("$.page.numberOfElements").value(10))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(any());
@@ -140,16 +140,16 @@ public class RecipeControllerTest {
                         .queryParam("page", "2").queryParam("size", "6"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded.recipes").exists())
+                .andExpect(jsonPath("$._embedded.recipes").isArray())
+                .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.pageSize").value(6))
-                .andExpect(jsonPath("$.numberOfElements").value(6))
-                .andExpect(jsonPath("$.pageNumber").value(2))
-                .andExpect(jsonPath("$.hasNext").value(false))
-                .andExpect(jsonPath("$.links.nextPage").doesNotExist())
+                .andExpect(jsonPath("$.page.size").value(6))
+                .andExpect(jsonPath("$.page.numberOfElements").value(6))
+                .andExpect(jsonPath("$.page.number").value(2))
+                .andExpect(jsonPath("$.page.hasNext").value(false))
+                .andExpect(jsonPath("$._links.nextPage").doesNotExist())
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(pageableCaptor.capture());
@@ -173,19 +173,19 @@ public class RecipeControllerTest {
                         .queryParam("sort", "difficulty,ASC"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded").exists())
+                .andExpect(jsonPath("$._embedded.recipes").isArray())
+                .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.links.next").value("http://localhost/api/v1/recipes/?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.self").value("http://localhost/api/v1/recipes/?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.prev").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.first").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.pageSize").value(2))
-                .andExpect(jsonPath("$.numberOfElements").value(2))
-                .andExpect(jsonPath("$.pageNumber").value(1))
-                .andExpect(jsonPath("$.hasNext").value(true))
+                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes/?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes/?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.page.size").value(2))
+                .andExpect(jsonPath("$.page.numberOfElements").value(2))
+                .andExpect(jsonPath("$.page.number").value(1))
+                .andExpect(jsonPath("$.page.hasNext").value(true))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipes(pageableCaptor.capture());
@@ -246,7 +246,7 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + mockData.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("$.id").value(mockData.getId()))
                 .andExpect(jsonPath("$.title").value(mockData.getTitle()))
                 .andReturn();
@@ -280,9 +280,11 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + "abch"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$.page").doesNotExist())
+                .andExpect(jsonPath("$._links").exists())
+                .andExpect(jsonPath("$._links").isNotEmpty())
+                .andExpect(jsonPath("$._links.self").isNotEmpty())
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
@@ -298,12 +300,12 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.pageSize").value(1))
-                .andExpect(jsonPath("$.numberOfElements").value(1))
-                .andExpect(jsonPath("$.pageNumber").value(0))
-                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.page.size").value(1))
+                .andExpect(jsonPath("$.page.numberOfElements").value(1))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
@@ -319,15 +321,15 @@ public class RecipeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded").exists())
+                .andExpect(jsonPath("$._embedded.recipes").isArray())
+                .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.pageSize").value(2))
-                .andExpect(jsonPath("$.numberOfElements").value(2))
-                .andExpect(jsonPath("$.pageNumber").value(0))
-                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.page.size").value(2))
+                .andExpect(jsonPath("$.page.numberOfElements").value(2))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipesForCategory(anyString(), any());
@@ -347,19 +349,19 @@ public class RecipeControllerTest {
                         .queryParam("sort", "difficulty,DESC"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded").exists())
+                .andExpect(jsonPath("$._embedded.recipes").isArray())
+                .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForData(mockData))
-                .andExpect(jsonPath("$.links.next").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.self").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.prev").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.links.first").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$.pageSize").value(2))
-                .andExpect(jsonPath("$.numberOfElements").value(2))
-                .andExpect(jsonPath("$.pageNumber").value(1))
-                .andExpect(jsonPath("$.hasNext").value(true))
+                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes/category/"+mockData.get(0).getCategory()+"?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$.page.size").value(2))
+                .andExpect(jsonPath("$.page.numberOfElements").value(2))
+                .andExpect(jsonPath("$.page.number").value(1))
+                .andExpect(jsonPath("$.page.hasNext").value(true))
                 .andReturn();
 
         verify(mockRecipeService).getAllRecipesForCategory(eq(mockData.get(0).getCategory()), pageableCaptor.capture());
@@ -377,15 +379,15 @@ public class RecipeControllerTest {
 
         if (null != data && !data.isEmpty()) {
             for (int i = 0, len = data.size(); i < len; ++i) {
-                matchers.add(jsonPath("$.data").exists());
-                matchers.add(jsonPath("$.data[" + i + "].id").value(data.get(i).getId()));
-                matchers.add(jsonPath("$.data[" + i + "].title").value(data.get(i).getTitle()));
-                matchers.add(jsonPath("$.data[" + i + "].shortDescription").value(data.get(i).getShortDescription()));
-                matchers.add(jsonPath("$.data[" + i + "].coverImageUrl").value(data.get(i).getCoverImageUrl()));
-                matchers.add(jsonPath("$.data[" + i + "].dateCreated").value(Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getDateCreated())));
-                matchers.add(jsonPath("$.data[" + i + "].difficulty").value(data.get(i).getDifficulty()));
-                matchers.add(jsonPath("$.data[" + i + "].category").value(data.get(i).getCategory()));
-                matchers.add(jsonPath("$.data[" + i + "].authorId").value(data.get(i).getAuthorId()));
+                matchers.add(jsonPath("$._embedded.recipes").exists());
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].id").value(data.get(i).getId()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].title").value(data.get(i).getTitle()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].shortDescription").value(data.get(i).getShortDescription()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].coverImageUrl").value(data.get(i).getCoverImageUrl()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].dateCreated").value(Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getDateCreated())));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].difficulty").value(data.get(i).getDifficulty()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].category").value(data.get(i).getCategory()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].authorId").value(data.get(i).getAuthorId()));
             }
         }
         return matchers.toArray(ResultMatcher[]::new);

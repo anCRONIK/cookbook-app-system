@@ -1,10 +1,13 @@
 package net.ancronik.cookbook.backend.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +20,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RecipePreviewDto extends EntityModel<RecipePreviewDto> {
+@Relation(collectionRelation = "recipes", itemRelation = "recipe")
+@JsonRootName(value = "recipe")
+public class RecipePreviewDto extends RepresentationModel<RecipePreviewDto> {
 
     private Long id;
 

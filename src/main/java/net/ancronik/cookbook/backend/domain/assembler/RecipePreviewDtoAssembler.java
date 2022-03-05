@@ -32,8 +32,8 @@ public class RecipePreviewDtoAssembler extends RepresentationModelAssemblerSuppo
     public RecipePreviewDto toModel(@NonNull Recipe entity) {
         RecipePreviewDto dto = modelMapper.map(entity, RecipePreviewDto.class);
 
-        dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId())).withSelfRel());
-        dto.add(linkTo(methodOn(RecipeController.class).getAllRecipesForCategory(dto.getCategory(), null)).withRel("searchCategory"));
+        dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId(), null)).withSelfRel());
+        dto.add(linkTo(methodOn(RecipeController.class).getAllRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));
         //TODO link to author
 
         return dto;

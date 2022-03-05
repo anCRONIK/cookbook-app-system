@@ -1,10 +1,13 @@
 package net.ancronik.cookbook.backend.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RecipeDto extends EntityModel<RecipeDto> {
+@JsonRootName(value = "recipe")
+public class RecipeDto extends RepresentationModel<RecipeDto> {
 
     private Long id;
 
@@ -28,7 +32,7 @@ public class RecipeDto extends EntityModel<RecipeDto> {
 
     private String coverImageUrl;
 
-    //FIXME json should have key named "ingredients"
+    @JsonProperty("ingredients")
     private List<IngredientDto> ingredientList;
 
     private Integer preparationTime;
