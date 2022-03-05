@@ -9,16 +9,29 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
+/**
+ * Advice which will handle all exceptions that are propagated from controllers.
+ *
+ * @author Nikola Presecki
+ */
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
+    /**
+     * Method for handling all general exceptions with bad request response.
+     *
+     * @param ex         exception
+     * @param webRequest request
+     * @return bad request with provided data
+     */
     @ExceptionHandler({EmptyDataException.class, RuntimeException.class})
     public ResponseEntity<ApiErrorResponse> genericExceptionHandler(Throwable ex, WebRequest webRequest) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 ex.getMessage(),
-                ex.getMessage(),
-                LocalDateTime.now()
+                ex.getMessage(), //FIXME
+                LocalDateTime.now(ZoneId.of("UTC"))
         ));
     }
 

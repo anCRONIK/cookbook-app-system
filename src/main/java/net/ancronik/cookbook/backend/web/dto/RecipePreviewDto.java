@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RecipePreviewDto extends EntityModel<RecipeDto> {
+public class RecipePreviewDto extends EntityModel<RecipePreviewDto> {
 
     private Long id;
 

@@ -8,6 +8,9 @@ import net.ancronik.cookbook.backend.web.dto.IngredientDto;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +38,7 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
         RecipeDto dto = modelMapper.map(entity, RecipeDto.class);
 
         dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(RecipeController.class).getAllRecipesForCategory(dto.getCategory(), null)).withRel("searchCategory"));
         //TODO link to author
 
         return dto;
@@ -42,7 +46,10 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
 
 
     private IngredientDto toDto(Ingredient entity) {
-        return modelMapper.map(entity, IngredientDto.class); //FIXME measurement mapping
+        IngredientDto dto = modelMapper.map(entity, IngredientDto.class);
+        dto.setMeasurementUnit(entity.getQuantity().getMeasurementUnit().getUnit());
+
+        return dto;
     }
 
 
