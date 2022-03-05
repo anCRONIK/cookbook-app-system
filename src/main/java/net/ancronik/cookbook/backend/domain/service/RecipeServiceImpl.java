@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service;
 
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.RecipePreviewDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class RecipeServiceImpl implements RecipeService {
 
     @Override
-    public Slice<RecipeDto> getAllRecipes(Pageable pageable) {
+    public Slice<RecipePreviewDto> getAllRecipes(Pageable pageable) {
 
         return null;
     }
@@ -27,7 +28,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Slice<RecipeDto> getAllRecipesForCategory(String category, Pageable pageable) {
+    public Slice<RecipePreviewDto> getAllRecipesForCategory(String category, Pageable pageable) {
         return null;
     }
 }

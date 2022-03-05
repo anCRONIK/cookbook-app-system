@@ -1,11 +1,11 @@
 package net.ancronik.cookbook.backend.web.controller;
 
 import lombok.SneakyThrows;
-import net.ancronik.cookbook.backend.MockTestUtils;
 import net.ancronik.cookbook.backend.application.exceptions.Util;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import net.ancronik.cookbook.backend.web.dto.RecipeDtoMockData;
+import net.ancronik.cookbook.backend.web.dto.RecipePreviewDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -88,7 +88,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipes_ServiceReturnsOneEntry_ReturnDataToCaller() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(1);
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(1);
         when(mockRecipeService.getAllRecipes(any())).thenReturn(new SliceImpl<>(mockData));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
@@ -109,7 +109,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipes_ServiceReturnsMultipleData_ReturnDataToCaller() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(10);
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(10);
         when(mockRecipeService.getAllRecipes(any())).thenReturn(new SliceImpl<>(mockData));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
@@ -133,7 +133,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipes_CallersUsesPaging_ProperParametersSentToService() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(6);
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(6);
         when(mockRecipeService.getAllRecipes(any())).thenReturn(new SliceImpl<>(mockData, Pageable.ofSize(6).withPage(2), false));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH)
@@ -162,7 +162,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipes_CallersUsesPagingAndSorting_ProperParametersSentToService() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(2);
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(2);
         when(mockRecipeService.getAllRecipes(any())).thenReturn(new SliceImpl<>(mockData,
                 PageRequest.of(1, 2, Sort.by(new Sort.Order(Sort.Direction.ASC, "difficulty"),
                         new Sort.Order(Sort.Direction.DESC, "category"))), true));
@@ -240,7 +240,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void findRecipeById_EntryFound_ReturnData() {
-        RecipeDto mockData = RecipeDtoMockData.generateRandomMockData(1).get(0);
+        RecipeDto mockData = RecipeDtoMockData.generateRandomMockDataForRecipeDto(1).get(0);
 
         when(mockRecipeService.getRecipe(mockData.getId())).thenReturn(Optional.of(mockData));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + mockData.getId()))
@@ -260,7 +260,7 @@ public class RecipeControllerTest {
     public void getAllRecipesForCategory_ServiceReturnsNull_ReturnServerError() {
         when(mockRecipeService.getAllRecipesForCategory(anyString(), any())).thenReturn(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+"abc"))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + "abc"))
                 .andExpect(status().isBadRequest())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.error").exists())
@@ -275,9 +275,9 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipesForCategory_ServiceReturnsEmptyList_ReturnDataToCaller() {
-        when(mockRecipeService.getAllRecipesForCategory(anyString(),any())).thenReturn(Page.empty());
+        when(mockRecipeService.getAllRecipesForCategory(anyString(), any())).thenReturn(Page.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+"abch"))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + "abch"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
@@ -292,10 +292,10 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipesForCategory_ServiceReturnsOneEntry_ReturnDataToCaller() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(1);
-        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()),any())).thenReturn(new SliceImpl<>(mockData));
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(1);
+        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory()))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
@@ -313,10 +313,10 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipesForCategory_ServiceReturnsMultipleData_ReturnDataToCaller() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(2);
-        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()),any())).thenReturn(new SliceImpl<>(mockData));
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(2);
+        when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory()))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
@@ -337,12 +337,12 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getAllRecipesForCategory_CallersUsesPagingAndSorting_ProperParametersSentToService() {
-        List<RecipeDto> mockData = RecipeDtoMockData.generateRandomMockData(2);
+        List<RecipePreviewDto> mockData = RecipeDtoMockData.generateRandomMockDataForRecipePreviewDto(2);
         when(mockRecipeService.getAllRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData,
                 PageRequest.of(1, 2, Sort.by(new Sort.Order(Sort.Direction.ASC, "difficulty"),
                         new Sort.Order(Sort.Direction.DESC, "category"))), true));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX+mockData.get(0).getCategory())
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory())
                         .queryParam("page", "1").queryParam("size", "2")
                         .queryParam("sort", "difficulty,DESC"))
                 .andDo(print())
@@ -372,7 +372,7 @@ public class RecipeControllerTest {
     }
 
 
-    private ResultMatcher[] createMatchersForData(List<RecipeDto> data) {
+    private ResultMatcher[] createMatchersForData(List<RecipePreviewDto> data) {
         List<ResultMatcher> matchers = new ArrayList<>();
 
         if (null != data && !data.isEmpty()) {
@@ -382,28 +382,10 @@ public class RecipeControllerTest {
                 matchers.add(jsonPath("$.data[" + i + "].title").value(data.get(i).getTitle()));
                 matchers.add(jsonPath("$.data[" + i + "].shortDescription").value(data.get(i).getShortDescription()));
                 matchers.add(jsonPath("$.data[" + i + "].coverImageUrl").value(data.get(i).getCoverImageUrl()));
-                matchers.add(jsonPath("$.data[" + i + "].ingredientList").isArray());
-                matchers.add(jsonPath("$.data[" + i + "].preparationTime").value(data.get(i).getPreparationTime()));
-                matchers.add(jsonPath("$.data[" + i + "].preparationInstructions").value(data.get(i).getPreparationInstructions()));
-                matchers.add(jsonPath("$.data[" + i + "].cookTime").value(data.get(i).getCookTime()));
-                matchers.add(jsonPath("$.data[" + i + "].cookingInstructions").value(data.get(i).getCookingInstructions()));
                 matchers.add(jsonPath("$.data[" + i + "].dateCreated").value(Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getDateCreated())));
-                matchers.add(jsonPath("$.data[" + i + "].lastUpdated").value(null == data.get(i).getLastUpdated() ? null : Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getLastUpdated())));
                 matchers.add(jsonPath("$.data[" + i + "].difficulty").value(data.get(i).getDifficulty()));
                 matchers.add(jsonPath("$.data[" + i + "].category").value(data.get(i).getCategory()));
                 matchers.add(jsonPath("$.data[" + i + "].authorId").value(data.get(i).getAuthorId()));
-
-                int ingCnt = 0;
-                final int index = i;
-                if (null != data.get(i).getIngredientList() && !data.get(i).getIngredientList().isEmpty()) {
-                    matchers.addAll(MockTestUtils.convertMatrixToList(data.get(i).getIngredientList().stream().map(
-                            (ing) -> new ResultMatcher[]{
-                                    jsonPath("$.data[" + index + "].ingredientList[" + ingCnt + "].name").value(data.get(index).getIngredientList().get(ingCnt).getName()),
-                                    jsonPath("$.data[" + index + "].ingredientList[" + ingCnt + "].quantity").value(data.get(index).getIngredientList().get(ingCnt).getQuantity()),
-                                    jsonPath("$.data[" + index + "].ingredientList[" + ingCnt + "].measurementUnit").value(data.get(index).getIngredientList().get(ingCnt).getMeasurementUnit())
-                            }
-                    ).toArray(ResultMatcher[][]::new)));
-                }
             }
         }
         return matchers.toArray(ResultMatcher[]::new);

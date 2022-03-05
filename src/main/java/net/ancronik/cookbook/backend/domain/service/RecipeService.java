@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service;
 
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.RecipePreviewDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -19,7 +20,7 @@ public interface RecipeService {
      * @param pageable pageable options
      * @return slice with data
      */
-    Slice<RecipeDto> getAllRecipes(Pageable pageable);
+    Slice<RecipePreviewDto> getAllRecipes(Pageable pageable);
 
     /**
      * Method for getting specific recipe using id.
@@ -36,5 +37,5 @@ public interface RecipeService {
      * @param pageable pageable options
      * @return slice with data
      */
-    Slice<RecipeDto> getAllRecipesForCategory(String category, Pageable pageable);
+    Slice<RecipePreviewDto> getAllRecipesForCategory(String category, Pageable pageable);
 }

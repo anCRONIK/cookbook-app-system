@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.web.controller.RecipeController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +13,9 @@ import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.hateoas.UriTemplate;
-import org.springframework.hateoas.server.core.UriTemplateFactory;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletContext;
 import java.io.IOException;
 
 /**
@@ -49,8 +46,8 @@ public class SliceJacksonSerializer extends JsonSerializer<Slice<?>> {
 
         UriTemplate uriTemplate = null;
 
-            uriTemplate = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getAllRecipes(null)).withSelfRel().getTemplate();
-            //uriTemplate = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getAllRecipesForCategory(null, null)).withSelfRel().getTemplate();
+        uriTemplate = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getAllRecipes(null)).withSelfRel().getTemplate();
+        //uriTemplate = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getAllRecipesForCategory(null, null)).withSelfRel().getTemplate();
 
         writeLink(jsonGenerator, createLink(uriTemplate, slice.getPageable(), LinkRelation.of("self")));
         writeLink(jsonGenerator, createLink(uriTemplate, PageRequest.of(0, slice.getSize(), slice.getSort()), LinkRelation.of("firstPage")));

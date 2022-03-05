@@ -3,6 +3,7 @@ package net.ancronik.cookbook.backend.web.controller;
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.RecipePreviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,8 +33,8 @@ public class RecipeController {
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Slice<RecipeDto> getAllRecipes(Pageable pageable) {
-        Slice<RecipeDto> data = recipeService.getAllRecipes(pageable);
+    public Slice<RecipePreviewDto> getAllRecipes(Pageable pageable) {
+        Slice<RecipePreviewDto> data = recipeService.getAllRecipes(pageable);
 
         if (null == data) {
             throw new EmptyDataException("Empty page returned by service");
@@ -55,8 +56,8 @@ public class RecipeController {
     }
 
     @GetMapping(value = "/category/{category}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Slice<RecipeDto> getAllRecipesForCategory(@PathVariable String category, Pageable pageable) {
-        Slice<RecipeDto> data = recipeService.getAllRecipesForCategory(category, pageable);
+    public Slice<RecipePreviewDto> getAllRecipesForCategory(@PathVariable String category, Pageable pageable) {
+        Slice<RecipePreviewDto> data = recipeService.getAllRecipesForCategory(category, pageable);
 
         if (null == data) {
             throw new EmptyDataException("Empty page returned by service");
