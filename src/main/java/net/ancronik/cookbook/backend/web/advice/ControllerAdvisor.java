@@ -1,8 +1,14 @@
 package net.ancronik.cookbook.backend.web.advice;
 
+import lombok.NonNull;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.web.dto.ApiErrorResponse;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -10,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 
 /**
  * Advice which will handle all exceptions that are propagated from controllers.
@@ -27,7 +34,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
      * @return bad request with provided data
      */
     @ExceptionHandler({EmptyDataException.class, RuntimeException.class})
-    public ResponseEntity<ApiErrorResponse> genericExceptionHandler(Throwable ex, WebRequest webRequest) {
+    public ResponseEntity<ApiErrorResponse> badRequestHandler(Throwable ex, WebRequest webRequest) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 ex.getMessage(),
                 ex.getMessage(), //FIXME
@@ -35,43 +42,30 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         ));
     }
 
-/*    @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<Object> handleCityNotFoundException(
-        CityNotFoundException ex, WebRequest request) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", "City not found");
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    /**
+     * Handler for exceptions thrown when requested data does not exist.
+     *
+     * @return not found
+     */
+    @ExceptionHandler({DataDoesNotExist.class})
+    public ResponseEntity<String> handleExceptionsWhenEntryDoesNotExistsInDatabase() {
+        return ResponseEntity.notFound().build();
     }
 
-    @ExceptionHandler(NoDataFoundException.class)
-    public ResponseEntity<Object> handleNodataFoundException(
-        NoDataFoundException ex, WebRequest request) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", "No cities found");
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-    }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @NonNull
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDate.now());
-        body.put("status", status.value());
+        return ResponseEntity.badRequest().body(new ApiErrorResponse(
+                Arrays.toString(ex.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage).toArray()),
+                "desc", //FIXME
+                LocalDateTime.now(ZoneId.of("UTC"))
+        ));
+    }
 
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
-
-        body.put("errors", errors);
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }*/
+    //TODO generic handler????
 }

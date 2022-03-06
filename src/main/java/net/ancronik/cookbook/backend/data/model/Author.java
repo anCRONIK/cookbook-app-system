@@ -17,13 +17,13 @@ public class Author {
 
     //TODO limits
     @PrimaryKey
-    private String username;
+    private String username; //TODO info from user db
     //TODO limits
     @Column(value = "full_name")
     private String fullName;
     //TODO limits
     @Column(value = "date_of_birth")
-    private LocalDate dateOfBirth;
+    private LocalDate dateOfBirth; //TODO info from user db
     //TODO limits
     @Column(value = "bio")
     private String bio;

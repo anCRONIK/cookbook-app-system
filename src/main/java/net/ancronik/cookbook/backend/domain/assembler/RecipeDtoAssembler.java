@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.data.model.Ingredient;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.web.controller.RecipeController;
@@ -33,6 +34,7 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
         this.modelMapper = modelMapper;
     }
 
+    @SneakyThrows
     @Override
     public RecipeDto toModel(@NonNull Recipe entity) {
         RecipeDto dto = modelMapper.map(Objects.requireNonNull(entity, "Given recipe entity is null"), RecipeDto.class); //FIXME, exclude ingredient list from default mapping

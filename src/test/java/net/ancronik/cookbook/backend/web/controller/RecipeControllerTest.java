@@ -1,7 +1,9 @@
 package net.ancronik.cookbook.backend.web.controller;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
 import net.ancronik.cookbook.backend.application.exceptions.Util;
+import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
@@ -44,6 +46,9 @@ public class RecipeControllerTest {
 
     @MockBean
     private RecipeService mockRecipeService;
+
+    @MockBean
+    private RecipeCommentService mockRecipeCommentService;
 
 
     @Captor
@@ -230,7 +235,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void findRecipeById_EntryNotFound_Return404() {
-        when(mockRecipeService.getRecipe(12L)).thenReturn(Optional.empty());
+        when(mockRecipeService.getRecipe(12L)).thenThrow(new DataDoesNotExist("msg"));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -244,7 +249,7 @@ public class RecipeControllerTest {
     public void findRecipeById_EntryFound_ReturnData() {
         RecipeDto mockData = DtoMockData.generateRandomMockDataForRecipeDto(1).get(0);
 
-        when(mockRecipeService.getRecipe(mockData.getId())).thenReturn(Optional.of(mockData));
+        when(mockRecipeService.getRecipe(mockData.getId())).thenReturn(mockData);
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + mockData.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -381,7 +386,7 @@ public class RecipeControllerTest {
     @Test
     @SneakyThrows
     public void getCommentsForRecipe_ServiceReturnsNull_ReturnServerError() {
-        when(mockRecipeService.getCommentsForRecipe(anyLong(), any())).thenReturn(null);
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 1L)))
                 .andExpect(status().isBadRequest())
@@ -391,14 +396,14 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verify(mockRecipeService).getCommentsForRecipe(anyLong(), any());
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
         verifyNoMoreInteractions(mockRecipeService);
     }
 
     @Test
     @SneakyThrows
     public void getCommentsForRecipe_ServiceReturnsEmptyList_ReturnDataToCaller() {
-        when(mockRecipeService.getCommentsForRecipe(anyLong(), any())).thenReturn(Page.empty());
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(Page.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 1L)))
                 .andDo(print())
@@ -410,7 +415,7 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$._links.self").isNotEmpty())
                 .andReturn();
 
-        verify(mockRecipeService).getCommentsForRecipe(anyLong(), any());
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
         verifyNoMoreInteractions(mockRecipeService);
     }
 
@@ -418,7 +423,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     public void getCommentsForRecipe_ServiceReturnsOneEntry_ReturnDataToCaller() {
         List<RecipeCommentDto> mockData = DtoMockData.generateRandomMockDataForRecipeCommentDto(1);
-        when(mockRecipeService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData));
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData));
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 23L)))
                 .andDo(print())
@@ -431,7 +436,7 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
-        verify(mockRecipeService).getCommentsForRecipe(anyLong(), any());
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
         verifyNoMoreInteractions(mockRecipeService);
     }
 
@@ -439,7 +444,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     public void getCommentsForRecipe_ServiceReturnsMultipleData_ReturnDataToCaller() {
         List<RecipeCommentDto> mockData = DtoMockData.generateRandomMockDataForRecipeCommentDto(4);
-        when(mockRecipeService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData));
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData));
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 23L)))
                 .andDo(print())
@@ -452,7 +457,7 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
-        verify(mockRecipeService).getCommentsForRecipe(anyLong(), any());
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
         verifyNoMoreInteractions(mockRecipeService);
     }
 
@@ -460,7 +465,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     public void getCommentsForRecipe_CallersUsesPagingAndSorting_ProperParametersSentToService() {
         List<RecipeCommentDto> mockData = DtoMockData.generateRandomMockDataForRecipeCommentDto(4);
-        when(mockRecipeService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData,
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(new SliceImpl<>(mockData,
                 PageRequest.of(10, 12, Sort.by(new Sort.Order(Sort.Direction.DESC, "dateCreated"))), false));
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 23L))
@@ -476,7 +481,7 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
 
-        verify(mockRecipeService).getCommentsForRecipe(anyLong(), pageableCaptor.capture());
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
         Assertions.assertEquals(10, pageable.getPageNumber());
         Assertions.assertEquals(12, pageable.getPageSize());
