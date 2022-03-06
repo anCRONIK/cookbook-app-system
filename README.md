@@ -6,3 +6,5 @@ tables, the one for ingredients would be huge (can be separated into few table d
 
 
 Liquibase should be run using mvn, need to add some migration tool that supports Cassandra to start with app.
+
+Jacoco to run unit and integration test separately

@@ -9,7 +9,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 import java.time.LocalDateTime;
 
 /**
- * Database model for comments that user's leave on the recipes.
+ * Database model for comments that users leave on the recipes.
  *
  * @author Nikola Presecki
  */
@@ -17,11 +17,11 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeComments {
+public class RecipeComment {
 
     //TODO checks
     @Column("recipe_id")
-    private Integer recipeId;
+    private Long recipeId;
     //TODO checks
     private String username;
     //TODO checks

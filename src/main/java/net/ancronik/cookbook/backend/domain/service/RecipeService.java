@@ -1,7 +1,8 @@
 package net.ancronik.cookbook.backend.domain.service;
 
+import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
+import net.ancronik.cookbook.backend.web.dto.RecipeCommentDto;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
-import net.ancronik.cookbook.backend.web.dto.RecipePreviewDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -15,12 +16,12 @@ import java.util.Optional;
 public interface RecipeService {
 
     /**
-     * Method for fetching all recipes with options for paging the data.
+     * Method for fetching recipes with options for pagination.
      *
      * @param pageable pageable options
      * @return slice with data
      */
-    Slice<RecipePreviewDto> getAllRecipes(Pageable pageable);
+    Slice<RecipeBasicInfoDto> getRecipes(Pageable pageable);
 
     /**
      * Method for getting specific recipe using id.
@@ -31,11 +32,20 @@ public interface RecipeService {
     Optional<RecipeDto> getRecipe(Long id);
 
     /**
-     * Method to find all recipes in the given category
+     * Method to find recipes in the given category
      *
      * @param category category
      * @param pageable pageable options
      * @return slice with data
      */
-    Slice<RecipePreviewDto> getAllRecipesForCategory(String category, Pageable pageable);
+    Slice<RecipeBasicInfoDto> getRecipesForCategory(String category, Pageable pageable);
+
+    /**
+     * Method for finding all comments for given recipe.
+     *
+     * @param id       recipe id
+     * @param pageable pageable options
+     * @return slice with data
+     */
+    Slice<RecipeCommentDto> getCommentsForRecipe(Long id, Pageable pageable);
 }

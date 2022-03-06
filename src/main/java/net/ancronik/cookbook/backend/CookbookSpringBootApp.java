@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Nikola Presecki
  */
 @SpringBootApplication
-public class BookRecipeBackendApplication {
+public class CookbookSpringBootApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookRecipeBackendApplication.class, args);
+        SpringApplication.run(CookbookSpringBootApp.class, args);
     }
 
 }

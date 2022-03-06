@@ -8,11 +8,11 @@ import net.ancronik.cookbook.backend.web.dto.IngredientDto;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -35,10 +35,13 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
 
     @Override
     public RecipeDto toModel(@NonNull Recipe entity) {
-        RecipeDto dto = modelMapper.map(entity, RecipeDto.class);
+        RecipeDto dto = modelMapper.map(Objects.requireNonNull(entity, "Given recipe entity is null"), RecipeDto.class); //FIXME, exclude ingredient list from default mapping
+        if (null != entity.getIngredientList() && !entity.getIngredientList().isEmpty()) {
+            dto.setIngredientList(entity.getIngredientList().stream().map(this::toDto).collect(Collectors.toList()));
+        }
 
-        dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId(), null)).withSelfRel());
-        dto.add(linkTo(methodOn(RecipeController.class).getAllRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));
+        dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(RecipeController.class).getRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));
         //TODO link to author
 
         return dto;
@@ -47,7 +50,7 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
 
     private IngredientDto toDto(Ingredient entity) {
         IngredientDto dto = modelMapper.map(entity, IngredientDto.class);
-        dto.setMeasurementUnit(entity.getQuantity().getMeasurementUnit().getUnit());
+        dto.setMeasurementUnit(entity.getQuantity().getMeasurementUnit().getUnit()); //TODO check if we need this
 
         return dto;
     }

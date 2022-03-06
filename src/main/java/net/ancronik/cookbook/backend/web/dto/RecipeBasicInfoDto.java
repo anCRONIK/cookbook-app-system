@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "recipes", itemRelation = "recipe")
 @JsonRootName(value = "recipe")
-public class RecipePreviewDto extends RepresentationModel<RecipePreviewDto> {
+public class RecipeBasicInfoDto extends RepresentationModel<RecipeBasicInfoDto> {
 
     private Long id;
 
