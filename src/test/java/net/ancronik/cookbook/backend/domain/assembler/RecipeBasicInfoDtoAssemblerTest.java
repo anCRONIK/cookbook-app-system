@@ -32,10 +32,10 @@ public class RecipeBasicInfoDtoAssemblerTest {
                 10, "slice everything into the bowl",
                 30, "throw sliced veggies in boiling water and cook for 30 minutes",
                 LocalDateTime.of(2022, 3, 6, 11, 23), null,
-                RecipeDifficulty.LOW, RecipeCategory.ENTREE, "pero");
+                1, new RecipeCategory("entree"), "pero");
 
         RecipeBasicInfoDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=ENTREE, authorId=pero)", dto.toString());
+        assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
         assertEquals(2, dto.getLinks().toList().size());
     }
 }

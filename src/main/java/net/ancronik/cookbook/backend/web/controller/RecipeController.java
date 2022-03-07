@@ -3,19 +3,21 @@ package net.ancronik.cookbook.backend.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
+import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
+import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.hateoas.SlicedModel;
 import net.ancronik.cookbook.backend.hateoas.SlicedResourcesAssembler;
-import net.ancronik.cookbook.backend.web.dto.AddCommentRequest;
-import net.ancronik.cookbook.backend.web.dto.RecipeCreateRequest;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeUpdateRequest;
+import net.ancronik.cookbook.backend.web.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.RepresentationModel;
@@ -40,12 +42,15 @@ public class RecipeController {
 
     private final RecipeCommentService recipeCommentService;
 
+    private final CodeQueryService codeQueryService;
+
     private final HateoasPageableHandlerMethodArgumentResolver hateoasPageableHandlerMethodArgumentResolver;
 
     @Autowired
-    public RecipeController(RecipeService recipeService, RecipeCommentService recipeCommentService, HateoasPageableHandlerMethodArgumentResolver hateoasPageableHandlerMethodArgumentResolver) {
+    public RecipeController(RecipeService recipeService, RecipeCommentService recipeCommentService, CodeQueryService codeQueryService, HateoasPageableHandlerMethodArgumentResolver hateoasPageableHandlerMethodArgumentResolver) {
         this.recipeService = recipeService;
         this.recipeCommentService = recipeCommentService;
+        this.codeQueryService = codeQueryService;
         this.hateoasPageableHandlerMethodArgumentResolver = hateoasPageableHandlerMethodArgumentResolver;
     }
 
@@ -114,6 +119,14 @@ public class RecipeController {
         recipeService.deleteRecipe(id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/categories", produces = MediaTypes.HAL_JSON_VALUE)
+    @Cacheable("recipe_categories")
+    public CollectionModel<RecipeCategoryDto> getRecipeCategories() throws GenericDatabaseException {
+        LOG.info("Fetching all recipe categories");
+
+        return CollectionModel.of(codeQueryService.getRecipeCategories());
     }
 
 

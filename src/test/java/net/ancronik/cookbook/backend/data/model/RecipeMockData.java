@@ -27,8 +27,8 @@ public class RecipeMockData {
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
                     LocalDateTime.now().minusDays(random.nextInt(100) + 1),
                     random.nextBoolean() ? LocalDateTime.now() : null,
-                    RecipeDifficulty.parse(random.nextInt(5)+1),
-                    RecipeCategory.values()[random.nextInt(RecipeCategory.values().length)],
+                    random.nextInt(5) + 1,
+                    new RecipeCategory(StringTestUtils.getRandomStringInLowerCase(6)),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(10))
             );
 

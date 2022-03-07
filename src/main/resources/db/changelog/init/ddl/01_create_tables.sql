@@ -39,6 +39,12 @@ CREATE TABLE IF NOT EXISTS cookbook.recipes (
     author_username VARCHAR,
 );
 
+-- Create recipe categories table
+CREATE TABLE IF NOT EXISTS cookbook.recipe_categories (
+    category VARCHAR,
+    PRIMARY KEY (category)
+);
+
 -- Create recipe comments table
 CREATE TABLE IF NOT EXISTS cookbook.recipe_comments (
     recipe_id BIGINT,

@@ -41,7 +41,7 @@ public class RecipeCreateRequestToRecipeMapperTest {
         assertEquals(request.getCookingInstructions(), recipe.getCookingInstructions());
         assertNull(recipe.getDateCreated());
         assertNull(recipe.getDateLastUpdated());
-        assertEquals(request.getDifficulty(), recipe.getDifficulty().getDifficulty());
+        assertEquals(request.getDifficulty(), recipe.getDifficulty());
         assertEquals(request.getCategory(), recipe.getCategory().getCategory());
         assertNull(recipe.getAuthorId());
 

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.application.Util;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
+import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.*;
@@ -48,6 +50,9 @@ public class RecipeControllerTest {
     @MockBean
     private RecipeCommentService mockRecipeCommentService;
 
+    @MockBean
+    private CodeQueryService mockCodeQueryService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Captor
@@ -70,6 +75,7 @@ public class RecipeControllerTest {
     private static final String ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE = "/api/v1/recipes/%s/comments";
     private static final String UPDATE_RECIPE_PATH_PREFIX = "/api/v1/recipes/";
     private static final String DELETE_RECIPE_PATH_PREFIX = "/api/v1/recipes/";
+    private static final String GET_RECIPES_CATEGORIES_PATH = "/api/v1/recipes/categories";
 
     @Test
     @SneakyThrows
@@ -784,6 +790,45 @@ public class RecipeControllerTest {
         verify(mockRecipeService).deleteRecipe(anyLong());
         verifyNoMoreInteractions(mockRecipeService);
         verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getRecipeCategories_ServiceThrowsGenericDatabaseException_ReturnInternalServerError() {
+        when(mockCodeQueryService.getRecipeCategories()).thenThrow(new GenericDatabaseException("test"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_CATEGORIES_PATH))
+                .andExpect(status().isInternalServerError())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andReturn();
+
+        verify(mockCodeQueryService).getRecipeCategories();
+        verifyNoMoreInteractions(mockCodeQueryService);
+        verifyNoInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void getRecipeCategories_ServiceReturnsData_CheckResponse() {
+        when(mockCodeQueryService.getRecipeCategories())
+                .thenReturn(List.of(new RecipeCategoryDto("dessert"), new RecipeCategoryDto("entree")));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_CATEGORIES_PATH))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded.categories").isArray())
+                .andExpect(jsonPath("$._embedded.categories.length()").value(2))
+                .andReturn();
+
+        verify(mockCodeQueryService).getRecipeCategories();
+        verifyNoMoreInteractions(mockCodeQueryService);
+        verifyNoInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
     }
 
     private ResultMatcher[] createMatchersForRecipeBasicInfoDto(List<RecipeBasicInfoDto> data) {

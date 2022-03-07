@@ -3,9 +3,12 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;
+import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
 import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitDtoAssembler;
 import net.ancronik.cookbook.backend.web.dto.MeasurementUnitDto;
+import net.ancronik.cookbook.backend.web.dto.RecipeCategoryDto;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,9 +27,11 @@ public class CodeQueryServiceImplTest {
 
     private final MeasurementUnitRepository mockMeasurementUnitRepository = Mockito.mock(MeasurementUnitRepository.class);
 
+    private final RecipeCategoryRepository mockRecipeCategoryRepository = Mockito.mock(RecipeCategoryRepository.class);
+
     private final MeasurementUnitDtoAssembler measurementUnitDtoAssembler = new MeasurementUnitDtoAssembler(new ModelMapper());
 
-    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, measurementUnitDtoAssembler);
+    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitDtoAssembler);
 
     @Test
     public void getMeasurementUnits_RepositoryThrowsException_ThrowGenericDatabaseException() {
@@ -64,7 +69,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_UnitDoesNotExists_ReturnFalse() {
+    public void isMeasurementUnitValid_UnitDoesNotExists_ReturnFalse() {
         when(mockMeasurementUnitRepository.existsById(anyString())).thenReturn(false);
 
         assertFalse(service.isMeasurementUnitValid("kgsa"));
@@ -72,10 +77,62 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_UnitExists_ReturnTrue() {
+    public void isMeasurementUnitValid_UnitExists_ReturnTrue() {
         when(mockMeasurementUnitRepository.existsById(anyString())).thenReturn(true);
 
-        assertTrue(service.isMeasurementUnitValid("kgsa"));
+        assertTrue(service.isMeasurementUnitValid("kg"));
+    }
+
+
+    @Test
+    public void getRecipeCategories_RepositoryThrowsException_ThrowGenericDatabaseException() {
+        doThrow(new RuntimeException("test")).when(mockRecipeCategoryRepository).findAll();
+
+        assertThrows(GenericDatabaseException.class, service::getRecipeCategories);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getRecipeCategories_RepositoryReturnsEmptyList_ReturnEmptyList() {
+        when(mockRecipeCategoryRepository.findAll()).thenReturn(new ArrayList<>());
+
+        assertTrue(service.getRecipeCategories().isEmpty());
+    }
+
+    @SneakyThrows
+    @Test
+    public void getRecipeCategories_RepositoryReturnsList_ReturnData() {
+        when(mockRecipeCategoryRepository.findAll())
+                .thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
+
+        List<RecipeCategoryDto> data = service.getRecipeCategories();
+
+        assertNotNull(data);
+        assertEquals(2, data.size());
+    }
+
+    @SneakyThrows
+    @Test
+    public void isRecipeCategoryValid_RepositoryThrowsException_ThrowGenericDatabaseException() {
+        doThrow(new RuntimeException("test")).when(mockRecipeCategoryRepository).existsById(anyString());
+
+        assertThrows(GenericDatabaseException.class, () -> service.isRecipeCategoryValid("uiodsa"));
+    }
+
+    @SneakyThrows
+    @Test
+    public void isRecipeCategoryValid_UnitDoesNotExists_ReturnFalse() {
+        when(mockRecipeCategoryRepository.existsById(anyString())).thenReturn(false);
+
+        assertFalse(service.isRecipeCategoryValid("kgsa"));
+    }
+
+    @SneakyThrows
+    @Test
+    public void isRecipeCategoryValid_UnitExists_ReturnTrue() {
+        when(mockRecipeCategoryRepository.existsById(anyString())).thenReturn(true);
+
+        assertTrue(service.isRecipeCategoryValid("entree"));
     }
 
 }

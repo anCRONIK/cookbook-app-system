@@ -1,9 +1,8 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
 import lombok.NonNull;
-import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.model.Recipe;
-import net.ancronik.cookbook.backend.data.model.RecipeDifficulty;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.web.dto.RecipeCreateRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,7 @@ public class RecipeCreateRequestToRecipeMapper implements Mapper<RecipeCreateReq
     @Override
     public Recipe map(@NonNull RecipeCreateRequest request) {
         Recipe recipe = modelMapper.map(request, Recipe.class);
-
-        recipe.setDifficulty(RecipeDifficulty.parse(request.getDifficulty())); //FIXME add converter to model mapper
+        recipe.setCategory(new RecipeCategory(request.getCategory()));
 
         return recipe;
     }

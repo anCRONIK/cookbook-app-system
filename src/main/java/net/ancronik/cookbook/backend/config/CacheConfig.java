@@ -24,6 +24,7 @@ public class CacheConfig {
         List<Cache> caches = new ArrayList<>();
 
         caches.add(this.buildCache("measurement_units", ticker, 2000L, 1L, TimeUnit.DAYS));
+        caches.add(this.buildCache("recipe_categories", ticker, 2000L, 1L, TimeUnit.DAYS));
 
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         cacheManager.setCaches(caches);

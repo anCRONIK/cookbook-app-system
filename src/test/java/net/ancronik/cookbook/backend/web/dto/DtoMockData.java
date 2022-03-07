@@ -54,7 +54,7 @@ public class DtoMockData {
                 random.nextInt(600),
                 StringTestUtils.getRandomStringInLowerCase(2000),
                 random.nextInt(5) + 1,
-                RecipeCategory.values()[random.nextInt(RecipeCategory.values().length)].getCategory()
+                getRandomStringInLowerCase(6)
         );
     }
 
@@ -69,7 +69,7 @@ public class DtoMockData {
                 random.nextInt(600),
                 StringTestUtils.getRandomStringInLowerCase(2000),
                 random.nextInt(5) + 1,
-                RecipeCategory.values()[random.nextInt(RecipeCategory.values().length)].getCategory()
+                getRandomStringInLowerCase(6)
         );
     }
 

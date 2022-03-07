@@ -53,8 +53,9 @@ public class Recipe {
     //TODO checks
     @Column(value = "date_last_updated")
     private LocalDateTime dateLastUpdated;
+    //TODO valid range (1-5)
     @Column(value = "difficulty")
-    private RecipeDifficulty difficulty;
+    private Integer difficulty;
 
     private RecipeCategory category;
 

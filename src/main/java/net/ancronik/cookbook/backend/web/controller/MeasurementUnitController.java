@@ -26,7 +26,6 @@ public class MeasurementUnitController {
 
     private final CodeQueryService codeQueryService;
 
-
     @Autowired
     public MeasurementUnitController(CodeQueryService codeQueryService) {
         this.codeQueryService = codeQueryService;

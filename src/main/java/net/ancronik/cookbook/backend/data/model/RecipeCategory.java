@@ -1,21 +1,21 @@
 package net.ancronik.cookbook.backend.data.model;
 
-import lombok.Getter;
+import lombok.*;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 /**
- * Enum representing recipe category.
+ * Model representing recipe category.
  *
  * @author Nikola Presecki
  */
+@Table("recipe_categories")
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public enum RecipeCategory {
+@ToString
+@EqualsAndHashCode
+public class RecipeCategory {
 
-    APPETIZER("APPETIZER"), ENTREE("ENTREE"), DESSERT("DESSERT");
-
-    private final String category;
-
-    RecipeCategory(String category) {
-        this.category = category;
-    }
+    private String category;
 
 }

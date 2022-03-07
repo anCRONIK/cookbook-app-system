@@ -28,3 +28,8 @@ INSERT INTO cookbook.measurement_units(name, code, category, is_imperial, is_met
 
 INSERT INTO cookbook.measurement_units(name, code, category, is_imperial, is_metric) VALUES ('mi', 'mi', 'length', true, false);
 INSERT INTO cookbook.measurement_units(name, code, category, is_imperial, is_metric) VALUES ('inch', 'inch', 'length', true, false);
+
+-- RECIPE CATEGORIES
+INSERT INTO cookbook.recipe_categories(category) VALUES ('appetizer');
+INSERT INTO cookbook.recipe_categories(category) VALUES ('entree');
+INSERT INTO cookbook.recipe_categories(category) VALUES ('dessert');

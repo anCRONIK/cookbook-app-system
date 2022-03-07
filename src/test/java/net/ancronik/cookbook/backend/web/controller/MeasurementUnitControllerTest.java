@@ -65,4 +65,5 @@ public class MeasurementUnitControllerTest {
         verify(mockCodeQueryService).getMeasurementUnits();
         verifyNoMoreInteractions(mockCodeQueryService);
     }
+
 }
