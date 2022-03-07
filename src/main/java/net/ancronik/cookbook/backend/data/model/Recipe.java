@@ -30,6 +30,9 @@ public class Recipe {
     @Column(value = "short_description")
     private String shortDescription;
     //TODO can be null or empty, url validation
+    @Column(value = "thumbnail_url")
+    private String thumbnailUrl;
+    //TODO can be null or empty, url validation
     @Column(value = "cover_image_url")
     private String coverImageUrl;
     //TODO can not be empty or null

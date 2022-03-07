@@ -826,7 +826,7 @@ public class RecipeControllerTest {
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].id").value(data.get(i).getId()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].title").value(data.get(i).getTitle()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].shortDescription").value(data.get(i).getShortDescription()));
-                matchers.add(jsonPath("$._embedded.recipes[" + i + "].coverImageUrl").value(data.get(i).getCoverImageUrl()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].thumbnailUrl").value(data.get(i).getThumbnailUrl()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].dateCreated").value(Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getDateCreated())));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].difficulty").value(data.get(i).getDifficulty()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].preparationTime").value(data.get(i).getPreparationTime()));

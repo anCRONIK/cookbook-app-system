@@ -23,6 +23,8 @@ public class RecipeUpdateRequest {
 
     private String coverImageUrl;
 
+    private String thumbnailUrl;
+
     @JsonAlias("ingredients")
     private List<IngredientDto> ingredientList;
 

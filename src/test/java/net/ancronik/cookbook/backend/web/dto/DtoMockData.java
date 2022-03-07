@@ -47,6 +47,7 @@ public class DtoMockData {
                 StringTestUtils.getRandomStringInLowerCase(20),
                 StringTestUtils.getRandomStringInLowerCase(200),
                 StringTestUtils.generateRandomUrl(),
+                StringTestUtils.generateRandomUrl(),
                 generateRandomMockDataForIngredientDto(random.nextInt(10)),
                 random.nextInt(600),
                 StringTestUtils.getRandomStringInLowerCase(2000),
@@ -61,6 +62,7 @@ public class DtoMockData {
         return new RecipeUpdateRequest(
                 StringTestUtils.getRandomStringInLowerCase(20),
                 StringTestUtils.getRandomStringInLowerCase(200),
+                StringTestUtils.generateRandomUrl(),
                 StringTestUtils.generateRandomUrl(),
                 generateRandomMockDataForIngredientDto(random.nextInt(10)),
                 random.nextInt(600),

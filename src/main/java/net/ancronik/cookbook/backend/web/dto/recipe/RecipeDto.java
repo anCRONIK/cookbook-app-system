@@ -31,6 +31,8 @@ public class RecipeDto extends RepresentationModel<RecipeDto> {
 
     private String coverImageUrl;
 
+    private String thumbnailUrl;
+
     @JsonProperty("ingredients")
     private List<IngredientDto> ingredientList;
 

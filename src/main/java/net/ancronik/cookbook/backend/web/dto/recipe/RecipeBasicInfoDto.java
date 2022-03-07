@@ -29,7 +29,7 @@ public class RecipeBasicInfoDto extends RepresentationModel<RecipeBasicInfoDto> 
 
     private String shortDescription;
 
-    private String coverImageUrl;
+    private String thumbnailUrl;
 
     private LocalDateTime dateCreated;
 

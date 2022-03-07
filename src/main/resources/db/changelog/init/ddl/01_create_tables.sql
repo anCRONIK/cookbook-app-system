@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS cookbook.recipes (
     id BIGINT PRIMARY KEY,
     title VARCHAR,
     short_description TEXT,
+    thumbnail_url VARCHAR,
     cover_image_url VARCHAR,
     ingredients LIST<frozen<ingredient>>,
     preparation_time TINYINT,

@@ -25,7 +25,7 @@ public class RecipeBasicInfoDtoAssemblerTest {
 
     @Test
     public void toModel_ModelWithIngredients_ValidDtoReturned() {
-        Recipe recipe = new Recipe(1L, "title", "short desc value", null,
+        Recipe recipe = new Recipe(1L, "title", "short desc value", null, null,
                 List.of(new Ingredient("ing1", "2/3", "cup"),
                         new Ingredient("ing2", "1.5", "kg")),
                 10, "slice everything into the bowl",
@@ -34,7 +34,7 @@ public class RecipeBasicInfoDtoAssemblerTest {
                 1, new RecipeCategory("entree"), "pero");
 
         RecipeBasicInfoDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
+        assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, thumbnailUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
         assertEquals(3, dto.getLinks().toList().size());
     }
 }

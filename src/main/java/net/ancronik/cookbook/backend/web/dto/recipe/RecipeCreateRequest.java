@@ -21,6 +21,8 @@ public class RecipeCreateRequest {
 
     private String shortDescription;
 
+    private String thumbnailUrl;
+
     private String coverImageUrl;
 
     @JsonAlias("ingredients")
