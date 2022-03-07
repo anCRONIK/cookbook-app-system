@@ -328,14 +328,15 @@ public class RecipeControllerTest {
     @SneakyThrows
     public void getRecipesForCategory_ServiceReturnsOneEntry_ReturnDataToCaller() {
         List<RecipeBasicInfoDto> mockData = DtoMockData.generateRandomMockDataForRecipeBasicInfoDto(1);
-        when(mockRecipeService.getRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData));
+        when(mockRecipeService.getRecipesForCategory(eq(mockData.get(0).getCategory()), any()))
+                .thenReturn(new SliceImpl<>(mockData, PageRequest.of(0, 20, Sort.unsorted()), false));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpectAll(createMatchersForRecipeBasicInfoDto(mockData))
-                .andExpect(jsonPath("$.page.size").value(1))
+                .andExpect(jsonPath("$.page.size").value(20))
                 .andExpect(jsonPath("$.page.numberOfElements").value(1))
                 .andExpect(jsonPath("$.page.number").value(0))
                 .andExpect(jsonPath("$.page.hasNext").value(false))
@@ -350,7 +351,8 @@ public class RecipeControllerTest {
     @SneakyThrows
     public void getRecipesForCategory_ServiceReturnsMultipleData_ReturnDataToCaller() {
         List<RecipeBasicInfoDto> mockData = DtoMockData.generateRandomMockDataForRecipeBasicInfoDto(2);
-        when(mockRecipeService.getRecipesForCategory(eq(mockData.get(0).getCategory()), any())).thenReturn(new SliceImpl<>(mockData));
+        when(mockRecipeService.getRecipesForCategory(eq(mockData.get(0).getCategory()), any()))
+                .thenReturn(new SliceImpl<>(mockData, PageRequest.of(0, 20, Sort.unsorted()), false));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + mockData.get(0).getCategory()))
                 .andDo(print())
@@ -360,7 +362,7 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$._embedded.recipes").isArray())
                 .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForRecipeBasicInfoDto(mockData))
-                .andExpect(jsonPath("$.page.size").value(2))
+                .andExpect(jsonPath("$.page.size").value(20))
                 .andExpect(jsonPath("$.page.numberOfElements").value(2))
                 .andExpect(jsonPath("$.page.number").value(0))
                 .andExpect(jsonPath("$.page.hasNext").value(false))

@@ -34,7 +34,7 @@ public class RecipeBasicInfoDtoAssembler extends RepresentationModelAssemblerSup
     @Override
     @SneakyThrows
     public RecipeBasicInfoDto toModel(@NonNull Recipe entity) {
-        RecipeBasicInfoDto dto = modelMapper.map(Objects.requireNonNull(entity, "Given recipe entity is null"), RecipeBasicInfoDto.class);
+        RecipeBasicInfoDto dto = modelMapper.map(entity, RecipeBasicInfoDto.class);
 
         dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId())).withSelfRel());
         dto.add(linkTo(methodOn(RecipeController.class).getRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));

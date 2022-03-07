@@ -17,6 +17,9 @@ public class Ingredient {
     //TODO limit size etc
     private String name;
 
-    private IngredientQuantity quantity;
+    //TODO need to check if it is a number because we should allow entries like (3/4 CUP)
+    private String quantity;
+
+    private String measurementUnit;
 
 }

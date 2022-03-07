@@ -29,7 +29,7 @@ public class RecipeCommentDtoAssembler extends RepresentationModelAssemblerSuppo
 
     @Override
     public RecipeCommentDto toModel(@NonNull RecipeComment entity) {
-        RecipeCommentDto dto = modelMapper.map(Objects.requireNonNull(entity, "Given recipe comment entity is null"), RecipeCommentDto.class);
+        RecipeCommentDto dto = modelMapper.map(entity, RecipeCommentDto.class);
 
         //TODO link to author
 

@@ -1,10 +1,11 @@
 package net.ancronik.cookbook.backend.web.dto;
 
 import net.ancronik.cookbook.backend.StringTestUtils;
-import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
+import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeMockData;
+import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitDtoAssembler;
 import net.ancronik.cookbook.backend.domain.assembler.RecipeBasicInfoDtoAssembler;
 import net.ancronik.cookbook.backend.domain.assembler.RecipeCommentDtoAssembler;
 import net.ancronik.cookbook.backend.domain.assembler.RecipeDtoAssembler;
@@ -82,10 +83,17 @@ public class DtoMockData {
             data.add(new IngredientDto(
                     getRandomStringInLowerCase(random.nextInt(100)),
                     "" + random.nextInt(100),
-                    MeasurementUnit.values()[random.nextInt(MeasurementUnit.values().length)].getUnit()
+                    getRandomStringInLowerCase(4)
             ));
         }
 
         return data;
+    }
+
+    public static List<MeasurementUnitDto> generateRandomMockDataForMeasurementUnitDto(int size) {
+        MeasurementUnitDtoAssembler assembler = new MeasurementUnitDtoAssembler(new ModelMapper());
+
+
+        return new ArrayList<>(assembler.toCollectionModel(MeasurementUnitMockData.generateRandomMockData(size)).getContent());
     }
 }

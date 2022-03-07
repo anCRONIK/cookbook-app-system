@@ -4,21 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
-import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.hateoas.SlicedModel;
 import net.ancronik.cookbook.backend.hateoas.SlicedResourcesAssembler;
-import net.ancronik.cookbook.backend.web.dto.*;
+import net.ancronik.cookbook.backend.web.dto.AddCommentRequest;
+import net.ancronik.cookbook.backend.web.dto.RecipeCreateRequest;
+import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.RecipeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.UriTemplate;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(RecipeController.DEFAULT_MAPPING)
-@ExposesResourceFor(Recipe.class)
 @Slf4j
 public class RecipeController {
 
@@ -51,11 +50,10 @@ public class RecipeController {
     }
 
     @GetMapping(value = "", produces = MediaTypes.HAL_JSON_VALUE)
-    public SlicedModel<RecipeBasicInfoDto> getRecipes(Pageable pageable) {
+    public SlicedModel<?> getRecipes(Pageable pageable) {
         LOG.info("Fetching all recipes [{}]", pageable);
 
-        return checkAndConvertSliceToModel(recipeService.getRecipes(pageable),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getRecipes(null)).withSelfRel().getTemplate());
+        return checkAndConvertSliceToModel(recipeService.getRecipes(pageable));
     }
 
 
@@ -67,19 +65,17 @@ public class RecipeController {
     }
 
     @GetMapping(value = "/category/{category}", produces = MediaTypes.HAL_JSON_VALUE)
-    public SlicedModel<RecipeBasicInfoDto> getRecipesForCategory(@PathVariable String category, Pageable pageable) {
+    public SlicedModel<?> getRecipesForCategory(@PathVariable String category, Pageable pageable) {
         LOG.info("Fetching recipes for category [{}] and pageable [{}]", category, pageable);
 
-        return checkAndConvertSliceToModel(recipeService.getRecipesForCategory(category, pageable),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getRecipesForCategory(category, null)).withSelfRel().getTemplate());
+        return checkAndConvertSliceToModel(recipeService.getRecipesForCategory(category, pageable));
     }
 
     @GetMapping(value = "/{id}/comments", produces = MediaTypes.HAL_JSON_VALUE)
-    public SlicedModel<RecipeCommentDto> getCommentsForRecipe(@PathVariable Long id, Pageable pageable) throws DataDoesNotExistException {
+    public SlicedModel<?> getCommentsForRecipe(@PathVariable Long id, Pageable pageable) throws DataDoesNotExistException {
         LOG.info("Fetching comments for recipe with id [{}] and pageable [{}]", id, pageable);
 
-        return checkAndConvertSliceToModel(recipeCommentService.getCommentsForRecipe(id, pageable),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RecipeController.class).getCommentsForRecipe(id, pageable)).withSelfRel().getTemplate());
+        return checkAndConvertSliceToModel(recipeCommentService.getCommentsForRecipe(id, pageable));
     }
 
     @PostMapping(value = "", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -121,15 +117,15 @@ public class RecipeController {
     }
 
 
-    private <T extends RepresentationModel<T>> SlicedModel<T> checkAndConvertSliceToModel(Slice<T> data, UriTemplate template) {
+    private <T extends RepresentationModel<T>> SlicedModel<EntityModel<T>> checkAndConvertSliceToModel(Slice<T> data) {
         if (null == data) {
-            LOG.error("Null data returned by service. [{}]", template.toString());
+            LOG.error("Null data returned by service.");
             throw new EmptyDataException("Null data returned by service");
         }
 
         SlicedResourcesAssembler<T> assembler = new SlicedResourcesAssembler<>(hateoasPageableHandlerMethodArgumentResolver, null);
 
-        return (SlicedModel<T>) assembler.toModel(data);
+        return assembler.toModel(data);
     }
 
 }

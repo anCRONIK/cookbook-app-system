@@ -27,10 +27,8 @@ public class RecipeCreateRequestToRecipeMapper implements Mapper<RecipeCreateReq
     @Override
     public Recipe map(@NonNull RecipeCreateRequest request) {
         Recipe recipe = modelMapper.map(request, Recipe.class);
-        for (int i = 0; i < request.getIngredientList().size(); ++i) { //FIXME try to modify mapper for automatic mapping or remove enum?
-            recipe.getIngredientList().get(i).getQuantity().setMeasurementUnit(MeasurementUnit.valueOf(request.getIngredientList().get(i).getMeasurementUnit()));
-        }
-        recipe.setDifficulty(RecipeDifficulty.parse(request.getDifficulty()));
+
+        recipe.setDifficulty(RecipeDifficulty.parse(request.getDifficulty())); //FIXME add converter to model mapper
 
         return recipe;
     }

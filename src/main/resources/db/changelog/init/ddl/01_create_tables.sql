@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS cookbook.authors (
 
 -- Create recipes table
 CREATE TABLE IF NOT EXISTS cookbook.recipes (
-    id BIGINT,
+    id BIGINT PRIMARY KEY,
     title VARCHAR,
     short_description TEXT,
     cover_image_url VARCHAR,
@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS cookbook.recipes (
     category VARCHAR,
     rating FLOAT,
     author_username VARCHAR,
-    PRIMARY KEY (author_username, id)
 );
 
 -- Create recipe comments table
@@ -47,4 +46,14 @@ CREATE TABLE IF NOT EXISTS cookbook.recipe_comments (
     text TEXT,
     date_created TIMESTAMP,
     PRIMARY KEY (recipe_id, username, date_created)
+);
+
+-- Create measurement units table
+CREATE TABLE IF NOT EXISTS cookbook.measurement_units (
+    name VARCHAR,
+    code VARCHAR,
+    category VARCHAR,
+    is_imperial BOOLEAN,
+    is_metric BOOLEAN,
+    PRIMARY KEY (code)
 );

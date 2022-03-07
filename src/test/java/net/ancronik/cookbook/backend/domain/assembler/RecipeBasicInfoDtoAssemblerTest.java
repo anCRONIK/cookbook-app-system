@@ -27,8 +27,8 @@ public class RecipeBasicInfoDtoAssemblerTest {
     @Test
     public void toModel_ModelWithIngredients_ValidDtoReturned() {
         Recipe recipe = new Recipe(1L, "title", "short desc value", null,
-                List.of(new Ingredient("ing1", new IngredientQuantity("2/3", MeasurementUnit.CUP)),
-                        new Ingredient("ing2", new IngredientQuantity("1.5", MeasurementUnit.KG))),
+                List.of(new Ingredient("ing1", "2/3", "cup"),
+                        new Ingredient("ing2", "1.5", "kg")),
                 10, "slice everything into the bowl",
                 30, "throw sliced veggies in boiling water and cook for 30 minutes",
                 LocalDateTime.of(2022, 3, 6, 11, 23), null,

@@ -32,8 +32,8 @@ public class RecipeCreateRequestToRecipeMapperTest {
         assertEquals(request.getIngredientList().size(), recipe.getIngredientList().size());
         for (int i = 0; i < request.getIngredientList().size(); ++i) {
             assertEquals(request.getIngredientList().get(i).getName(), recipe.getIngredientList().get(i).getName());
-            assertEquals(request.getIngredientList().get(i).getQuantity(), recipe.getIngredientList().get(i).getQuantity().getQuantity());
-            assertEquals(request.getIngredientList().get(i).getMeasurementUnit(), recipe.getIngredientList().get(i).getQuantity().getMeasurementUnit().getUnit());
+            assertEquals(request.getIngredientList().get(i).getQuantity(), recipe.getIngredientList().get(i).getQuantity());
+            assertEquals(request.getIngredientList().get(i).getMeasurementUnit(), recipe.getIngredientList().get(i).getMeasurementUnit());
         }
         assertEquals(request.getPreparationInstructions(), recipe.getPreparationInstructions());
         assertEquals(request.getPreparationTime(), recipe.getPreparationTime());
