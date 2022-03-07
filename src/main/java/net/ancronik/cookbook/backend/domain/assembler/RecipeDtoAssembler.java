@@ -4,15 +4,14 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.data.model.Ingredient;
 import net.ancronik.cookbook.backend.data.model.Recipe;
+import net.ancronik.cookbook.backend.web.controller.AuthorController;
 import net.ancronik.cookbook.backend.web.controller.RecipeController;
-import net.ancronik.cookbook.backend.web.dto.IngredientDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.IngredientDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -36,11 +35,11 @@ public class RecipeDtoAssembler extends RepresentationModelAssemblerSupport<Reci
     @SneakyThrows
     @Override
     public RecipeDto toModel(@NonNull Recipe entity) {
-        RecipeDto dto = modelMapper.map(Objects.requireNonNull(entity, "Given recipe entity is null"), RecipeDto.class);
+        RecipeDto dto = modelMapper.map(entity, RecipeDto.class);
 
-        dto.add(linkTo(methodOn(RecipeController.class).findRecipeById(dto.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(RecipeController.class).getRecipeById(dto.getId())).withSelfRel());
         dto.add(linkTo(methodOn(RecipeController.class).getRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));
-        //TODO link to author
+        dto.add(linkTo(methodOn(AuthorController.class).getAuthorById(dto.getAuthorId())).withRel("author"));
 
         return dto;
     }

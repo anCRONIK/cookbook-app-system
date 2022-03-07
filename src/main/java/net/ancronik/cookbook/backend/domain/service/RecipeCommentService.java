@@ -3,8 +3,8 @@ package net.ancronik.cookbook.backend.domain.service;
 import lombok.NonNull;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
-import net.ancronik.cookbook.backend.web.dto.AddCommentRequest;
-import net.ancronik.cookbook.backend.web.dto.RecipeCommentDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -33,6 +33,6 @@ public interface RecipeCommentService {
      * @throws DataDoesNotExistException if recipe with given id does not exist in database
      * @throws IllegalDataInRequestException if request is not valid
      */
-    void addCommentToRecipe(@NonNull Long id, @NonNull AddCommentRequest text) throws DataDoesNotExistException, IllegalDataInRequestException;
+    void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest text) throws DataDoesNotExistException, IllegalDataInRequestException;
 
 }

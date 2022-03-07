@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.web.dto;
+package net.ancronik.cookbook.backend.web.dto.recipe;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddCommentRequest {
+public class AddRecipeCommentRequest {
 
     private String text;
 

@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.web.dto;
+package net.ancronik.cookbook.backend.web.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ public class RecipeUpdateRequest {
 
     private String preparationInstructions;
 
-    private Integer cookTime;
+    private Integer cookingTime;
 
     private String cookingInstructions;
 

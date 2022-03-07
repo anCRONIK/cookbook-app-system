@@ -1,14 +1,13 @@
 package net.ancronik.cookbook.backend.web.dto;
 
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.data.model.AuthorMockData;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
-import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeMockData;
-import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitDtoAssembler;
-import net.ancronik.cookbook.backend.domain.assembler.RecipeBasicInfoDtoAssembler;
-import net.ancronik.cookbook.backend.domain.assembler.RecipeCommentDtoAssembler;
-import net.ancronik.cookbook.backend.domain.assembler.RecipeDtoAssembler;
+import net.ancronik.cookbook.backend.domain.assembler.*;
+import net.ancronik.cookbook.backend.web.dto.author.AuthorDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.*;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
@@ -95,5 +94,12 @@ public class DtoMockData {
 
 
         return new ArrayList<>(assembler.toCollectionModel(MeasurementUnitMockData.generateRandomMockData(size)).getContent());
+    }
+
+    public static List<AuthorDto> generateRandomMockDataForAuthorDto(int size) {
+        AuthorDtoAssembler assembler = new AuthorDtoAssembler(new ModelMapper());
+
+
+        return new ArrayList<>(assembler.toCollectionModel(AuthorMockData.generateRandomMockData(size)).getContent());
     }
 }

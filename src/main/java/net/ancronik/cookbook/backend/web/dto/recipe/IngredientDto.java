@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.web.dto;
+package net.ancronik.cookbook.backend.web.dto.recipe;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

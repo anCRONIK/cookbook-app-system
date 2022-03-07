@@ -10,6 +10,7 @@ import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.web.dto.*;
+import net.ancronik.cookbook.backend.web.dto.recipe.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,18 +59,9 @@ public class RecipeControllerTest {
     @Captor
     private ArgumentCaptor<Pageable> pageableCaptor;
 
-    @Captor
-    private ArgumentCaptor<RecipeCreateRequest> recipeCreateRequestCaptor;
-
-    @Captor
-    private ArgumentCaptor<AddCommentRequest> addCommentRequestCaptor;
-
-    @Captor
-    private ArgumentCaptor<RecipeUpdateRequest> recipeUpdateRequestCaptor;
-
     private static final String GET_RECIPES_PATH = "/api/v1/recipes";
     private static final String GET_RECIPE_BY_ID_PATH_PREFIX = "/api/v1/recipes/";
-    private static final String GET_RECIPES_IN_CATEGORY_PATH_PREFIX = "/api/v1/recipes/category/";
+    private static final String GET_RECIPES_IN_CATEGORY_PATH_PREFIX = "/api/v1/recipes/categories/";
     private static final String GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE = "/api/v1/recipes/%s/comments";
     private static final String CREATE_RECIPE_PATH = "/api/v1/recipes";
     private static final String ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE = "/api/v1/recipes/%s/comments";
@@ -231,7 +223,7 @@ public class RecipeControllerTest {
 
     @Test
     @SneakyThrows
-    public void findRecipeById_GivenIdIsNotAANumber_ReturnBadRequest() {
+    public void getRecipeById_GivenIdIsNotAANumber_ReturnBadRequest() {
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + "abcd12"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(""))
@@ -243,7 +235,7 @@ public class RecipeControllerTest {
 
     @Test
     @SneakyThrows
-    public void findRecipeById_RecipeServiceThrowsAnError_ReturnInternalServerError() {
+    public void getRecipeById_RecipeServiceThrowsAnError_ReturnInternalServerError() {
         when(mockRecipeService.getRecipe(12L)).thenThrow(new RuntimeException("test"));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
                 .andExpect(status().isInternalServerError())
@@ -260,7 +252,7 @@ public class RecipeControllerTest {
 
     @Test
     @SneakyThrows
-    public void findRecipeById_EntryNotFound_ReturnNotFound() {
+    public void getRecipeById_EntryNotFound_ReturnNotFound() {
         when(mockRecipeService.getRecipe(12L)).thenThrow(new DataDoesNotExistException("msg"));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
                 .andExpect(status().isNotFound())
@@ -273,7 +265,7 @@ public class RecipeControllerTest {
 
     @Test
     @SneakyThrows
-    public void findRecipeById_EntryFound_ReturnData() {
+    public void getRecipeById_EntryFound_ReturnData() {
         RecipeDto mockData = DtoMockData.generateRandomMockDataForRecipeDto(1).get(0);
 
         when(mockRecipeService.getRecipe(mockData.getId())).thenReturn(mockData);
@@ -398,10 +390,10 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$._embedded.recipes").isArray())
                 .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForRecipeBasicInfoDto(mockData))
-                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes/category/" + mockData.get(0).getCategory() + "?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes/category/" + mockData.get(0).getCategory() + "?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes/category/" + mockData.get(0).getCategory() + "?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes/category/" + mockData.get(0).getCategory() + "?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes/categories/" + mockData.get(0).getCategory() + "?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes/categories/" + mockData.get(0).getCategory() + "?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes/categories/" + mockData.get(0).getCategory() + "?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes/categories/" + mockData.get(0).getCategory() + "?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
                 .andExpect(jsonPath("$.page.size").value(2))
                 .andExpect(jsonPath("$.page.numberOfElements").value(2))
                 .andExpect(jsonPath("$.page.number").value(1))
@@ -589,9 +581,7 @@ public class RecipeControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andReturn();
 
-        verify(mockRecipeService).createRecipe(recipeCreateRequestCaptor.capture());
-        RecipeCreateRequest capturedRequest = recipeCreateRequestCaptor.getValue();
-        assertEquals(request, capturedRequest);
+        verify(mockRecipeService).createRecipe(eq(request));
         verifyNoMoreInteractions(mockRecipeService);
         verifyNoInteractions(mockRecipeCommentService);
     }
@@ -613,7 +603,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     @Test
     public void addCommentToRecipe_RecipeNotFound_ReturnBadRequest() {
-        AddCommentRequest request = new AddCommentRequest("dssadaskldjaskldjklas");
+        AddRecipeCommentRequest request = new AddRecipeCommentRequest("dssadaskldjaskldjklas");
 
         doThrow(new DataDoesNotExistException("test")).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
@@ -633,7 +623,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     @Test
     public void addCommentToRecipe_IllegalDataInRequest_ReturnBadRequest() {
-        AddCommentRequest request = new AddCommentRequest("dssadaskldjaskldjklas");
+        AddRecipeCommentRequest request = new AddRecipeCommentRequest("dssadaskldjaskldjklas");
 
         doThrow(new IllegalDataInRequestException("test")).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
@@ -653,7 +643,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     @Test
     public void addCommentToRecipe_RequestIsValid_ReturnOk() {
-        AddCommentRequest request = new AddCommentRequest("kjdklas jdksajdlaksjd djskald jkl");
+        AddRecipeCommentRequest request = new AddRecipeCommentRequest("kjdklas jdksajdlaksjd djskald jkl");
 
         doNothing().when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
@@ -665,9 +655,7 @@ public class RecipeControllerTest {
                 .andReturn();
 
 
-        verify(mockRecipeCommentService).addCommentToRecipe(eq(123L), addCommentRequestCaptor.capture());
-        AddCommentRequest capturedRequest = addCommentRequestCaptor.getValue();
-        assertEquals(request, capturedRequest);
+        verify(mockRecipeCommentService).addCommentToRecipe(eq(123L),eq(request));
         verifyNoMoreInteractions(mockRecipeCommentService);
         verifyNoInteractions(mockRecipeService);
     }
@@ -739,9 +727,7 @@ public class RecipeControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andReturn();
 
-        verify(mockRecipeService).updateRecipe(eq(231L), recipeUpdateRequestCaptor.capture());
-        RecipeUpdateRequest capturedRequest = recipeUpdateRequestCaptor.getValue();
-        assertEquals(request, capturedRequest);
+        verify(mockRecipeService).updateRecipe(eq(231L), eq(request));
         verifyNoMoreInteractions(mockRecipeService);
         verifyNoInteractions(mockRecipeCommentService);
     }

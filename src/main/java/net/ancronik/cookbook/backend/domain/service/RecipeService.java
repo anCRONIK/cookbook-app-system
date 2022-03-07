@@ -3,10 +3,10 @@ package net.ancronik.cookbook.backend.domain.service;
 import lombok.NonNull;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
-import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeCreateRequest;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeUpdateRequest;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

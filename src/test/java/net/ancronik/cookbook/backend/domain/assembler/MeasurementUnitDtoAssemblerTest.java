@@ -1,7 +1,7 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
-import net.ancronik.cookbook.backend.web.dto.MeasurementUnitDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;

@@ -5,22 +5,18 @@ import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistExce
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
-import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.hateoas.SlicedModel;
 import net.ancronik.cookbook.backend.hateoas.SlicedResourcesAssembler;
-import net.ancronik.cookbook.backend.web.dto.*;
+import net.ancronik.cookbook.backend.web.dto.recipe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,13 +59,13 @@ public class RecipeController {
 
 
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<RecipeDto> findRecipeById(@PathVariable Long id) throws DataDoesNotExistException {
+    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long id) throws DataDoesNotExistException {
         LOG.info("Fetching recipe with id [{}]", id);
 
         return ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
-    @GetMapping(value = "/category/{category}", produces = MediaTypes.HAL_JSON_VALUE)
+    @GetMapping(value = "/categories/{category}", produces = MediaTypes.HAL_JSON_VALUE)
     public SlicedModel<?> getRecipesForCategory(@PathVariable String category, Pageable pageable) {
         LOG.info("Fetching recipes for category [{}] and pageable [{}]", category, pageable);
 
@@ -90,12 +86,12 @@ public class RecipeController {
 
         RecipeDto response = recipeService.createRecipe(request);
 
-        return ResponseEntity.created(response.getLink("self").orElseThrow().toUri()).body(response);
+        return ResponseEntity.created(response.getLink(IanaLinkRelations.SELF).orElseThrow().toUri()).body(response);
     }
 
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
-    public ResponseEntity<String> addCommentToRecipe(@PathVariable Long id, @RequestBody AddCommentRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
+    public ResponseEntity<String> addCommentToRecipe(@PathVariable Long id, @RequestBody AddRecipeCommentRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
         LOG.info("Adding new comment to recipe [{}]", id);
 
         recipeCommentService.addCommentToRecipe(id, request);

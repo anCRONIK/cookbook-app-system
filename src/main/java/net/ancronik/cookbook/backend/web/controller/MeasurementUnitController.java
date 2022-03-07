@@ -3,7 +3,7 @@ package net.ancronik.cookbook.backend.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
-import net.ancronik.cookbook.backend.web.dto.MeasurementUnitDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.CollectionModel;

@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.web.dto;
+package net.ancronik.cookbook.backend.web.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;

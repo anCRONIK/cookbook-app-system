@@ -1,8 +1,7 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import net.ancronik.cookbook.backend.data.model.*;
-import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoDto;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -36,6 +35,6 @@ public class RecipeBasicInfoDtoAssemblerTest {
 
         RecipeBasicInfoDto dto = assembler.toModel(recipe);
         assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
-        assertEquals(2, dto.getLinks().toList().size());
+        assertEquals(3, dto.getLinks().toList().size());
     }
 }

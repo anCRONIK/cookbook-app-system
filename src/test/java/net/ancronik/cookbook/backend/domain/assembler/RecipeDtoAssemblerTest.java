@@ -1,7 +1,7 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import net.ancronik.cookbook.backend.data.model.*;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeDto;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -33,7 +33,7 @@ public class RecipeDtoAssemblerTest {
 
         RecipeDto dto = assembler.toModel(recipe);
         assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=null, preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
-        assertEquals(2, dto.getLinks().toList().size());
+        assertEquals(3, dto.getLinks().toList().size());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class RecipeDtoAssemblerTest {
 
         RecipeDto dto = assembler.toModel(recipe);
         assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[], preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
-        assertEquals(2, dto.getLinks().toList().size());
+        assertEquals(3, dto.getLinks().toList().size());
     }
 
     @Test
@@ -61,6 +61,6 @@ public class RecipeDtoAssemblerTest {
 
         RecipeDto dto = assembler.toModel(recipe);
         assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[IngredientDto(name=ing1, quantity=2/3, measurementUnit=cup), IngredientDto(name=ing2, quantity=1.5, measurementUnit=kg)], preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
-        assertEquals(2, dto.getLinks().toList().size());
+        assertEquals(3, dto.getLinks().toList().size());
     }
 }

@@ -2,7 +2,7 @@ package net.ancronik.cookbook.backend.domain.mapper;
 
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -10,9 +10,9 @@ import org.modelmapper.ModelMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("unit")
-public class RecipeCreateRequestToRecipeMapperTest {
+public class RecipeUpdateRequestToRecipeMapperTest {
 
-    RecipeCreateRequestToRecipeMapper mapper = new RecipeCreateRequestToRecipeMapper(new ModelMapper());
+    RecipeUpdateRequestToRecipeMapper mapper = new RecipeUpdateRequestToRecipeMapper(new ModelMapper());
 
     @Test
     public void map_NullGiven_ThrowException() {
@@ -21,7 +21,7 @@ public class RecipeCreateRequestToRecipeMapperTest {
 
     @Test
     public void map_DtoGiven_ReturnPopulatedModel() {
-        RecipeCreateRequest request = DtoMockData.generateRandomMockDataForRecipeCreateRequest();
+        RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
 
         Recipe recipe = mapper.map(request);
 

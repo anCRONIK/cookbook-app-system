@@ -3,8 +3,8 @@ package net.ancronik.cookbook.backend.domain.service;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
-import net.ancronik.cookbook.backend.web.dto.MeasurementUnitDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeCategoryDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryDto;
 
 import java.util.List;
 
