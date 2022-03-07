@@ -2,10 +2,7 @@ package net.ancronik.cookbook.backend.web.advice;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
-import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
+import net.ancronik.cookbook.backend.application.exceptions.*;
 import net.ancronik.cookbook.backend.web.dto.ApiErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -34,8 +31,8 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     /**
      * Method for handling all general exceptions with bad request response.
      *
-     * @param exception  exception
-     * @param request request
+     * @param exception exception
+     * @param request   request
      * @return bad request with provided data
      */
     @ExceptionHandler({IllegalDataInRequestException.class})
@@ -67,7 +64,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
      * @param request   request
      * @return api error response
      */
-    @ExceptionHandler({EmptyDataException.class, GenericDatabaseException.class, RuntimeException.class, Exception.class})
+    @ExceptionHandler({EmptyDataException.class, GenericDatabaseException.class, CdnException.class, Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiErrorResponse> internalServerExceptionsHandler(Exception exception, WebRequest request) {
         LOG.error("Unknown error occurred {}", request, exception);
