@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateRecipeRequest {
+public class RecipeCreateRequest {
 
     private String title;
 
@@ -30,7 +30,7 @@ public class UpdateRecipeRequest {
 
     private String preparationInstructions;
 
-    private Integer cookTime;
+    private Integer cookingTime;
 
     private String cookingInstructions;
 

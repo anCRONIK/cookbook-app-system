@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.application.exceptions;
+package net.ancronik.cookbook.backend.application;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

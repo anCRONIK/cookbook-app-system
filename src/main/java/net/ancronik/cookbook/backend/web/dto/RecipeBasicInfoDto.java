@@ -33,6 +33,10 @@ public class RecipeBasicInfoDto extends RepresentationModel<RecipeBasicInfoDto> 
 
     private LocalDateTime dateCreated;
 
+    private Integer preparationTime;
+
+    private Integer cookingTime;
+
     private Integer difficulty;
 
     private String category;

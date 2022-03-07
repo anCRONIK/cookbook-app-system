@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,7 @@ public class RecipeDto extends RepresentationModel<RecipeDto> {
 
     private String preparationInstructions;
 
-    private Integer cookTime;
+    private Integer cookingTime;
 
     private String cookingInstructions;
 

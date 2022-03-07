@@ -19,8 +19,8 @@ public class RecipeDtoAssemblerTest {
     RecipeDtoAssembler assembler = new RecipeDtoAssembler(new ModelMapper());
 
     @Test
-    public void toModel_NullGiven_ThrowNUP() {
-        assertThrows(NullPointerException.class, () -> assembler.toModel(null));
+    public void toModel_NullGiven_ThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> assembler.toModel(null));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class RecipeDtoAssemblerTest {
                 RecipeDifficulty.LOW, RecipeCategory.ENTREE, "pero");
 
         RecipeDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=null, preparationTime=10, preparationInstructions=slice everything into the bowl, cookTime=null, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
+        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=null, preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=ENTREE, authorId=pero)", dto.toString());
         assertEquals(2, dto.getLinks().toList().size());
     }
 
@@ -45,7 +45,7 @@ public class RecipeDtoAssemblerTest {
                 RecipeDifficulty.LOW, RecipeCategory.ENTREE, "pero");
 
         RecipeDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[], preparationTime=10, preparationInstructions=slice everything into the bowl, cookTime=null, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
+        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[], preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=ENTREE, authorId=pero)", dto.toString());
         assertEquals(2, dto.getLinks().toList().size());
     }
 
@@ -60,7 +60,7 @@ public class RecipeDtoAssemblerTest {
                 RecipeDifficulty.LOW, RecipeCategory.ENTREE, "pero");
 
         RecipeDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[IngredientDto(name=ing1, quantity=2/3, measurementUnit=cup), IngredientDto(name=ing2, quantity=1.5, measurementUnit=kg)], preparationTime=10, preparationInstructions=slice everything into the bowl, cookTime=null, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=entree, authorId=pero)", dto.toString());
+        assertEquals("RecipeDto(id=1, title=title, shortDescription=short desc value, coverImageUrl=null, ingredientList=[IngredientDto(name=ing1, quantity=2/3, measurementUnit=CUP), IngredientDto(name=ing2, quantity=1.5, measurementUnit=KG)], preparationTime=10, preparationInstructions=slice everything into the bowl, cookingTime=30, cookingInstructions=throw sliced veggies in boiling water and cook for 30 minutes, dateCreated=2022-03-06T11:23, lastUpdated=null, difficulty=1, category=ENTREE, authorId=pero)", dto.toString());
         assertEquals(2, dto.getLinks().toList().size());
     }
 }

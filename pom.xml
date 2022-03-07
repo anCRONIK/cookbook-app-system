@@ -271,10 +271,13 @@
                                     <element>CLASS</element>
                                     <excludes>
                                         <exclude>net.ancronik.cookbook.backend.config.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.application.exceptions.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.hateoas.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.domain.entity.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.domain.mapper.Mapper</exclude>
                                         <exclude>net.ancronik.cookbook.backend.data.model.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.web.dto.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.web.advice.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.ServletInitializer</exclude>
                                         <exclude>net.ancronik.cookbook.backend.CookbookSpringBootApp</exclude>
                                     </excludes>

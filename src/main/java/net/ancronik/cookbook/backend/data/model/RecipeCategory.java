@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum RecipeCategory {
 
-    APPETIZER("appetizer"), ENTREE("entree"), DESSERT("dessert");
+    APPETIZER("APPETIZER"), ENTREE("ENTREE"), DESSERT("DESSERT");
 
     private final String category;
 

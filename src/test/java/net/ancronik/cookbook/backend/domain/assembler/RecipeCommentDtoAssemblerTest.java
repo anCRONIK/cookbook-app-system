@@ -20,8 +20,8 @@ public class RecipeCommentDtoAssemblerTest {
     RecipeCommentDtoAssembler assembler = new RecipeCommentDtoAssembler(new ModelMapper());
 
     @Test
-    public void toModel_NullGiven_ThrowNUP() {
-        assertThrows(NullPointerException.class, () -> assembler.toModel(null));
+    public void toModel_NullGiven_ThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> assembler.toModel(null));
     }
 
     @Test

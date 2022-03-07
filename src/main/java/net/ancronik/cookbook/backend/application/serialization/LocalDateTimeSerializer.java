@@ -3,7 +3,7 @@ package net.ancronik.cookbook.backend.application.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import net.ancronik.cookbook.backend.application.exceptions.Util;
+import net.ancronik.cookbook.backend.application.Util;
 import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;

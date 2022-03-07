@@ -7,14 +7,14 @@ package net.ancronik.cookbook.backend.application.exceptions;
  *
  * @author Nikola Presecki
  */
-public class DataDoesNotExist extends Exception {
+public class DataDoesNotExistException extends Exception {
 
     /**
      * Constructor with message.
      *
      * @param message message
      */
-    public DataDoesNotExist(String message) {
+    public DataDoesNotExistException(String message) {
         super(message);
     }
 

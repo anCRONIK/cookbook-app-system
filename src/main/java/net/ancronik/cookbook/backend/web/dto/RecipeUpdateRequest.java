@@ -1,15 +1,10 @@
 package net.ancronik.cookbook.backend.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.RepresentationModel;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRecipeRequest {
+public class RecipeUpdateRequest {
 
     private String title;
 

@@ -21,7 +21,7 @@ public enum RecipeDifficulty {
     }
 
     public static RecipeDifficulty parse(Integer difficulty) {
-        return RecipeDifficulty.values()[difficulty];
+        return RecipeDifficulty.values()[difficulty - 1];
     }
 
 }

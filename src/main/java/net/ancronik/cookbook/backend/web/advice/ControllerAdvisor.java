@@ -1,8 +1,10 @@
 package net.ancronik.cookbook.backend.web.advice;
 
 import lombok.NonNull;
-import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
+import lombok.extern.slf4j.Slf4j;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
+import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.web.dto.ApiErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -24,20 +27,23 @@ import java.util.Arrays;
  * @author Nikola Presecki
  */
 @ControllerAdvice
+@Slf4j
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     /**
      * Method for handling all general exceptions with bad request response.
      *
-     * @param ex         exception
-     * @param webRequest request
+     * @param exception  exception
+     * @param request request
      * @return bad request with provided data
      */
-    @ExceptionHandler({EmptyDataException.class, RuntimeException.class})
-    public ResponseEntity<ApiErrorResponse> badRequestHandler(Throwable ex, WebRequest webRequest) {
+    @ExceptionHandler({IllegalDataInRequestException.class})
+    public ResponseEntity<ApiErrorResponse> badRequestHandler(Throwable exception, WebRequest request) {
+        LOG.error("Bad request found {}", request, exception);
+
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                ex.getMessage(),
-                ex.getMessage(), //FIXME
+                exception.getMessage(),
+                exception instanceof IllegalDataInRequestException ? ((IllegalDataInRequestException) exception).getInvalidFieldsAsString() : exception.getMessage(),
                 LocalDateTime.now(ZoneId.of("UTC"))
         ));
     }
@@ -47,25 +53,43 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
      *
      * @return not found
      */
-    @ExceptionHandler({DataDoesNotExist.class})
-    public ResponseEntity<String> handleExceptionsWhenEntryDoesNotExistsInDatabase() {
+    @ExceptionHandler({DataDoesNotExistException.class})
+    public ResponseEntity<String> handleExceptionsWhenEntryDoesNotExistsInDatabase(Exception exception, WebRequest request) {
+        LOG.error("Data not found {}", request, exception);
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * General handler
+     *
+     * @param exception exception
+     * @param request   request
+     * @return api error response
+     */
+    @ExceptionHandler({EmptyDataException.class, RuntimeException.class, Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ApiErrorResponse> internalServerExceptionsHandler(Exception exception, WebRequest request) {
+        LOG.error("Unknown error occurred {}", request, exception);
+        return ResponseEntity.internalServerError().body(
+                new ApiErrorResponse(
+                        exception.getMessage(),
+                        exception.toString(),
+                        LocalDateTime.now(ZoneId.of("UTC"))
+                )
+        );
+    }
 
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
-
+        LOG.error("Argument not valid", ex);
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
+                ex.getMessage(),
                 Arrays.toString(ex.getBindingResult()
                         .getFieldErrors()
                         .stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage).toArray()),
-                "desc", //FIXME
                 LocalDateTime.now(ZoneId.of("UTC"))
         ));
     }
-
-    //TODO generic handler????
 }

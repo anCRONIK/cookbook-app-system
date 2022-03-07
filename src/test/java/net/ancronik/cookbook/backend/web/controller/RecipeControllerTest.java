@@ -1,15 +1,13 @@
 package net.ancronik.cookbook.backend.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
-import net.ancronik.cookbook.backend.application.exceptions.Util;
+import net.ancronik.cookbook.backend.application.Util;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
-import net.ancronik.cookbook.backend.web.dto.DtoMockData;
-import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeCommentDto;
-import net.ancronik.cookbook.backend.web.dto.RecipeDto;
-import org.junit.jupiter.api.Assertions;
+import net.ancronik.cookbook.backend.web.dto.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,22 +48,36 @@ public class RecipeControllerTest {
     @MockBean
     private RecipeCommentService mockRecipeCommentService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Captor
     private ArgumentCaptor<Pageable> pageableCaptor;
 
-    private static final String GET_ALL_RECIPES_PATH = "/api/v1/recipes";
+    @Captor
+    private ArgumentCaptor<RecipeCreateRequest> recipeCreateRequestCaptor;
+
+    @Captor
+    private ArgumentCaptor<AddCommentRequest> addCommentRequestCaptor;
+
+    @Captor
+    private ArgumentCaptor<RecipeUpdateRequest> recipeUpdateRequestCaptor;
+
+    private static final String GET_RECIPES_PATH = "/api/v1/recipes";
     private static final String GET_RECIPE_BY_ID_PATH_PREFIX = "/api/v1/recipes/";
     private static final String GET_RECIPES_IN_CATEGORY_PATH_PREFIX = "/api/v1/recipes/category/";
     private static final String GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE = "/api/v1/recipes/%s/comments";
+    private static final String CREATE_RECIPE_PATH = "/api/v1/recipes";
+    private static final String ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE = "/api/v1/recipes/%s/comments";
+    private static final String UPDATE_RECIPE_PATH_PREFIX = "/api/v1/recipes/";
+    private static final String DELETE_RECIPE_PATH_PREFIX = "/api/v1/recipes/";
 
     @Test
     @SneakyThrows
     public void getRecipes_ServiceReturnsNull_ReturnServerError() {
         when(mockRecipeService.getRecipes(any())).thenReturn(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH))
+                .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.description").exists())
@@ -74,6 +86,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -81,7 +94,7 @@ public class RecipeControllerTest {
     public void getRecipes_ServiceReturnsEmptyList_ReturnDataToCaller() {
         when(mockRecipeService.getRecipes(any())).thenReturn(Page.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
@@ -90,6 +103,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -98,7 +112,7 @@ public class RecipeControllerTest {
         List<RecipeBasicInfoDto> mockData = DtoMockData.generateRandomMockDataForRecipeBasicInfoDto(1);
         when(mockRecipeService.getRecipes(any())).thenReturn(new SliceImpl<>(mockData));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
@@ -111,6 +125,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -119,7 +134,7 @@ public class RecipeControllerTest {
         List<RecipeBasicInfoDto> mockData = DtoMockData.generateRandomMockDataForRecipeBasicInfoDto(10);
         when(mockRecipeService.getRecipes(any())).thenReturn(new SliceImpl<>(mockData));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH))
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
@@ -135,6 +150,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -143,7 +159,7 @@ public class RecipeControllerTest {
         List<RecipeBasicInfoDto> mockData = DtoMockData.generateRandomMockDataForRecipeBasicInfoDto(6);
         when(mockRecipeService.getRecipes(any())).thenReturn(new SliceImpl<>(mockData, Pageable.ofSize(6).withPage(2), false));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH)
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH)
                         .queryParam("page", "2").queryParam("size", "6"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -161,9 +177,10 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
-        Assertions.assertEquals(2, pageable.getPageNumber());
-        Assertions.assertEquals(6, pageable.getPageSize());
+        assertEquals(2, pageable.getPageNumber());
+        assertEquals(6, pageable.getPageSize());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -174,7 +191,7 @@ public class RecipeControllerTest {
                 PageRequest.of(1, 2, Sort.by(new Sort.Order(Sort.Direction.ASC, "difficulty"),
                         new Sort.Order(Sort.Direction.DESC, "category"))), true));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_ALL_RECIPES_PATH)
+        mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_PATH)
                         .queryParam("page", "1").queryParam("size", "2")
                         .queryParam("sort", "category,DESC")
                         .queryParam("sort", "difficulty,ASC"))
@@ -185,10 +202,10 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$._embedded.recipes").isArray())
                 .andExpect(jsonPath("$._embedded.recipes").isNotEmpty())
                 .andExpectAll(createMatchersForRecipeBasicInfoDto(mockData))
-                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes/?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes/?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
-                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes/?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.next.href").value("http://localhost/api/v1/recipes?page=2&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/recipes?page=1&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.prev.href").value("http://localhost/api/v1/recipes?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
+                .andExpect(jsonPath("$._links.first.href").value("http://localhost/api/v1/recipes?page=0&size=2&sort=difficulty,asc&sort=category,desc"))
                 .andExpect(jsonPath("$.page.size").value(2))
                 .andExpect(jsonPath("$.page.numberOfElements").value(2))
                 .andExpect(jsonPath("$.page.number").value(1))
@@ -197,12 +214,13 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipes(pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
-        Assertions.assertEquals(1, pageable.getPageNumber());
-        Assertions.assertEquals(2, pageable.getPageSize());
-        Assertions.assertTrue(pageable.getSort().getOrderFor("category").getDirection().isDescending());
-        Assertions.assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isAscending());
-        Assertions.assertNull(pageable.getSort().getOrderFor("rating"));
+        assertEquals(1, pageable.getPageNumber());
+        assertEquals(2, pageable.getPageSize());
+        assertTrue(pageable.getSort().getOrderFor("category").getDirection().isDescending());
+        assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isAscending());
+        assertNull(pageable.getSort().getOrderFor("rating"));
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -214,6 +232,7 @@ public class RecipeControllerTest {
                 .andReturn();
 
         verifyNoInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -221,7 +240,7 @@ public class RecipeControllerTest {
     public void findRecipeById_RecipeServiceThrowsAnError_ReturnInternalServerError() {
         when(mockRecipeService.getRecipe(12L)).thenThrow(new RuntimeException("test"));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.description").exists())
@@ -230,18 +249,20 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipe(12L);
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
     @SneakyThrows
-    public void findRecipeById_EntryNotFound_Return404() {
-        when(mockRecipeService.getRecipe(12L)).thenThrow(new DataDoesNotExist("msg"));
+    public void findRecipeById_EntryNotFound_ReturnNotFound() {
+        when(mockRecipeService.getRecipe(12L)).thenThrow(new DataDoesNotExistException("msg"));
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPE_BY_ID_PATH_PREFIX + 12))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
         verify(mockRecipeService).getRecipe(12L);
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -257,12 +278,12 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.id").value(mockData.getId()))
                 .andExpect(jsonPath("$.title").value(mockData.getTitle()))
                 .andExpect(jsonPath("$.ingredients").isArray())
-                .andExpect(jsonPath("$.ingredients").isNotEmpty())
                 .andExpectAll(createMatchersForIngredients(mockData))
                 .andReturn();
 
         verify(mockRecipeService).getRecipe(mockData.getId());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -271,7 +292,7 @@ public class RecipeControllerTest {
         when(mockRecipeService.getRecipesForCategory(anyString(), any())).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_IN_CATEGORY_PATH_PREFIX + "abc"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.description").exists())
@@ -280,6 +301,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipesForCategory(anyString(), any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -291,7 +313,7 @@ public class RecipeControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("$.page").doesNotExist())
+                .andExpect(jsonPath("$.page").exists())
                 .andExpect(jsonPath("$._links").exists())
                 .andExpect(jsonPath("$._links").isNotEmpty())
                 .andExpect(jsonPath("$._links.self").isNotEmpty())
@@ -299,6 +321,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipesForCategory(anyString(), any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -320,6 +343,7 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipesForCategory(anyString(), any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -341,9 +365,11 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.page.number").value(0))
                 .andExpect(jsonPath("$.page.hasNext").value(false))
                 .andReturn();
+        //FIXME links for prev and first not present?
 
         verify(mockRecipeService).getRecipesForCategory(anyString(), any());
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -376,11 +402,12 @@ public class RecipeControllerTest {
 
         verify(mockRecipeService).getRecipesForCategory(eq(mockData.get(0).getCategory()), pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
-        Assertions.assertEquals(1, pageable.getPageNumber());
-        Assertions.assertEquals(2, pageable.getPageSize());
-        Assertions.assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isDescending());
-        Assertions.assertNull(pageable.getSort().getOrderFor("rating"));
+        assertEquals(1, pageable.getPageNumber());
+        assertEquals(2, pageable.getPageSize());
+        assertTrue(pageable.getSort().getOrderFor("difficulty").getDirection().isDescending());
+        assertNull(pageable.getSort().getOrderFor("rating"));
         verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -389,7 +416,7 @@ public class RecipeControllerTest {
         when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 1L)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.description").exists())
@@ -397,7 +424,22 @@ public class RecipeControllerTest {
                 .andReturn();
 
         verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
-        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void getCommentsForRecipe_ServiceThrowsNotFoundException_ReturnNotFound() {
+        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenThrow(new DataDoesNotExistException("null"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 1L)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
+        verifyNoInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -409,14 +451,15 @@ public class RecipeControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("$.page").doesNotExist())
+                .andExpect(jsonPath("$.page").exists())
                 .andExpect(jsonPath("$._links").exists())
                 .andExpect(jsonPath("$._links").isNotEmpty())
                 .andExpect(jsonPath("$._links.self").isNotEmpty())
                 .andReturn();
 
         verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
-        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
     }
 
     @Test
@@ -437,7 +480,8 @@ public class RecipeControllerTest {
                 .andReturn();
 
         verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
-        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
     }
 
     @Test
@@ -458,7 +502,8 @@ public class RecipeControllerTest {
                 .andReturn();
 
         verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
-        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
     }
 
     @Test
@@ -483,12 +528,261 @@ public class RecipeControllerTest {
 
         verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
-        Assertions.assertEquals(10, pageable.getPageNumber());
-        Assertions.assertEquals(12, pageable.getPageSize());
-        Assertions.assertTrue(pageable.getSort().getOrderFor("dateCreated").getDirection().isDescending());
-        verifyNoMoreInteractions(mockRecipeService);
+        assertEquals(10, pageable.getPageNumber());
+        assertEquals(12, pageable.getPageSize());
+        assertTrue(pageable.getSort().getOrderFor("dateCreated").getDirection().isDescending());
+        verifyNoInteractions(mockRecipeService);
+        verifyNoMoreInteractions(mockRecipeCommentService);
     }
 
+
+    @SneakyThrows
+    @Test
+    public void createRecipe_NoDataInRequest_ServiceThrowsException_ReturnBadRequest() {
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_RECIPE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        verifyNoInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void createRecipe_NoFullDataInRequest_ServiceThrowsException_ReturnBadRequest() {
+        when(mockRecipeService.createRecipe(any())).thenThrow(new IllegalDataInRequestException("no data"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_RECIPE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("{}")
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        verify(mockRecipeService).createRecipe(any());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void createRecipe_ValidRequest_ReturnCreatedEntry() {
+        RecipeCreateRequest request = DtoMockData.generateRandomMockDataForRecipeCreateRequest();
+
+        when(mockRecipeService.createRecipe(any())).thenReturn(DtoMockData.generateRandomMockDataForRecipeDto(1).get(0));//FIXME
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_RECIPE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andReturn();
+
+        verify(mockRecipeService).createRecipe(recipeCreateRequestCaptor.capture());
+        RecipeCreateRequest capturedRequest = recipeCreateRequestCaptor.getValue();
+        assertEquals(request, capturedRequest);
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void addCommentToRecipe_NoDataInRequest_ReturnBadRequest() {
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+
+        verifyNoInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void addCommentToRecipe_RecipeNotFound_ReturnBadRequest() {
+        AddCommentRequest request = new AddCommentRequest("dssadaskldjaskldjklas");
+
+        doThrow(new DataDoesNotExistException("test")).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+
+        verify(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+        verifyNoMoreInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void addCommentToRecipe_IllegalDataInRequest_ReturnBadRequest() {
+        AddCommentRequest request = new AddCommentRequest("dssadaskldjaskldjklas");
+
+        doThrow(new IllegalDataInRequestException("test")).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+
+        verify(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+        verifyNoMoreInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void addCommentToRecipe_RequestIsValid_ReturnOk() {
+        AddCommentRequest request = new AddCommentRequest("kjdklas jdksajdlaksjd djskald jkl");
+
+        doNothing().when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+
+        verify(mockRecipeCommentService).addCommentToRecipe(eq(123L), addCommentRequestCaptor.capture());
+        AddCommentRequest capturedRequest = addCommentRequestCaptor.getValue();
+        assertEquals(request, capturedRequest);
+        verifyNoMoreInteractions(mockRecipeCommentService);
+        verifyNoInteractions(mockRecipeService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateRecipe_ServiceThrowsRuntimeException_ReturnInternalServerError() {
+        RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
+        doThrow(new RuntimeException("random")).when(mockRecipeService).updateRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_RECIPE_PATH_PREFIX + "231")
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andReturn();
+
+        verify(mockRecipeService).updateRecipe(anyLong(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateRecipe_RecipeNotFound_ReturnNotFound() {
+        RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
+        doThrow(new DataDoesNotExistException("random")).when(mockRecipeService).updateRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_RECIPE_PATH_PREFIX + "231")
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(mockRecipeService).updateRecipe(anyLong(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateRecipe_UpdateDataInvalid_ReturnBadRequest() {
+        RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
+        doThrow(new IllegalDataInRequestException("random")).when(mockRecipeService).updateRecipe(anyLong(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_RECIPE_PATH_PREFIX + "231")
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        verify(mockRecipeService).updateRecipe(anyLong(), any());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateRecipe_UpdateDataValid_ReturnUpdatedEntry() {
+        RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
+        when(mockRecipeService.updateRecipe(anyLong(), any())).thenReturn(DtoMockData.generateRandomMockDataForRecipeDto(1).get(0));
+
+        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_RECIPE_PATH_PREFIX + "231")
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andReturn();
+
+        verify(mockRecipeService).updateRecipe(eq(231L), recipeUpdateRequestCaptor.capture());
+        RecipeUpdateRequest capturedRequest = recipeUpdateRequestCaptor.getValue();
+        assertEquals(request, capturedRequest);
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void deleteRecipe_ServiceThrowsRuntimeException_ReturnInternalServerError() {
+        doThrow(new RuntimeException("random")).when(mockRecipeService).deleteRecipe(anyLong());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE_RECIPE_PATH_PREFIX + "231"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andReturn();
+
+        verify(mockRecipeService).deleteRecipe(anyLong());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void deleteRecipe_RecipeNotFound_ReturnNotFound() {
+        doThrow(new DataDoesNotExistException("no")).when(mockRecipeService).deleteRecipe(anyLong());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE_RECIPE_PATH_PREFIX + "231"))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(mockRecipeService).deleteRecipe(anyLong());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void deleteRecipe_RecipeDeletedSuccessfully_ReturnOk() {
+        doNothing().when(mockRecipeService).deleteRecipe(anyLong());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE_RECIPE_PATH_PREFIX + "231"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(mockRecipeService).deleteRecipe(anyLong());
+        verifyNoMoreInteractions(mockRecipeService);
+        verifyNoInteractions(mockRecipeCommentService);
+    }
 
     private ResultMatcher[] createMatchersForRecipeBasicInfoDto(List<RecipeBasicInfoDto> data) {
         List<ResultMatcher> matchers = new ArrayList<>();
@@ -502,6 +796,8 @@ public class RecipeControllerTest {
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].coverImageUrl").value(data.get(i).getCoverImageUrl()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].dateCreated").value(Util.APP_DATE_TIME_FORMATTER.format(data.get(i).getDateCreated())));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].difficulty").value(data.get(i).getDifficulty()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].preparationTime").value(data.get(i).getPreparationTime()));
+                matchers.add(jsonPath("$._embedded.recipes[" + i + "].cookingTime").value(data.get(i).getCookingTime()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].category").value(data.get(i).getCategory()));
                 matchers.add(jsonPath("$._embedded.recipes[" + i + "].authorId").value(data.get(i).getAuthorId()));
             }

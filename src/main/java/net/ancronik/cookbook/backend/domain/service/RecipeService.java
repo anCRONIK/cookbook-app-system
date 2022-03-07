@@ -1,10 +1,12 @@
 package net.ancronik.cookbook.backend.domain.service;
 
-import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
-import net.ancronik.cookbook.backend.web.dto.CreateRecipeRequest;
+import lombok.NonNull;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.web.dto.RecipeBasicInfoDto;
+import net.ancronik.cookbook.backend.web.dto.RecipeCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.RecipeDto;
-import net.ancronik.cookbook.backend.web.dto.UpdateRecipeRequest;
+import net.ancronik.cookbook.backend.web.dto.RecipeUpdateRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -28,9 +30,9 @@ public interface RecipeService {
      *
      * @param id recipe id
      * @return which will contain recipe if exists
-     * @throws DataDoesNotExist if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException if recipe with given id does not exist in database
      */
-    RecipeDto getRecipe(Long id) throws DataDoesNotExist;
+    RecipeDto getRecipe(@NonNull Long id) throws DataDoesNotExistException;
 
     /**
      * Method to find recipes in the given category
@@ -39,23 +41,24 @@ public interface RecipeService {
      * @param pageable pageable options
      * @return slice with data
      */
-    Slice<RecipeBasicInfoDto> getRecipesForCategory(String category, Pageable pageable);
+    Slice<RecipeBasicInfoDto> getRecipesForCategory(@NonNull String category, Pageable pageable);
 
     /**
      * Method for creating new recipe.
      *
      * @param request create request
      * @return newly created recipe
+     * @throws IllegalDataInRequestException if request is not properly populated
      */
-    RecipeDto createRecipe(CreateRecipeRequest request);
+    RecipeDto createRecipe(@NonNull RecipeCreateRequest request) throws IllegalDataInRequestException;
 
     /**
      * Method for deleting specific recipe using id.
      *
      * @param id recipe id
-     * @throws DataDoesNotExist if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException if recipe with given id does not exist in database
      */
-    void deleteRecipe(Long id) throws DataDoesNotExist;
+    void deleteRecipe(@NonNull Long id) throws DataDoesNotExistException;
 
     /**
      * Method for updating specific recipe using id.
@@ -63,7 +66,8 @@ public interface RecipeService {
      * @param id      recipe id
      * @param request update request
      * @return updated recipe
-     * @throws DataDoesNotExist if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException     if recipe with given id does not exist in database
+     * @throws IllegalDataInRequestException if request is not properly populated
      */
-    RecipeDto updateRecipe(Long id, UpdateRecipeRequest request) throws DataDoesNotExist;
+    RecipeDto updateRecipe(@NonNull Long id, @NonNull RecipeUpdateRequest request) throws DataDoesNotExistException, IllegalDataInRequestException;
 }

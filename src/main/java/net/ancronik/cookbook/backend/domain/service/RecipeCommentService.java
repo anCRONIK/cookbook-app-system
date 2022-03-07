@@ -1,6 +1,8 @@
 package net.ancronik.cookbook.backend.domain.service;
 
-import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExist;
+import lombok.NonNull;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.web.dto.AddCommentRequest;
 import net.ancronik.cookbook.backend.web.dto.RecipeCommentDto;
 import org.springframework.data.domain.Pageable;
@@ -19,17 +21,18 @@ public interface RecipeCommentService {
      * @param id       recipe id
      * @param pageable pageable options
      * @return slice with data
-     * @throws DataDoesNotExist if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException if recipe with given id does not exist in database
      */
-    Slice<RecipeCommentDto> getCommentsForRecipe(Long id, Pageable pageable) throws DataDoesNotExist;
+    Slice<RecipeCommentDto> getCommentsForRecipe(@NonNull Long id, Pageable pageable) throws DataDoesNotExistException;
 
     /**
      * Method for adding new comment to the recipe.
      *
      * @param id   recipe id
      * @param text comment
-     * @throws DataDoesNotExist if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException if recipe with given id does not exist in database
+     * @throws IllegalDataInRequestException if request is not valid
      */
-    void addCommentToRecipe(Long id, AddCommentRequest text) throws DataDoesNotExist;
+    void addCommentToRecipe(@NonNull Long id, @NonNull AddCommentRequest text) throws DataDoesNotExistException, IllegalDataInRequestException;
 
 }

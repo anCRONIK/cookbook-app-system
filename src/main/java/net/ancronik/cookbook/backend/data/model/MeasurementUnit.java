@@ -13,12 +13,12 @@ import lombok.ToString;
 public enum MeasurementUnit {
 
     // weight
-    KG("kg"), G("g"), LB("lb"),
+    KG("KG"), G("G"), LB("LB"),
     // size
-    M("m"), CM("cm"), INCH("inch"), FOOT("foot"),
+    M("M"), CM("CM"), INCH("INCH"), FOOT("FOOT"),
     // volume
-    L("l"), DL("dl"), ML("ml"), CUP("cup"),
-    SPOON("spoon"), TEA_SPOON("tea_spoon"), DROP("DROP");
+    L("L"), DL("DL"), ML("ML"), CUP("CUP"),
+    SPOON("SPOON"), TEA_SPOON("TEA_SPOON"), DROP("DROP");
 
     private final String unit;
 
