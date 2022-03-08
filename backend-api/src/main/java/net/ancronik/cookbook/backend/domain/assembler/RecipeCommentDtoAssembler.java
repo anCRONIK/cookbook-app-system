@@ -32,6 +32,8 @@ public class RecipeCommentDtoAssembler extends RepresentationModelAssemblerSuppo
     @Override
     public RecipeCommentDto toModel(@NonNull RecipeComment entity) {
         RecipeCommentDto dto = modelMapper.map(entity, RecipeCommentDto.class);
+        dto.setDateCreated(entity.getRecipeCommentPK().getDateCreated());
+        dto.setUsername(entity.getRecipeCommentPK().getUsername());
 
         dto.add(linkTo(methodOn(AuthorController.class).getAuthorById(dto.getUsername())).withRel("author"));
 

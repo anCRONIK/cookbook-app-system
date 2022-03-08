@@ -16,10 +16,13 @@ public class RecipeCommentMockData {
 
         for (int i = 0; i < size; ++i) {
             RecipeComment entity = new RecipeComment(
-                    (long) random.nextInt(Integer.MAX_VALUE),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(20)),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)),
-                    LocalDateTime.now().minusDays(random.nextInt(100) + 1));
+                    new RecipeCommentPK(
+                            (long) random.nextInt(Integer.MAX_VALUE),
+                            StringTestUtils.getRandomStringInLowerCase(random.nextInt(20)),
+                            LocalDateTime.now().minusDays(random.nextInt(100) + 1)
+                    ),
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(200))
+            );
 
             data.add(entity);
         }

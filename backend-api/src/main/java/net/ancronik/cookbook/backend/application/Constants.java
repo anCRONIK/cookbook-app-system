@@ -7,7 +7,7 @@ package net.ancronik.cookbook.backend.application;
  */
 public class Constants {
 
-    private Constants(){
+    private Constants() {
         //util
     }
 

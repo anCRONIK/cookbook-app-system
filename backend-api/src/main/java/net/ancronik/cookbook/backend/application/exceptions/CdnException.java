@@ -2,7 +2,7 @@ package net.ancronik.cookbook.backend.application.exceptions;
 
 /**
  * Exception which should be thrown in case of some CDN exception
- *
+ * <p>
  * Should be thrown/propagated by services to controller and processed by global handler.
  *
  * @author Nikola Presecki

@@ -11,7 +11,7 @@ import java.io.Serializable;
  * <p>
  * There are two flags {@link #isImperial} and {@link #isMetric} because some units can be used for both (for instance
  * teaspoon, spoon, drop).
- *
+ * <p>
  * This should be read only.
  *
  * @author Nikola Presecki

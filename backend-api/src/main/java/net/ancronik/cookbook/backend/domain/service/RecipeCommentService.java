@@ -28,9 +28,9 @@ public interface RecipeCommentService {
     /**
      * Method for adding new comment to the recipe.
      *
-     * @param id   recipe id
+     * @param id      recipe id
      * @param comment comment
-     * @throws DataDoesNotExistException if recipe with given id does not exist in database
+     * @throws DataDoesNotExistException     if recipe with given id does not exist in database
      * @throws IllegalDataInRequestException if request is not valid
      */
     void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment) throws DataDoesNotExistException, IllegalDataInRequestException;

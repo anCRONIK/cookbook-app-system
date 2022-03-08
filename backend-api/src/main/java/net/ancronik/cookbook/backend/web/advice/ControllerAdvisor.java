@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.*;
 import net.ancronik.cookbook.backend.web.dto.ApiErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,13 +59,33 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Database exceptions handler
+     *
+     * @param exception exception
+     * @param request   request
+     * @return api error response
+     */
+    @ExceptionHandler({EmptyDataException.class, GenericDatabaseException.class, DataAccessException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ApiErrorResponse> databaseExceptionsHandler(Exception exception, WebRequest request) {
+        LOG.error("Database error occurred {}", request, exception);
+        return ResponseEntity.internalServerError().body(
+                new ApiErrorResponse(
+                        "There is error with database", //TODO extract to messages file
+                        exception.toString(),
+                        LocalDateTime.now(ZoneId.of("UTC"))
+                )
+        );
+    }
+
+    /**
      * General handler
      *
      * @param exception exception
      * @param request   request
      * @return api error response
      */
-    @ExceptionHandler({EmptyDataException.class, GenericDatabaseException.class, CdnException.class, Exception.class})
+    @ExceptionHandler({CdnException.class, Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiErrorResponse> internalServerExceptionsHandler(Exception exception, WebRequest request) {
         LOG.error("Unknown error occurred {}", request, exception);

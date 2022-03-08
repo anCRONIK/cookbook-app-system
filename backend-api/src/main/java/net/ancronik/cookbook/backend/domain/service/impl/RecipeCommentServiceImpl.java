@@ -51,7 +51,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     }
 
     @Override
-    public Slice<RecipeCommentDto> getCommentsForRecipe(@NonNull Long id, Pageable pageable) throws DataDoesNotExistException {
+    public Slice<RecipeCommentDto> getCommentsForRecipe(@NonNull Long id, @NonNull Pageable pageable) throws DataDoesNotExistException {
         checkIfRecipeExists(id);
 
         Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeId(id, pageable);
@@ -65,7 +65,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     public void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment) throws DataDoesNotExistException, IllegalDataInRequestException {
         checkIfRecipeExists(id);
 
-        if(!StringUtils.hasText(comment.getText())){
+        if (!StringUtils.hasText(comment.getText())) {
             LOG.error("Comment text is null or empty");
             throw new IllegalDataInRequestException("Comment text can not be null or empty");
         }
@@ -73,7 +73,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
         String username = authenticationService.getAuthenticatedUsername();
 
         RecipeCommentPK recipeCommentPK = new RecipeCommentPK(id, username, LocalDateTime.now(ZoneId.of("UTC")));
-        RecipeComment recipeComment = new RecipeComment(recipeCommentPK ,comment.getText());
+        RecipeComment recipeComment = new RecipeComment(recipeCommentPK, comment.getText());
 
         recipeCommentRepository.save(recipeComment);
     }
