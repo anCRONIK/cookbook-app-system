@@ -7,10 +7,10 @@ import net.ancronik.cookbook.backend.data.model.RecipeCommentMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentPK;
 import net.ancronik.cookbook.backend.data.repository.RecipeCommentRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
-import net.ancronik.cookbook.backend.domain.assembler.RecipeCommentDtoAssembler;
+import net.ancronik.cookbook.backend.domain.assembler.RecipeCommentModelAssembler;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @Tag("junit")
 public class RecipeCommentServiceImplTest {
 
-    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentDto> recipeCommentDtoAssembler = new RecipeCommentDtoAssembler(new ModelMapper());
+    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler = new RecipeCommentModelAssembler(new ModelMapper());
 
     private final AuthenticationService mockAuthenticationService = Mockito.mock(AuthenticationService.class);
 
@@ -38,7 +38,7 @@ public class RecipeCommentServiceImplTest {
 
     private final RecipeRepository mockRecipeRepository = Mockito.mock(RecipeRepository.class);
 
-    private final RecipeCommentServiceImpl recipeCommentService = new RecipeCommentServiceImpl(recipeCommentDtoAssembler, mockRecipeCommentRepository, mockRecipeRepository, mockAuthenticationService);
+    private final RecipeCommentServiceImpl recipeCommentService = new RecipeCommentServiceImpl(RecipeCommentModelAssembler, mockRecipeCommentRepository, mockRecipeRepository, mockAuthenticationService);
 
     @Test
     @SneakyThrows
@@ -85,7 +85,7 @@ public class RecipeCommentServiceImplTest {
         when(mockRecipeRepository.existsById(id)).thenReturn(true);
         when(mockRecipeCommentRepository.findAllByRecipeId(id, pageable)).thenReturn(new SliceImpl<>(RecipeCommentMockData.generateRandomMockData(10), pageable, true));
 
-        Slice<RecipeCommentDto> data = recipeCommentService.getCommentsForRecipe(id, pageable);
+        Slice<RecipeCommentModel> data = recipeCommentService.getCommentsForRecipe(id, pageable);
 
         assertNotNull(data);
         assertEquals(10, data.getNumberOfElements());

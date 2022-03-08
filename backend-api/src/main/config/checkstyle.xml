@@ -42,7 +42,7 @@
     <!-- Checks that a package.html file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#PackageHtml -->
     <module name="JavadocPackage">
-        <property name="allowLegacy" value="true" />
+        <property name="allowLegacy" value="true"/>
     </module>
 
     <!-- Checks whether files end with a new line.                        -->
@@ -135,7 +135,8 @@
 
         <module name="NoWhitespaceAfter">
             <!-- Default tokens and additional GENERIC_START -->
-            <property name="tokens" value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS, GENERIC_START"/>
+            <property name="tokens"
+                      value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS, GENERIC_START"/>
         </module>
 
         <module name="NoWhitespaceBefore">

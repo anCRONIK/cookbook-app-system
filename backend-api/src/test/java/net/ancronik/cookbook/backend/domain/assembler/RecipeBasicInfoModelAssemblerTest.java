@@ -1,7 +1,9 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
-import net.ancronik.cookbook.backend.data.model.*;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoDto;
+import net.ancronik.cookbook.backend.data.model.Ingredient;
+import net.ancronik.cookbook.backend.data.model.Recipe;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoModel;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -13,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
-public class RecipeBasicInfoDtoAssemblerTest {
+public class RecipeBasicInfoModelAssemblerTest {
 
-    RecipeBasicInfoDtoAssembler assembler = new RecipeBasicInfoDtoAssembler(new ModelMapper());
+    RecipeBasicInfoModelAssembler assembler = new RecipeBasicInfoModelAssembler(new ModelMapper());
 
     @Test
     public void toModel_NullGiven_ThrowException() {
@@ -33,8 +35,8 @@ public class RecipeBasicInfoDtoAssemblerTest {
                 LocalDateTime.of(2022, 3, 6, 11, 23), null,
                 1, new RecipeCategory("entree"), "pero");
 
-        RecipeBasicInfoDto dto = assembler.toModel(recipe);
-        assertEquals("RecipeBasicInfoDto(id=1, title=title, shortDescription=short desc value, thumbnailUrl=null, dateCreated=2022-03-06T11:23, preparationTime=10, cookingTime=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
+        RecipeBasicInfoModel dto = assembler.toModel(recipe);
+        assertEquals("RecipeBasicInfoModel(id=1, title=title, shortDescription=short desc value, thumbnailUrl=null, dateCreated=2022-03-06T11:23, preparationTimeInMinutes=10, cookingTimeInMinutes=30, difficulty=1, category=entree, authorId=pero)", dto.toString());
         assertEquals(3, dto.getLinks().toList().size());
     }
 }

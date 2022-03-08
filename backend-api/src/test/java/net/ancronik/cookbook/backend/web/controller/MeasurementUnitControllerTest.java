@@ -52,7 +52,7 @@ public class MeasurementUnitControllerTest {
     @SneakyThrows
     @Test
     public void getMeasurementUnits_ServiceReturnsData_CheckResponse() {
-        when(mockCodeQueryService.getMeasurementUnits()).thenReturn(DtoMockData.generateRandomMockDataForMeasurementUnitDto(4));
+        when(mockCodeQueryService.getMeasurementUnits()).thenReturn(DtoMockData.generateRandomMockDataForMeasurementUnitModel(4));
 
         mockMvc.perform(MockMvcRequestBuilders.get(MeasurementUnitController.DEFAULT_MAPPING))
                 .andExpect(status().isOk())

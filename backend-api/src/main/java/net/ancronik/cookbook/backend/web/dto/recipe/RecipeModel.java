@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "recipe")
-public class RecipeDto extends RepresentationModel<RecipeDto> {
+public class RecipeModel extends RepresentationModel<RecipeModel> {
 
     private Long id;
 
@@ -36,11 +36,11 @@ public class RecipeDto extends RepresentationModel<RecipeDto> {
     @JsonProperty("ingredients")
     private List<IngredientDto> ingredientList;
 
-    private Integer preparationTime;
+    private Integer preparationTimeInMinutes;
 
     private String preparationInstructions;
 
-    private Integer cookingTime;
+    private Integer cookingTimeInMinutes;
 
     private String cookingInstructions;
 

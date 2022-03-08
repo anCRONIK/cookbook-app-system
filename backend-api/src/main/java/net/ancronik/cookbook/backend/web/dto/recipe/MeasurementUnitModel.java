@@ -14,7 +14,7 @@ import org.springframework.hateoas.server.core.Relation;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "units", itemRelation = "unit")
 @JsonRootName("unit")
-public class MeasurementUnitDto extends RepresentationModel<RecipeDto> {
+public class MeasurementUnitModel extends RepresentationModel<MeasurementUnitModel> {
 
     private String code;
 

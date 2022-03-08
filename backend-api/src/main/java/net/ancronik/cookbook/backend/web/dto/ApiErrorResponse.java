@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ApiErrorResponse {
 
-    private String error;
+    protected String error;
 
-    private String description;
+    protected String description;
 
-    private LocalDateTime timestamp;
+    protected LocalDateTime timestamp;
 
 }

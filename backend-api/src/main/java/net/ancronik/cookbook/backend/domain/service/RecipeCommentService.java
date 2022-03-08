@@ -4,7 +4,7 @@ import lombok.NonNull;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -23,7 +23,7 @@ public interface RecipeCommentService {
      * @return slice with data
      * @throws DataDoesNotExistException if recipe with given id does not exist in database
      */
-    Slice<RecipeCommentDto> getCommentsForRecipe(@NonNull Long id, Pageable pageable) throws DataDoesNotExistException;
+    Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull Long id, Pageable pageable) throws DataDoesNotExistException;
 
     /**
      * Method for adding new comment to the recipe.

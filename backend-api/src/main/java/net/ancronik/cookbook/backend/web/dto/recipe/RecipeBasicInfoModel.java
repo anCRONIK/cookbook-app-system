@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "recipes", itemRelation = "recipe")
 @JsonRootName(value = "recipe")
-public class RecipeBasicInfoDto extends RepresentationModel<RecipeBasicInfoDto> {
+public class RecipeBasicInfoModel extends RepresentationModel<RecipeBasicInfoModel> {
 
     private Long id;
 
@@ -33,9 +33,9 @@ public class RecipeBasicInfoDto extends RepresentationModel<RecipeBasicInfoDto> 
 
     private LocalDateTime dateCreated;
 
-    private Integer preparationTime;
+    private Integer preparationTimeInMinutes;
 
-    private Integer cookingTime;
+    private Integer cookingTimeInMinutes;
 
     private Integer difficulty;
 

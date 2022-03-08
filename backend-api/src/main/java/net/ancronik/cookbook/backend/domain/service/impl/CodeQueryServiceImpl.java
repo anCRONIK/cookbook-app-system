@@ -2,14 +2,15 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
+import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
-import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitDtoAssembler;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
-import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,20 +27,20 @@ public class CodeQueryServiceImpl implements CodeQueryService {
 
     private final RecipeCategoryRepository recipeCategoryRepository;
 
-    private final MeasurementUnitDtoAssembler measurementUnitDtoAssembler;
+    private final RepresentationModelAssemblerSupport<MeasurementUnit, MeasurementUnitModel> MeasurementUnitModelAssembler;
 
     @Autowired
-    public CodeQueryServiceImpl(MeasurementUnitRepository measurementUnitRepository, RecipeCategoryRepository recipeCategoryRepository, MeasurementUnitDtoAssembler measurementUnitDtoAssembler) {
+    public CodeQueryServiceImpl(MeasurementUnitRepository measurementUnitRepository, RecipeCategoryRepository recipeCategoryRepository, RepresentationModelAssemblerSupport<MeasurementUnit, MeasurementUnitModel> MeasurementUnitModelAssembler) {
         this.measurementUnitRepository = measurementUnitRepository;
         this.recipeCategoryRepository = recipeCategoryRepository;
-        this.measurementUnitDtoAssembler = measurementUnitDtoAssembler;
+        this.MeasurementUnitModelAssembler = MeasurementUnitModelAssembler;
     }
 
     @Cacheable(value = "measurement_units")
     @Override
-    public List<MeasurementUnitDto> getMeasurementUnits() throws GenericDatabaseException {
+    public List<MeasurementUnitModel> getMeasurementUnits() throws GenericDatabaseException {
         try {
-            return measurementUnitRepository.findAll().stream().map(measurementUnitDtoAssembler::toModel).collect(Collectors.toList());
+            return measurementUnitRepository.findAll().stream().map(MeasurementUnitModelAssembler::toModel).collect(Collectors.toList());
         } catch (Exception e) {
             LOG.error("Error while fetching measurement units from database", e);
             throw new GenericDatabaseException(e);
@@ -59,9 +60,9 @@ public class CodeQueryServiceImpl implements CodeQueryService {
 
     @Cacheable(value = "recipe_categories")
     @Override
-    public List<RecipeCategoryDto> getRecipeCategories() throws GenericDatabaseException {
+    public List<RecipeCategoryModel> getRecipeCategories() throws GenericDatabaseException {
         try {
-            return recipeCategoryRepository.findAll().stream().map(c -> new RecipeCategoryDto(c.getCategory())).collect(Collectors.toList());
+            return recipeCategoryRepository.findAll().stream().map(c -> new RecipeCategoryModel(c.getCategory())).collect(Collectors.toList());
         } catch (Exception e) {
             LOG.error("Error while fetching recipe categories from database", e);
             throw new GenericDatabaseException(e);

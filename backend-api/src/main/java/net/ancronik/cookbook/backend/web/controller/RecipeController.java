@@ -11,6 +11,7 @@ import net.ancronik.cookbook.backend.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.hateoas.SlicedModel;
 import net.ancronik.cookbook.backend.hateoas.SlicedResourcesAssembler;
 import net.ancronik.cookbook.backend.web.dto.recipe.*;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,12 @@ import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver
 import org.springframework.hateoas.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -30,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(RecipeController.DEFAULT_MAPPING)
 @Slf4j
+@Validated
 public class RecipeController {
 
     public static final String DEFAULT_MAPPING = "/api/v1/recipes";
@@ -59,21 +66,21 @@ public class RecipeController {
 
 
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long id) throws DataDoesNotExistException {
+    public ResponseEntity<RecipeModel> getRecipeById(@PathVariable @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException {
         LOG.info("Fetching recipe with id [{}]", id);
 
         return ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
     @GetMapping(value = "/categories/{category}", produces = MediaTypes.HAL_JSON_VALUE)
-    public SlicedModel<?> getRecipesForCategory(@PathVariable String category, Pageable pageable) {
+    public SlicedModel<?> getRecipesForCategory(@PathVariable @NotNull @Size(min = 1, max = 50) String category, Pageable pageable) {
         LOG.info("Fetching recipes for category [{}] and pageable [{}]", category, pageable);
 
         return checkAndConvertSliceToModel(recipeService.getRecipesForCategory(category, pageable));
     }
 
     @GetMapping(value = "/{id}/comments", produces = MediaTypes.HAL_JSON_VALUE)
-    public SlicedModel<?> getCommentsForRecipe(@PathVariable Long id, Pageable pageable) throws DataDoesNotExistException {
+    public SlicedModel<?> getCommentsForRecipe(@PathVariable @NotNull @Range(min = 1) Long id, Pageable pageable) throws DataDoesNotExistException {
         LOG.info("Fetching comments for recipe with id [{}] and pageable [{}]", id, pageable);
 
         return checkAndConvertSliceToModel(recipeCommentService.getCommentsForRecipe(id, pageable));
@@ -81,17 +88,17 @@ public class RecipeController {
 
     @PostMapping(value = "", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
-    public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeCreateRequest request) throws IllegalDataInRequestException {
+    public ResponseEntity<RecipeModel> createRecipe(@Valid @RequestBody RecipeCreateRequest request) throws IllegalDataInRequestException {
         LOG.info("Creating new recipe {}", request);
 
-        RecipeDto response = recipeService.createRecipe(request);
+        RecipeModel response = recipeService.createRecipe(request);
 
         return ResponseEntity.created(response.getLink(IanaLinkRelations.SELF).orElseThrow().toUri()).body(response);
     }
 
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
-    public ResponseEntity<String> addCommentToRecipe(@PathVariable Long id, @RequestBody AddRecipeCommentRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
+    public ResponseEntity<String> addCommentToRecipe(@PathVariable @NotNull @Range(min = 1) Long id, @RequestBody @Valid AddRecipeCommentRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
         LOG.info("Adding new comment to recipe [{}]", id);
 
         recipeCommentService.addCommentToRecipe(id, request);
@@ -101,7 +108,7 @@ public class RecipeController {
 
     @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint and it is the author of given recipe
-    public ResponseEntity<RecipeDto> updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
+    public ResponseEntity<RecipeModel> updateRecipe(@PathVariable @NotNull @Range(min = 1) Long id, @RequestBody @Valid RecipeUpdateRequest request) throws DataDoesNotExistException, IllegalDataInRequestException {
         LOG.info("Updating recipe with id [{}]: [{}]", id, request);
 
         return ResponseEntity.ok(recipeService.updateRecipe(id, request));
@@ -109,7 +116,7 @@ public class RecipeController {
 
     @DeleteMapping(value = "/{id}")
     //TODO add security to make user authorized and it is the author of given recipe
-    public ResponseEntity<String> deleteRecipe(@PathVariable Long id) throws DataDoesNotExistException {
+    public ResponseEntity<String> deleteRecipe(@PathVariable @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException {
         LOG.info("Deleting recipe with id [{}]", id);
 
         recipeService.deleteRecipe(id);
@@ -119,7 +126,7 @@ public class RecipeController {
 
     @GetMapping(value = "/categories", produces = MediaTypes.HAL_JSON_VALUE)
     @Cacheable("recipe_categories")
-    public CollectionModel<RecipeCategoryDto> getRecipeCategories() throws GenericDatabaseException {
+    public CollectionModel<RecipeCategoryModel> getRecipeCategories() throws GenericDatabaseException {
         LOG.info("Fetching all recipe categories");
 
         return CollectionModel.of(codeQueryService.getRecipeCategories());

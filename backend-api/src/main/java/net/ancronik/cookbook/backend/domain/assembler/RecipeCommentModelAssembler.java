@@ -1,10 +1,11 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.data.model.RecipeComment;
 import net.ancronik.cookbook.backend.web.controller.AuthorController;
 import net.ancronik.cookbook.backend.web.controller.RecipeController;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -14,24 +15,25 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Assembler for {@link RecipeCommentDto} from {@link net.ancronik.cookbook.backend.data.model.RecipeComment}.
+ * Assembler for {@link RecipeCommentModel} from {@link net.ancronik.cookbook.backend.data.model.RecipeComment}.
  *
  * @author Nikola Presecki
  */
 @Component
-public class RecipeCommentDtoAssembler extends RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentDto> {
+public class RecipeCommentModelAssembler extends RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RecipeCommentDtoAssembler(ModelMapper modelMapper) {
-        super(RecipeController.class, RecipeCommentDto.class);
+    public RecipeCommentModelAssembler(ModelMapper modelMapper) {
+        super(RecipeController.class, RecipeCommentModel.class);
         this.modelMapper = modelMapper;
     }
 
+    @SneakyThrows
     @Override
-    public RecipeCommentDto toModel(@NonNull RecipeComment entity) {
-        RecipeCommentDto dto = modelMapper.map(entity, RecipeCommentDto.class);
+    public RecipeCommentModel toModel(@NonNull RecipeComment entity) {
+        RecipeCommentModel dto = modelMapper.map(entity, RecipeCommentModel.class);
         dto.setDateCreated(entity.getRecipeCommentPK().getDateCreated());
         dto.setUsername(entity.getRecipeCommentPK().getUsername());
 

@@ -3,8 +3,8 @@ package net.ancronik.cookbook.backend.domain.service;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
-import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public interface CodeQueryService {
      *
      * @return list of units
      */
-    List<MeasurementUnitDto> getMeasurementUnits() throws GenericDatabaseException;
+    List<MeasurementUnitModel> getMeasurementUnits() throws GenericDatabaseException;
 
     /**
      * Method for checking if given measurement unit code is valid.
@@ -35,7 +35,7 @@ public interface CodeQueryService {
      *
      * @return list of recipe categories
      */
-    List<RecipeCategoryDto> getRecipeCategories() throws GenericDatabaseException;
+    List<RecipeCategoryModel> getRecipeCategories() throws GenericDatabaseException;
 
     /**
      * Method for checking if recipe category is valid.

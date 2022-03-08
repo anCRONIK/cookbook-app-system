@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("unit")
@@ -22,13 +20,13 @@ public class AuthorCreateRequestToAuthorMapperTest {
 
     @Test
     public void map_DtoGiven_ReturnPopulatedModel() {
-        AuthorCreateRequest request = new AuthorCreateRequest("roki", LocalDate.of(2020, 2, 2));
+        AuthorCreateRequest request = new AuthorCreateRequest("roki");
 
         Author author = mapper.map(request);
 
         assertNotNull(author);
         assertEquals(request.getUsername(), author.getUsername());
-        assertEquals(request.getDateOfBirth(), author.getDateOfBirth());
+        assertNull(author.getDateOfBirth());
         assertNull(author.getImageUrl());
         assertNull(author.getBio());
         assertNull(author.getFullName());

@@ -13,7 +13,7 @@ import org.springframework.hateoas.server.core.Relation;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "categories", itemRelation = "category")
 @JsonRootName(value = "category")
-public class RecipeCategoryDto {
+public class RecipeCategoryModel {
 
     private String category;
 

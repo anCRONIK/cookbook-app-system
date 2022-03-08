@@ -4,7 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.CodePointLength;
+import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -17,26 +24,45 @@ import java.util.List;
 @AllArgsConstructor
 public class RecipeUpdateRequest {
 
+    @NotBlank
+    @CodePointLength(min = 1, max = 50)
     private String title;
 
+    @CodePointLength(max = 200)
     private String shortDescription;
 
-    private String coverImageUrl;
-
+    @URL
     private String thumbnailUrl;
 
+    @URL
+    private String coverImageUrl;
+
+    @NotNull
+    @NotEmpty
+    @Size(min = 1, max = 1000)
     @JsonAlias("ingredients")
     private List<IngredientDto> ingredientList;
 
-    private Integer preparationTime;
+    @NotNull
+    @Range(max = 144000)
+    private Integer preparationTimeInMinutes;
 
+    @NotBlank
+    @CodePointLength(max = 20000)
     private String preparationInstructions;
 
-    private Integer cookingTime;
+    @NotNull
+    @Range(min = 1, max = 1440)
+    private Integer cookingTimeInMinutes;
 
+    @NotBlank
+    @CodePointLength(min = 10, max = 100000)
     private String cookingInstructions;
 
+    @Range(min = 1, max = 5)
     private Integer difficulty;
 
+    @NotBlank
+    @Size(min = 1, max = 50)
     private String category;
 }

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "authors", itemRelation = "author")
 @JsonRootName(value = "author")
-public class AuthorDto extends RepresentationModel<AuthorDto> {
+public class AuthorModel extends RepresentationModel<AuthorModel> {
 
     private String username;
 

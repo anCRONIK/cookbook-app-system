@@ -6,9 +6,9 @@ import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
-import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitDtoAssembler;
-import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitDto;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryDto;
+import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitModelAssembler;
+import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,9 +29,9 @@ public class CodeQueryServiceImplTest {
 
     private final RecipeCategoryRepository mockRecipeCategoryRepository = Mockito.mock(RecipeCategoryRepository.class);
 
-    private final MeasurementUnitDtoAssembler measurementUnitDtoAssembler = new MeasurementUnitDtoAssembler(new ModelMapper());
+    private final MeasurementUnitModelAssembler measurementUnitModelAssembler = new MeasurementUnitModelAssembler(new ModelMapper());
 
-    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitDtoAssembler);
+    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitModelAssembler);
 
     @Test
     public void getMeasurementUnits_RepositoryThrowsException_ThrowGenericDatabaseException() {
@@ -53,7 +53,7 @@ public class CodeQueryServiceImplTest {
     public void getMeasurementUnits_RepositoryReturnsList_ReturnData() {
         when(mockMeasurementUnitRepository.findAll()).thenReturn(MeasurementUnitMockData.generateRandomMockData(10));
 
-        List<MeasurementUnitDto> data = service.getMeasurementUnits();
+        List<MeasurementUnitModel> data = service.getMeasurementUnits();
 
         assertNotNull(data);
         assertEquals(10, data.size());
@@ -105,7 +105,7 @@ public class CodeQueryServiceImplTest {
         when(mockRecipeCategoryRepository.findAll())
                 .thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
 
-        List<RecipeCategoryDto> data = service.getRecipeCategories();
+        List<RecipeCategoryModel> data = service.getRecipeCategories();
 
         assertNotNull(data);
         assertEquals(2, data.size());

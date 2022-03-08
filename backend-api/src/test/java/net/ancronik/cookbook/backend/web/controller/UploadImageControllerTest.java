@@ -12,14 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 
@@ -41,7 +38,7 @@ public class UploadImageControllerTest {
     @SneakyThrows
     @Test
     public void uploadImage_ServiceCdnException_ReturnInternalServerError() {
-        MockMultipartFile  file = new MockMultipartFile ( "imageFile", "file.png", "text/plain" ,"data".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file = new MockMultipartFile("imageFile", "file.png", "text/plain", "data".getBytes(StandardCharsets.UTF_8));
 
         when(mockCdnService.uploadImage(anyBoolean(), any())).thenThrow(new CdnException("test"));
 
@@ -62,7 +59,7 @@ public class UploadImageControllerTest {
     @SneakyThrows
     @Test
     public void uploadImage_ServiceReturnsData_CheckResponse() {
-        MockMultipartFile  file = new MockMultipartFile ( "imageFile", "file.png", "text/plain" ,"data".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file = new MockMultipartFile("imageFile", "file.png", "text/plain", "data".getBytes(StandardCharsets.UTF_8));
 
         when(mockCdnService.uploadImage(anyBoolean(), any())).thenReturn(new UploadImageResponse(StringTestUtils.generateRandomUrl(), StringTestUtils.generateRandomUrl()));
 

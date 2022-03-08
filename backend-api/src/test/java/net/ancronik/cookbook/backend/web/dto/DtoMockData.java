@@ -6,7 +6,7 @@ import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeMockData;
 import net.ancronik.cookbook.backend.domain.assembler.*;
-import net.ancronik.cookbook.backend.web.dto.author.AuthorDto;
+import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.*;
 import org.modelmapper.ModelMapper;
 
@@ -20,23 +20,23 @@ import static net.ancronik.cookbook.backend.StringTestUtils.random;
 public class DtoMockData {
 
 
-    public static List<RecipeDto> generateRandomMockDataForRecipeDto(int size) {
-        RecipeDtoAssembler assembler = new RecipeDtoAssembler(new ModelMapper());
+    public static List<RecipeModel> generateRandomMockDataForRecipeModel(int size) {
+        RecipeModelAssembler assembler = new RecipeModelAssembler(new ModelMapper());
 
 
         return new ArrayList<>(assembler.toCollectionModel(RecipeMockData.generateRandomMockData(size)).getContent());
     }
 
-    public static List<RecipeBasicInfoDto> generateRandomMockDataForRecipeBasicInfoDto(int size) {
-        RecipeBasicInfoDtoAssembler assembler = new RecipeBasicInfoDtoAssembler(new ModelMapper());
+    public static List<RecipeBasicInfoModel> generateRandomMockDataForRecipeBasicInfoModel(int size) {
+        RecipeBasicInfoModelAssembler assembler = new RecipeBasicInfoModelAssembler(new ModelMapper());
 
 
         return new ArrayList<>(assembler.toCollectionModel(RecipeMockData.generateRandomMockData(size)).getContent());
     }
 
 
-    public static List<RecipeCommentDto> generateRandomMockDataForRecipeCommentDto(int size) {
-        RecipeCommentDtoAssembler assembler = new RecipeCommentDtoAssembler(new ModelMapper());
+    public static List<RecipeCommentModel> generateRandomMockDataForRecipeCommentModel(int size) {
+        RecipeCommentModelAssembler assembler = new RecipeCommentModelAssembler(new ModelMapper());
 
 
         return new ArrayList<>(assembler.toCollectionModel(RecipeCommentMockData.generateRandomMockData(size)).getContent());
@@ -91,15 +91,15 @@ public class DtoMockData {
         return data;
     }
 
-    public static List<MeasurementUnitDto> generateRandomMockDataForMeasurementUnitDto(int size) {
-        MeasurementUnitDtoAssembler assembler = new MeasurementUnitDtoAssembler(new ModelMapper());
+    public static List<MeasurementUnitModel> generateRandomMockDataForMeasurementUnitModel(int size) {
+        MeasurementUnitModelAssembler assembler = new MeasurementUnitModelAssembler(new ModelMapper());
 
 
         return new ArrayList<>(assembler.toCollectionModel(MeasurementUnitMockData.generateRandomMockData(size)).getContent());
     }
 
-    public static List<AuthorDto> generateRandomMockDataForAuthorDto(int size) {
-        AuthorDtoAssembler assembler = new AuthorDtoAssembler(new ModelMapper());
+    public static List<AuthorModel> generateRandomMockDataForAuthorModel(int size) {
+        AuthorModelAssembler assembler = new AuthorModelAssembler(new ModelMapper());
 
 
         return new ArrayList<>(assembler.toCollectionModel(AuthorMockData.generateRandomMockData(size)).getContent());

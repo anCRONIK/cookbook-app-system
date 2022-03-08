@@ -262,17 +262,6 @@ public class SlicedModel<T> extends CollectionModel<T> {
     }
 
     /**
-     * Returns the pagination metadata.
-     *
-     * @return the metadata
-     */
-    @JsonProperty("page")
-    @Nullable
-    public SliceMetadata getMetadata() {
-        return metadata;
-    }
-
-    /**
      * Factory method to easily create a {@link SlicedModel} instance from a set of entities and pagination metadata.
      *
      * @param content  must not be {@literal null}.
@@ -290,6 +279,17 @@ public class SlicedModel<T> extends CollectionModel<T> {
         }
 
         return SlicedModel.of(resources, metadata);
+    }
+
+    /**
+     * Returns the pagination metadata.
+     *
+     * @return the metadata
+     */
+    @JsonProperty("page")
+    @Nullable
+    public SliceMetadata getMetadata() {
+        return metadata;
     }
 
     /**

@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.web.controller.AuthorController;
 import net.ancronik.cookbook.backend.web.controller.RecipeController;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -15,25 +15,25 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Assembler for {@link RecipeBasicInfoDto} from {@link Recipe}.
+ * Assembler for {@link RecipeModel} from {@link Recipe}.
  *
  * @author Nikola Presecki
  */
 @Component
-public class RecipeBasicInfoDtoAssembler extends RepresentationModelAssemblerSupport<Recipe, RecipeBasicInfoDto> {
+public class RecipeModelAssembler extends RepresentationModelAssemblerSupport<Recipe, RecipeModel> {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RecipeBasicInfoDtoAssembler(ModelMapper modelMapper) {
-        super(RecipeController.class, RecipeBasicInfoDto.class);
+    public RecipeModelAssembler(ModelMapper modelMapper) {
+        super(RecipeController.class, RecipeModel.class);
         this.modelMapper = modelMapper;
     }
 
-    @Override
     @SneakyThrows
-    public RecipeBasicInfoDto toModel(@NonNull Recipe entity) {
-        RecipeBasicInfoDto dto = modelMapper.map(entity, RecipeBasicInfoDto.class);
+    @Override
+    public RecipeModel toModel(@NonNull Recipe entity) {
+        RecipeModel dto = modelMapper.map(entity, RecipeModel.class);
 
         dto.add(linkTo(methodOn(RecipeController.class).getRecipeById(dto.getId())).withSelfRel());
         dto.add(linkTo(methodOn(RecipeController.class).getRecipesForCategory(dto.getCategory(), null)).withRel("search_category"));
@@ -41,6 +41,5 @@ public class RecipeBasicInfoDtoAssembler extends RepresentationModelAssemblerSup
 
         return dto;
     }
-
 
 }

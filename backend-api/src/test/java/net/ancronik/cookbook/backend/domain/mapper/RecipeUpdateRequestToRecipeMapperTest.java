@@ -37,8 +37,8 @@ public class RecipeUpdateRequestToRecipeMapperTest {
             assertEquals(request.getIngredientList().get(i).getMeasurementUnit(), recipe.getIngredientList().get(i).getMeasurementUnit());
         }
         assertEquals(request.getPreparationInstructions(), recipe.getPreparationInstructions());
-        assertEquals(request.getPreparationTime(), recipe.getPreparationTime());
-        assertEquals(request.getCookingTime(), recipe.getCookingTime());
+        assertEquals(request.getPreparationTimeInMinutes(), recipe.getPreparationTimeInMinutes());
+        assertEquals(request.getCookingTimeInMinutes(), recipe.getCookingTimeInMinutes());
         assertEquals(request.getCookingInstructions(), recipe.getCookingInstructions());
         assertNull(recipe.getDateCreated());
         assertNull(recipe.getDateLastUpdated());

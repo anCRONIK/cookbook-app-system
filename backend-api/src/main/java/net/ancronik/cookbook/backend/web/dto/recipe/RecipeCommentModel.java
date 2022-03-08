@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "comments", itemRelation = "comment")
 @JsonRootName(value = "comment")
-public class RecipeCommentDto extends RepresentationModel<RecipeCommentDto> {
+public class RecipeCommentModel extends RepresentationModel<RecipeCommentModel> {
 
     private String username;
 

@@ -5,7 +5,7 @@ import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistExce
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
-import net.ancronik.cookbook.backend.web.dto.author.AuthorDto;
+import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
 
 /**
@@ -23,7 +23,7 @@ public interface AuthorService {
      * @throws DataDoesNotExistException in case that author does not exist
      * @throws GenericDatabaseException  in case of db exception
      */
-    AuthorDto getAuthor(@NonNull String id) throws DataDoesNotExistException, GenericDatabaseException;
+    AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException, GenericDatabaseException;
 
     /**
      * Method for creating new author.
@@ -33,7 +33,7 @@ public interface AuthorService {
      * @throws IllegalDataInRequestException in case that request data is invalid
      * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorDto createAuthor(@NonNull AuthorCreateRequest request) throws IllegalDataInRequestException, GenericDatabaseException;
+    AuthorModel createAuthor(@NonNull AuthorCreateRequest request) throws IllegalDataInRequestException, GenericDatabaseException;
 
     /**
      * Method for updating author.
@@ -45,5 +45,5 @@ public interface AuthorService {
      * @throws IllegalDataInRequestException in case that request data is invalid
      * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorDto updateAuthor(String id, @NonNull AuthorUpdateRequest request) throws IllegalDataInRequestException, DataDoesNotExistException, GenericDatabaseException;
+    AuthorModel updateAuthor(String id, @NonNull AuthorUpdateRequest request) throws IllegalDataInRequestException, DataDoesNotExistException, GenericDatabaseException;
 }

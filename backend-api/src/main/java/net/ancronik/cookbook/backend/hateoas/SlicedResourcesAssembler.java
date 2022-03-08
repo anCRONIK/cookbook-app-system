@@ -48,6 +48,10 @@ public class SlicedResourcesAssembler<T> implements RepresentationModelAssembler
         this.baseUri = Optional.ofNullable(baseUri);
     }
 
+    private static String currentRequest() {
+        return ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
+    }
+
     /**
      * Configures whether to always add {@code first} and {@code last} links to the {@link SlicedModel} created. Defaults
      * to {@literal false} which means that {@code first} and {@code last} links only appear in conjunction with
@@ -268,9 +272,5 @@ public class SlicedResourcesAssembler<T> implements RepresentationModelAssembler
 
     private String baseUriOrCurrentRequest() {
         return baseUri.map(Object::toString).orElseGet(SlicedResourcesAssembler::currentRequest);
-    }
-
-    private static String currentRequest() {
-        return ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
     }
 }

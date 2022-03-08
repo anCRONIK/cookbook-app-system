@@ -3,16 +3,17 @@ package net.ancronik.cookbook.backend.web.dto.author;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.CodePointLength;
 
-import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthorCreateRequest {
 
+    @NotBlank
+    @CodePointLength(min = 2, max = 12)
     private String username;
-
-    private LocalDate dateOfBirth;
 
 }

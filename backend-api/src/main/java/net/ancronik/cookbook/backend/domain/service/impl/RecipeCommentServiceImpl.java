@@ -11,7 +11,7 @@ import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
-import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentDto;
+import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RecipeCommentServiceImpl implements RecipeCommentService {
 
-    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentDto> recipeCommentDtoAssembler;
+    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler;
 
     private final RecipeCommentRepository recipeCommentRepository;
 
@@ -43,20 +43,20 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     private final AuthenticationService authenticationService;
 
     @Autowired
-    public RecipeCommentServiceImpl(RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentDto> recipeCommentDtoAssembler, RecipeCommentRepository recipeCommentRepository, RecipeRepository recipeRepository, AuthenticationService authenticationService) {
-        this.recipeCommentDtoAssembler = recipeCommentDtoAssembler;
+    public RecipeCommentServiceImpl(RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler, RecipeCommentRepository recipeCommentRepository, RecipeRepository recipeRepository, AuthenticationService authenticationService) {
+        this.RecipeCommentModelAssembler = RecipeCommentModelAssembler;
         this.recipeCommentRepository = recipeCommentRepository;
         this.recipeRepository = recipeRepository;
         this.authenticationService = authenticationService;
     }
 
     @Override
-    public Slice<RecipeCommentDto> getCommentsForRecipe(@NonNull Long id, @NonNull Pageable pageable) throws DataDoesNotExistException {
+    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull Long id, @NonNull Pageable pageable) throws DataDoesNotExistException {
         checkIfRecipeExists(id);
 
         Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeId(id, pageable);
 
-        List<RecipeCommentDto> dtoList = data.getContent().stream().map(recipeCommentDtoAssembler::toModel).collect(Collectors.toList());
+        List<RecipeCommentModel> dtoList = data.getContent().stream().map(RecipeCommentModelAssembler::toModel).collect(Collectors.toList());
 
         return new SliceImpl<>(dtoList, data.getPageable(), data.hasNext());
     }
@@ -64,11 +64,6 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     @Override
     public void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment) throws DataDoesNotExistException, IllegalDataInRequestException {
         checkIfRecipeExists(id);
-
-        if (!StringUtils.hasText(comment.getText())) {
-            LOG.error("Comment text is null or empty");
-            throw new IllegalDataInRequestException("Comment text can not be null or empty");
-        }
 
         String username = authenticationService.getAuthenticatedUsername();
 
@@ -78,7 +73,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
         recipeCommentRepository.save(recipeComment);
     }
 
-    private void checkIfRecipeExists(@NonNull Long id) throws DataDoesNotExistException {
+    private void checkIfRecipeExists(Long id) throws DataDoesNotExistException {
         if (!recipeRepository.existsById(id)) {
             LOG.error("Recipe with id [{}] does not exists in db so there won't be any operation for comments", id);
             throw new DataDoesNotExistException("Recipe with given id does not exists. Id: " + id);
