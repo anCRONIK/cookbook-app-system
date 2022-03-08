@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -17,17 +19,11 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeComment {
+public class RecipeComment implements Serializable {
 
-    //TODO checks
-    @Column("recipe_id")
-    private Long recipeId;
-    //TODO checks
-    private String username;
-    //TODO checks
+    @PrimaryKey
+    RecipeCommentPK recipeCommentPK;
+
     private String text;
-    //TODO checks
-    @Column("date_created")
-    private LocalDateTime dateCreated;
 
 }

@@ -7,13 +7,14 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Table("authors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Author {
+public class Author implements Serializable {
 
     //TODO limits
     @PrimaryKey

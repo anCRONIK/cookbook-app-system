@@ -3,7 +3,7 @@ package net.ancronik.cookbook.backend.domain.entity;
 import lombok.Data;
 
 @Data
-public class User {
+public class AppUser {
 
     private Integer id;
 

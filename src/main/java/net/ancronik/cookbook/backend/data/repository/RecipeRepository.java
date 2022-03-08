@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @author Nikola Presecki
  */
 @Repository
-public interface RecipeRepository extends CassandraRepository<Recipe, Integer> {
+public interface RecipeRepository extends CassandraRepository<Recipe, Long> {
 }

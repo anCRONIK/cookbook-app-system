@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS cookbook.recipe_comments (
     text TEXT,
     date_created TIMESTAMP,
     PRIMARY KEY (recipe_id, username, date_created)
-);
+) WITH CLUSTERING ORDER BY (date_created DESC);
 
 -- Create measurement units table
 CREATE TABLE IF NOT EXISTS cookbook.measurement_units (

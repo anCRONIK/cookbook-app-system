@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.io.Serializable;
+
 /**
  * Model representing recipe category.
  *
@@ -15,7 +17,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class RecipeCategory {
+public class RecipeCategory implements Serializable {
 
     @PrimaryKey
     private String category;
