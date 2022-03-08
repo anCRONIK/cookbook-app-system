@@ -1,10 +1,19 @@
-# cookbook-backend
-Backend application for cookbook app
+In development
 
-not using relational database because NoSql databases are better for this purpose as we have only two entities and if we would use
-tables, the one for ingredients would be huge (can be separated into few table depending on recipe type (desert, main course, appetizer, etc)) 
+Complete app system for some simple online _Cookbook_.
+This project is created for learning new technologies and sharpening current skill. It shouldn't be used in a finished product.
 
+All projects are in single repository to be more accessible, otherwise, every app would have own repository.
 
-Liquibase should be run using mvn, need to add some migration tool that supports Cassandra to start with app.
-
-Jacoco to run unit and integration test separately
+Full app system will consist of:
+- backend application (Spring Boot, Spring HATEOAS (HAL structure), Cassandra, JWT for security, integration with CDN for images/videos) : handling all operations regarding to the application
+- security server (Spring Boot, Spring OAUTH, Postgres) : handling user registration and authentication
+- frontend application (ReactJS)
+- mobile application (Flutter)
+- databases: Postgres, Cassandra
+- CDN ?
+- LB, RP: Nginx
+- monitoring (ELK ?)
+- CI/CD: for now Github actions
+- hosting (GP?)
+- TODO: try to find some use case for JMS or streaming integration
