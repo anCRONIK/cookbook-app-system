@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.RecipeComment;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentPK;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class RecipeCommentModelAssemblerTest {
 
     RecipeCommentModelAssembler assembler = new RecipeCommentModelAssembler(new ModelMapper());

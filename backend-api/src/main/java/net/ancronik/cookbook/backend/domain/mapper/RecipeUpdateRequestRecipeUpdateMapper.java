@@ -14,20 +14,18 @@ import org.springframework.stereotype.Component;
  * @author Nikola Presecki
  */
 @Component
-public class RecipeUpdateRequestToRecipeMapper implements Mapper<RecipeUpdateRequest, Recipe> {
+public class RecipeUpdateRequestRecipeUpdateMapper implements UpdateMapper<RecipeUpdateRequest, Recipe> {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RecipeUpdateRequestToRecipeMapper(ModelMapper modelMapper) {
+    public RecipeUpdateRequestRecipeUpdateMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public Recipe map(@NonNull RecipeUpdateRequest request) {
-        Recipe recipe = modelMapper.map(request, Recipe.class);
+    public void update(@NonNull RecipeUpdateRequest request, @NonNull Recipe recipe) {
+        modelMapper.map(request, recipe);
         recipe.setCategory(new RecipeCategory(request.getCategory()));
-
-        return recipe;
     }
 }

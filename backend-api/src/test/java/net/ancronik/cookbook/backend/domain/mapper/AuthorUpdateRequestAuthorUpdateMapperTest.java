@@ -1,7 +1,7 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
-import liquibase.pro.packaged.A;
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Author;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
 import org.junit.jupiter.api.Tag;
@@ -12,10 +12,10 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("unit")
-public class AuthorUpdateRequestToAuthorMapperTest {
+@Tag(TestTypes.UNIT)
+public class AuthorUpdateRequestAuthorUpdateMapperTest {
 
-    AuthorUpdateRequestToAuthorMapper mapper = new AuthorUpdateRequestToAuthorMapper(new ModelMapper());
+    AuthorUpdateRequestAuthorUpdateMapper mapper = new AuthorUpdateRequestAuthorUpdateMapper(new ModelMapper());
 
     @Test
     public void map_NullGiven_ThrowException() {

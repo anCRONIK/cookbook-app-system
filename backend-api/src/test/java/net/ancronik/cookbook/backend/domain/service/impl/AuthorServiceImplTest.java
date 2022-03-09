@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.Author;
@@ -8,7 +9,7 @@ import net.ancronik.cookbook.backend.data.model.AuthorMockData;
 import net.ancronik.cookbook.backend.data.repository.AuthorRepository;
 import net.ancronik.cookbook.backend.domain.assembler.AuthorModelAssembler;
 import net.ancronik.cookbook.backend.domain.mapper.AuthorCreateRequestToAuthorMapper;
-import net.ancronik.cookbook.backend.domain.mapper.AuthorUpdateRequestToAuthorMapper;
+import net.ancronik.cookbook.backend.domain.mapper.AuthorUpdateRequestAuthorUpdateMapper;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@Tag("junit")
+@Tag(TestTypes.UNIT)
 public class AuthorServiceImplTest {
 
     private final ModelMapper modelMapper = new ModelMapper();
@@ -35,9 +36,9 @@ public class AuthorServiceImplTest {
 
     private final AuthorCreateRequestToAuthorMapper authorCreateRequestToAuthorMapper = new AuthorCreateRequestToAuthorMapper(modelMapper);
 
-    private final AuthorUpdateRequestToAuthorMapper authorUpdateRequestToAuthorMapper = new AuthorUpdateRequestToAuthorMapper(modelMapper);
+    private final AuthorUpdateRequestAuthorUpdateMapper authorUpdateRequestAuthorUpdateMapper = new AuthorUpdateRequestAuthorUpdateMapper(modelMapper);
 
-    private final AuthorServiceImpl authorService = new AuthorServiceImpl(authorModelAssembler, mockAuthorRepository, authorCreateRequestToAuthorMapper, authorUpdateRequestToAuthorMapper);
+    private final AuthorServiceImpl authorService = new AuthorServiceImpl(authorModelAssembler, mockAuthorRepository, authorCreateRequestToAuthorMapper, authorUpdateRequestAuthorUpdateMapper);
 
 
     @Test
@@ -169,7 +170,7 @@ public class AuthorServiceImplTest {
         authorUpdateRequest.setBio("Awesome Chef!");
 
         when(mockAuthorRepository.findById(id)).thenReturn(Optional.of(author));
-        authorUpdateRequestToAuthorMapper.update(authorUpdateRequest, author);
+        authorUpdateRequestAuthorUpdateMapper.update(authorUpdateRequest, author);
         when(mockAuthorRepository.save(any(Author.class))).thenReturn(author);
 
         AuthorModel dto = authorService.updateAuthor(id, authorUpdateRequest);

@@ -3,6 +3,7 @@ package net.ancronik.cookbook.backend.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(RecipeController.class)
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class RecipeControllerDataValidationTest {
 
     //there are no validation tests for update operation because they are covered by create request

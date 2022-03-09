@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class MeasurementUnitModelAssemblerTest {
 
     MeasurementUnitModelAssembler assembler = new MeasurementUnitModelAssembler(new ModelMapper());

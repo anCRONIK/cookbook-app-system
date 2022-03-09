@@ -2,6 +2,7 @@ package net.ancronik.cookbook.backend.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.Util;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(RecipeController.class)
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class RecipeControllerTest {
 
     private static final String GET_RECIPES_PATH = "/api/v1/recipes";

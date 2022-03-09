@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.domain.service.AuthorService;
@@ -33,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(AuthorController.class)
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class AuthorControllerTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

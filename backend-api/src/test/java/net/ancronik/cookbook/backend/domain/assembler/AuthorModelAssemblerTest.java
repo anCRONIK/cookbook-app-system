@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Author;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import org.junit.jupiter.api.Tag;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class AuthorModelAssemblerTest {
 
     AuthorModelAssembler assembler = new AuthorModelAssembler(new ModelMapper());

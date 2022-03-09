@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
@@ -9,7 +10,7 @@ import org.modelmapper.ModelMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class RecipeCreateRequestToRecipeMapperTest {
 
     RecipeCreateRequestToRecipeMapper mapper = new RecipeCreateRequestToRecipeMapper(new ModelMapper());

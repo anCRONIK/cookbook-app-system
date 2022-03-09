@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Author;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
 import org.junit.jupiter.api.Tag;
@@ -8,7 +9,7 @@ import org.modelmapper.ModelMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class AuthorCreateRequestToAuthorMapperTest {
 
     AuthorCreateRequestToAuthorMapper mapper = new AuthorCreateRequestToAuthorMapper(new ModelMapper());

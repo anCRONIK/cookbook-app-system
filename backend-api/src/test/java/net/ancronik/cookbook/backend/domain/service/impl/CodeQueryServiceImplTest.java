@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
@@ -22,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class CodeQueryServiceImplTest {
 
     private final MeasurementUnitRepository mockMeasurementUnitRepository = Mockito.mock(MeasurementUnitRepository.class);

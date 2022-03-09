@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
@@ -9,21 +10,24 @@ import org.modelmapper.ModelMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("unit")
-public class RecipeUpdateRequestToRecipeMapperTest {
+@Tag(TestTypes.UNIT)
+public class RecipeUpdateRequestRecipeUpdateMapperTest {
 
-    RecipeUpdateRequestToRecipeMapper mapper = new RecipeUpdateRequestToRecipeMapper(new ModelMapper());
+    RecipeUpdateRequestRecipeUpdateMapper mapper = new RecipeUpdateRequestRecipeUpdateMapper(new ModelMapper());
 
     @Test
     public void map_NullGiven_ThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> mapper.map(null));
+        assertThrows(IllegalArgumentException.class, () -> mapper.update(null, new Recipe()));
+        assertThrows(IllegalArgumentException.class, () -> mapper.update(new RecipeUpdateRequest(), null));
     }
 
     @Test
     public void map_DtoGiven_ReturnPopulatedModel() {
         RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
 
-        Recipe recipe = mapper.map(request);
+        Recipe recipe = new Recipe();
+
+        mapper.update(request, recipe);
 
         assertNull(recipe.getId());
         assertEquals(request.getTitle(), recipe.getTitle());

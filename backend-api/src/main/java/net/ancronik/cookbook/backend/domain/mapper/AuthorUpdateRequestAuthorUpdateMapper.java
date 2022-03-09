@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
  * @author Nikola Presecki
  */
 @Component
-public class AuthorUpdateRequestToAuthorMapper implements UpdateMapper<AuthorUpdateRequest, Author> {
+public class AuthorUpdateRequestAuthorUpdateMapper implements UpdateMapper<AuthorUpdateRequest, Author> {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public AuthorUpdateRequestToAuthorMapper(ModelMapper modelMapper) {
+    public AuthorUpdateRequestAuthorUpdateMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

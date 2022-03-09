@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.web.controller;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(MeasurementUnitController.class)
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class MeasurementUnitControllerTest {
 
     @Autowired

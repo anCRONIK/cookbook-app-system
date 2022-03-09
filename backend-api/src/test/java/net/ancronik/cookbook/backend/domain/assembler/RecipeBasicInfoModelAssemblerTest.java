@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.assembler;
 
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.Ingredient;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
@@ -14,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class RecipeBasicInfoModelAssemblerTest {
 
     RecipeBasicInfoModelAssembler assembler = new RecipeBasicInfoModelAssembler(new ModelMapper());

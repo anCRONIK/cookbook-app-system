@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.data.model.RecipeComment;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentMockData;
@@ -27,7 +28,7 @@ import java.time.ZoneId;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Tag("junit")
+@Tag(TestTypes.UNIT)
 public class RecipeCommentServiceImplTest {
 
     private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler = new RecipeCommentModelAssembler(new ModelMapper());

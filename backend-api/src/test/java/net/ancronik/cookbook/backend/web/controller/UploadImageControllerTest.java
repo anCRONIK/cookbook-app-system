@@ -2,6 +2,7 @@ package net.ancronik.cookbook.backend.web.controller;
 
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.StringTestUtils;
+import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.CdnException;
 import net.ancronik.cookbook.backend.domain.service.CdnService;
 import net.ancronik.cookbook.backend.web.dto.UploadImageResponse;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(UploadImageController.class)
-@Tag("unit")
+@Tag(TestTypes.UNIT)
 public class UploadImageControllerTest {
 
     @Autowired
