@@ -47,6 +47,9 @@ public class AuthorServiceImpl implements AuthorService {
             Author author = authorRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Author with given username does not exists: " + id));
 
             return authorModelAssembler.toModel(author);
+        } catch (DataDoesNotExistException e) {
+            LOG.error("Author with id [{}] does not exists", id);
+            throw e;
         } catch (Exception e) {
             LOG.error("Error while fetching author by id [{}]", id, e);
             throw new GenericDatabaseException(e);
@@ -73,6 +76,9 @@ public class AuthorServiceImpl implements AuthorService {
             authorUpdateRequestToAuthorMapper.update(request, author);
 
             return authorModelAssembler.toModel(authorRepository.save(author));
+        } catch (DataDoesNotExistException e) {
+            LOG.error("Author with id [{}] does not exists", id);
+            throw e;
         } catch (Exception e) {
             LOG.error("Error while updating author. {}", request, e);
             throw new GenericDatabaseException(e);
