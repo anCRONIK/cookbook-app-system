@@ -30,10 +30,9 @@ public interface AuthorService {
      *
      * @param request request
      * @return newly created author
-     * @throws IllegalDataInRequestException in case that request data is invalid
      * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorModel createAuthor(@NonNull AuthorCreateRequest request) throws IllegalDataInRequestException, GenericDatabaseException;
+    AuthorModel createAuthor(@NonNull AuthorCreateRequest request) throws GenericDatabaseException;
 
     /**
      * Method for updating author.
@@ -42,8 +41,7 @@ public interface AuthorService {
      * @param request request
      * @return updated author
      * @throws DataDoesNotExistException     in case that author does not exist
-     * @throws IllegalDataInRequestException in case that request data is invalid
      * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorModel updateAuthor(String id, @NonNull AuthorUpdateRequest request) throws IllegalDataInRequestException, DataDoesNotExistException, GenericDatabaseException;
+    AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException, GenericDatabaseException;
 }

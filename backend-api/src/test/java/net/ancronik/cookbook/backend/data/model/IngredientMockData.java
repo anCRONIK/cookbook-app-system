@@ -16,8 +16,8 @@ public class IngredientMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new Ingredient(
-                    getRandomStringInLowerCase(random.nextInt(100)),
-                    "" + random.nextInt(100), getRandomStringInLowerCase(4))
+                    getRandomStringInLowerCase(random.nextInt(100)+1),
+                    "" + random.nextInt(100), getRandomStringInLowerCase(4)+1)
             );
         }
 

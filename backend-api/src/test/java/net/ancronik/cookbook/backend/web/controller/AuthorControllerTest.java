@@ -126,24 +126,6 @@ public class AuthorControllerTest {
 
     @SneakyThrows
     @Test
-    public void createAuthor_NoFullDataInRequest_ValidationExceptionThrown_ReturnBadRequest() {
-        when(mockAuthorService.createAuthor(any())).thenThrow(new IllegalDataInRequestException("no data"));
-
-        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_AUTHOR_PATH)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content("{}")
-                )
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andReturn();
-
-        verifyNoInteractions(mockAuthorService);
-    }
-
-    @SneakyThrows
-    @Test
     public void createAuthor_ValidRequest_ReturnCreatedEntry() {
         AuthorCreateRequest request = new AuthorCreateRequest("testni_user");
 

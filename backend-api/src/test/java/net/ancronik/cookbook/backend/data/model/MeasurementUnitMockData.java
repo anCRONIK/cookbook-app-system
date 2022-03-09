@@ -15,9 +15,9 @@ public class MeasurementUnitMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new MeasurementUnit(
-                    getRandomStringInLowerCase(random.nextInt(20)),
-                    getRandomStringInLowerCase(random.nextInt(20)),
-                    getRandomStringInLowerCase(random.nextInt(20)),
+                    getRandomStringInLowerCase(random.nextInt(20)+1),
+                    getRandomStringInLowerCase(random.nextInt(20)+1),
+                    getRandomStringInLowerCase(random.nextInt(20)+1),
                     random.nextBoolean(),
                     random.nextBoolean())
             );

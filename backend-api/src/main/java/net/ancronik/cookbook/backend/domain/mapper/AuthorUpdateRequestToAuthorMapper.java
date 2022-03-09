@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Mapper for {@link AuthorUpdateRequest} to {@link Author}.
+ * Mapper updating  {@link Author} with data from {@link AuthorUpdateRequest}.
  *
  * @author Nikola Presecki
  */
 @Component
-public class AuthorUpdateRequestToAuthorMapper implements Mapper<AuthorUpdateRequest, Author> {
+public class AuthorUpdateRequestToAuthorMapper implements UpdateMapper<AuthorUpdateRequest, Author> {
 
     private final ModelMapper modelMapper;
 
@@ -23,8 +23,7 @@ public class AuthorUpdateRequestToAuthorMapper implements Mapper<AuthorUpdateReq
     }
 
     @Override
-    public Author map(@NonNull AuthorUpdateRequest request) {
-
-        return modelMapper.map(request, Author.class);
+    public void update(@NonNull AuthorUpdateRequest authorUpdateRequest, @NonNull Author author) {
+        modelMapper.map(authorUpdateRequest, author);
     }
 }

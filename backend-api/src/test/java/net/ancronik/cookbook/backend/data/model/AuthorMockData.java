@@ -17,7 +17,7 @@ public class AuthorMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new Author(
-                    getRandomStringInLowerCase(random.nextInt(12)),
+                    getRandomStringInLowerCase(random.nextInt(12)+1),
                     getRandomStringInLowerCase(random.nextInt(20)),
                     LocalDate.now().minusMonths(random.nextInt(100)),
                     getRandomStringInLowerCase(random.nextInt(20)),

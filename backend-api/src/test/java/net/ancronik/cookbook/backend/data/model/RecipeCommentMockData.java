@@ -18,10 +18,10 @@ public class RecipeCommentMockData {
             RecipeComment entity = new RecipeComment(
                     new RecipeCommentPK(
                             (long) random.nextInt(Integer.MAX_VALUE),
-                            StringTestUtils.getRandomStringInLowerCase(random.nextInt(20)),
+                            StringTestUtils.getRandomStringInLowerCase(random.nextInt(20)+1),
                             LocalDateTime.now().minusDays(random.nextInt(100) + 1)
                     ),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(200))
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)+1)
             );
 
             data.add(entity);

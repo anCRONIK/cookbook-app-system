@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.domain.mapper;
 
+import liquibase.pro.packaged.A;
 import net.ancronik.cookbook.backend.StringTestUtils;
 import net.ancronik.cookbook.backend.data.model.Author;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
@@ -18,14 +19,18 @@ public class AuthorUpdateRequestToAuthorMapperTest {
 
     @Test
     public void map_NullGiven_ThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> mapper.map(null));
+        assertThrows(IllegalArgumentException.class, () -> mapper.update(null, null));
+        assertThrows(IllegalArgumentException.class, () -> mapper.update(null, new Author()));
+        assertThrows(IllegalArgumentException.class, () -> mapper.update(new AuthorUpdateRequest(), null));
     }
 
     @Test
     public void map_DtoGiven_ReturnPopulatedModel() {
         AuthorUpdateRequest request = new AuthorUpdateRequest("Roki Novi", LocalDate.of(2020, 2, 2), null, null);
 
-        Author author = mapper.map(request);
+        Author author = new Author();
+
+        mapper.update(request, author);
 
         assertNotNull(author);
         assertEquals(request.getFullName(), author.getFullName());
@@ -39,9 +44,10 @@ public class AuthorUpdateRequestToAuthorMapperTest {
     public void map_DtoGiven_ReturnPopulatedModel2() {
         AuthorUpdateRequest request = new AuthorUpdateRequest(null, null, null, null);
 
-        Author author = mapper.map(request);
+        Author author = new Author();
 
-        assertNotNull(author);
+        mapper.update(request, author);
+
         assertNull(author.getFullName());
         assertNull(author.getDateOfBirth());
         assertNull(author.getImageUrl());
@@ -53,9 +59,13 @@ public class AuthorUpdateRequestToAuthorMapperTest {
     public void map_DtoGiven_ReturnPopulatedModel3() {
         AuthorUpdateRequest request = new AuthorUpdateRequest("Roki Novi", LocalDate.of(2020, 2, 2), "Nothing special", StringTestUtils.generateRandomUrl());
 
-        Author author = mapper.map(request);
+        Author author = new Author();
+        author.setUsername("test");
+
+        mapper.update(request, author);
 
         assertNotNull(author);
+        assertEquals("test", author.getUsername());
         assertEquals(request.getFullName(), author.getFullName());
         assertEquals(request.getDateOfBirth(), author.getDateOfBirth());
         assertEquals(request.getImageUrl(), author.getImageUrl());
