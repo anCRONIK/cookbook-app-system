@@ -1,6 +1,5 @@
 package net.ancronik.cookbook.backend.web.controller;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
@@ -14,11 +13,13 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller handling all operations for the {@link net.ancronik.cookbook.backend.data.model.Author}.
@@ -28,7 +29,6 @@ import javax.validation.constraints.Size;
 @RestController
 @RequestMapping(AuthorController.DEFAULT_MAPPING)
 @Slf4j
-@Validated
 public class AuthorController {
 
     public static final String DEFAULT_MAPPING = "/api/v1/authors";
@@ -41,7 +41,7 @@ public class AuthorController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<AuthorModel> getAuthorById(@PathVariable @Size(min = 2, max = 12) String id)
+    public ResponseEntity<AuthorModel> getAuthorById(@PathVariable String id)
             throws DataDoesNotExistException, GenericDatabaseException {
         LOG.info("Fetching author with id [{}]", id);
 
@@ -50,7 +50,7 @@ public class AuthorController {
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     // TODO secure this endpoint so that only user auth app can all it
-    public ResponseEntity<AuthorModel> createAuthor(@RequestBody @Valid AuthorCreateRequest request)
+    public ResponseEntity<AuthorModel> createAuthor(@RequestBody AuthorCreateRequest request)
             throws IllegalDataInRequestException, GenericDatabaseException {
         LOG.info("Creating new author [{}]", request);
 
@@ -61,7 +61,7 @@ public class AuthorController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     // TODO secure this endpoint so that only user can update this
-    public ResponseEntity<AuthorModel> updateAuthor(@PathVariable @Size(min = 2, max = 12) String id, @RequestBody @Valid AuthorUpdateRequest request)
+    public ResponseEntity<AuthorModel> updateAuthor(@PathVariable String id, @RequestBody AuthorUpdateRequest request)
             throws DataDoesNotExistException, IllegalDataInRequestException, GenericDatabaseException {
         LOG.info("Updating author [{}]", id);
 

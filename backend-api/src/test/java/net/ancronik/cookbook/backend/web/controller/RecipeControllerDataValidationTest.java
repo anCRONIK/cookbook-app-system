@@ -11,15 +11,24 @@ import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
+import org.cassandraunit.spring.CassandraDataSet;
+import org.cassandraunit.spring.CassandraUnit;
+import org.cassandraunit.spring.CassandraUnitTestExecutionListener;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -30,8 +39,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
-@WebMvcTest(RecipeController.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@CassandraUnit
+@TestExecutionListeners({ CassandraUnitTestExecutionListener.class })
+//@CassandraDataSet(value = { "setupTables.sql" }, keyspace = "cookbook")
 @Tag(TestTypes.UNIT)
 public class RecipeControllerDataValidationTest {
 
@@ -48,12 +60,6 @@ public class RecipeControllerDataValidationTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private RecipeService mockRecipeService;
-    @MockBean
-    private RecipeCommentService mockRecipeCommentService;
-    @MockBean
-    private CodeQueryService mockCodeQueryService;
 
     @Test
     @SneakyThrows
@@ -68,8 +74,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
     @Test
@@ -85,8 +89,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
     @SneakyThrows
@@ -107,8 +109,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @SneakyThrows
@@ -129,8 +129,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
     }
 
     @SneakyThrows
@@ -151,8 +149,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -173,8 +170,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -195,8 +191,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -217,8 +212,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -239,8 +233,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -263,8 +256,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -287,8 +279,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -309,8 +300,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -331,8 +321,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -353,8 +342,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -375,8 +363,7 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
@@ -397,16 +384,13 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-        verifyNoInteractions(mockRecipeService);
-        verifyNoInteractions(mockRecipeCommentService);
+
     }
 
     @SneakyThrows
     @Test
     public void addCommentToRecipe_CommentTooLong_ReturnValidationError() {
         AddRecipeCommentRequest request = new AddRecipeCommentRequest(StringTestUtils.getRandomStringInLowerCase(10001));
-
-        doNothing().when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -420,17 +404,12 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
 
-
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
     @SneakyThrows
     @Test
     public void addCommentToRecipe_IdIsNegativeNumber_ReturnValidationError() {
         AddRecipeCommentRequest request = new AddRecipeCommentRequest(StringTestUtils.getRandomStringInLowerCase(101));
-
-        doNothing().when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, -123))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -443,10 +422,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.errors.id").isNotEmpty())
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
-
-
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
     @Test
@@ -465,9 +440,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.errors.id").isNotEmpty())
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
-
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
     @Test
@@ -482,9 +454,6 @@ public class RecipeControllerDataValidationTest {
                 .andExpect(jsonPath("$.errors.id").isNotEmpty())
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andReturn();
-
-        verifyNoInteractions(mockRecipeCommentService);
-        verifyNoInteractions(mockRecipeService);
     }
 
 }

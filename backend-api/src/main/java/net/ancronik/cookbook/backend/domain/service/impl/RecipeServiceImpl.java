@@ -131,7 +131,7 @@ public class RecipeServiceImpl implements RecipeService {
                 return recipeModelAssembler.toModel(recipeRepository.save(recipe));
             } else {
                 //TODO throws some exeption
-                throw UnsupportedOperationException("bla");
+                throw new UnsupportedOperationException("bla");
             }
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);

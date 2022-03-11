@@ -45,7 +45,6 @@ public class RecipeCommentServiceImplTest {
     @SneakyThrows
     public void getCommentsForRecipe_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> recipeCommentService.getCommentsForRecipe(null, Pageable.unpaged()));
-        assertThrows(IllegalArgumentException.class, () -> recipeCommentService.getCommentsForRecipe(1L, null));
 
         verifyNoInteractions(mockRecipeCommentRepository);
         verifyNoInteractions(mockRecipeRepository);

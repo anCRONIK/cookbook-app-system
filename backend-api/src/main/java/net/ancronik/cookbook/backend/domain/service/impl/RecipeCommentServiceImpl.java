@@ -12,6 +12,7 @@ import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@Validated
 public class RecipeCommentServiceImpl implements RecipeCommentService {
 
     private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> recipeCommentModelAssembler;
@@ -53,7 +57,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     }
 
     @Override
-    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull Long id, @PageableDefault Pageable pageable) throws DataDoesNotExistException {
+    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull @Range(min = 1L) Long id, @PageableDefault Pageable pageable) throws DataDoesNotExistException {
         LOG.debug("Searching comments for recipe [{}] with pageable [{}]", id, pageable);
 
         checkIfRecipeExists(id);
@@ -66,7 +70,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     }
 
     @Override
-    public void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment)
+    public void addCommentToRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @Valid AddRecipeCommentRequest comment)
             throws DataDoesNotExistException {
         LOG.debug("Adding new comment to [{}] with data [{}]", id, comment);
 

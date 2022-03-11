@@ -14,6 +14,11 @@ import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Implementation of {@link AuthorService}.
@@ -22,6 +27,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
+@Validated
 public class AuthorServiceImpl implements AuthorService {
 
     private final RepresentationModelAssemblerSupport<Author, AuthorModel> authorModelAssembler;
@@ -43,7 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException {
+    public AuthorModel getAuthor(@NonNull @Size(min = 2, max = 12) String id) throws DataDoesNotExistException {
         LOG.debug("Searching author with id [{}]", id);
 
         try {
@@ -58,7 +64,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel createAuthor(@NonNull AuthorCreateRequest request) {
+    public AuthorModel createAuthor(@NonNull @Valid AuthorCreateRequest request) {
         LOG.debug("Saving new author [{}]", request);
 
         Author author = authorRepository.save(authorCreateRequestToAuthorMapper.map(request));
@@ -67,7 +73,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException {
+    public AuthorModel updateAuthor(@NonNull @Size(min = 2, max = 12) String id, @NonNull @Valid AuthorUpdateRequest request)
+            throws DataDoesNotExistException {
         LOG.debug("Updating author [{}] with data [{}]", id, request);
 
         try {

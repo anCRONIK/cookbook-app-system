@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.dao.DataAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,10 @@ public class CodeQueryServiceImplTest {
     private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitModelAssembler);
 
     @Test
-    public void getMeasurementUnits_RepositoryThrowsException_ThrowGenericDatabaseException() {
-        doThrow(new RuntimeException("test")).when(mockMeasurementUnitRepository).findAll();
+    public void getMeasurementUnits_RepositoryThrowsException_PropagateException() {
+        doThrow(new ConcurrencyFailureException("test")).when(mockMeasurementUnitRepository).findAll();
 
-        assertThrows(GenericDatabaseException.class, service::getMeasurementUnits);
+        assertThrows(DataAccessException.class, service::getMeasurementUnits);
     }
 
     @SneakyThrows
@@ -60,12 +62,16 @@ public class CodeQueryServiceImplTest {
         assertEquals(10, data.size());
     }
 
-    @SneakyThrows
     @Test
-    public void isMeasurementUnitValid_RepositoryThrowsException_ThrowGenericDatabaseException() {
-        doThrow(new RuntimeException("test")).when(mockMeasurementUnitRepository).existsById(anyString());
+    public void isMeasurementUnitValid_NullGiven_ThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> service.isMeasurementUnitValid(null));
+    }
 
-        assertThrows(GenericDatabaseException.class, () -> service.isMeasurementUnitValid("uiodsa"));
+    @Test
+    public void isMeasurementUnitValid_RepositoryThrowsException_PropagateException() {
+        doThrow(new ConcurrencyFailureException("test")).when(mockMeasurementUnitRepository).existsById(anyString());
+
+        assertThrows(DataAccessException.class, () -> service.isMeasurementUnitValid("uiodsa"));
     }
 
     @SneakyThrows
@@ -86,10 +92,10 @@ public class CodeQueryServiceImplTest {
 
 
     @Test
-    public void getRecipeCategories_RepositoryThrowsException_ThrowGenericDatabaseException() {
+    public void getRecipeCategories_RepositoryThrowsException_PropagateException() {
         doThrow(new RuntimeException("test")).when(mockRecipeCategoryRepository).findAll();
 
-        assertThrows(GenericDatabaseException.class, service::getRecipeCategories);
+        assertThrows(RuntimeException.class, service::getRecipeCategories);
     }
 
     @SneakyThrows
@@ -114,10 +120,16 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isRecipeCategoryValid_RepositoryThrowsException_ThrowGenericDatabaseException() {
+    public void isRecipeCategoryValid_NullGiven_ThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> service.isRecipeCategoryValid(null));
+    }
+
+    @SneakyThrows
+    @Test
+    public void isRecipeCategoryValid_RepositoryThrowsException_PropagateException() {
         doThrow(new RuntimeException("test")).when(mockRecipeCategoryRepository).existsById(anyString());
 
-        assertThrows(GenericDatabaseException.class, () -> service.isRecipeCategoryValid("uiodsa"));
+        assertThrows(RuntimeException.class, () -> service.isRecipeCategoryValid("uiodsa"));
     }
 
     @SneakyThrows
