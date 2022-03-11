@@ -21,18 +21,16 @@ public interface AuthorService {
      * @param id username
      * @return author
      * @throws DataDoesNotExistException in case that author does not exist
-     * @throws GenericDatabaseException  in case of db exception
      */
-    AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException, GenericDatabaseException;
+    AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException;
 
     /**
      * Method for creating new author.
      *
      * @param request request
      * @return newly created author
-     * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorModel createAuthor(@NonNull AuthorCreateRequest request) throws GenericDatabaseException;
+    AuthorModel createAuthor(@NonNull AuthorCreateRequest request);
 
     /**
      * Method for updating author.
@@ -41,7 +39,6 @@ public interface AuthorService {
      * @param request request
      * @return updated author
      * @throws DataDoesNotExistException     in case that author does not exist
-     * @throws GenericDatabaseException      in case of db exception
      */
-    AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException, GenericDatabaseException;
+    AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException;
 }

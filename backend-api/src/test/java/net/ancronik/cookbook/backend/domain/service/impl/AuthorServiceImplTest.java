@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.dao.DataAccessException;
 
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ public class AuthorServiceImplTest {
 
         when(mockAuthorRepository.findById(id)).thenThrow(new ConcurrencyFailureException("test"));
 
-        assertThrows(GenericDatabaseException.class, () -> authorService.getAuthor(id));
+        assertThrows(DataAccessException.class, () -> authorService.getAuthor(id));
 
         verify(mockAuthorRepository).findById(id);
         verifyNoMoreInteractions(mockAuthorRepository);
@@ -104,7 +105,7 @@ public class AuthorServiceImplTest {
 
         when(mockAuthorRepository.save(any())).thenThrow(new ConcurrencyFailureException("test"));
 
-        assertThrows(GenericDatabaseException.class, () -> authorService.createAuthor(authorCreateRequest));
+        assertThrows(DataAccessException.class, () -> authorService.createAuthor(authorCreateRequest));
 
         verify(mockAuthorRepository).save(any());
         verifyNoMoreInteractions(mockAuthorRepository);
@@ -142,7 +143,7 @@ public class AuthorServiceImplTest {
 
         when(mockAuthorRepository.findById(id)).thenThrow(new ConcurrencyFailureException("test"));
 
-        assertThrows(GenericDatabaseException.class, () -> authorService.updateAuthor(id, new AuthorUpdateRequest()));
+        assertThrows(DataAccessException.class, () -> authorService.updateAuthor(id, new AuthorUpdateRequest()));
 
         verify(mockAuthorRepository).findById(id);
         verifyNoMoreInteractions(mockAuthorRepository);

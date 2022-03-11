@@ -3,7 +3,6 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.Author;
 import net.ancronik.cookbook.backend.data.repository.AuthorRepository;
 import net.ancronik.cookbook.backend.domain.mapper.Mapper;
@@ -34,7 +33,9 @@ public class AuthorServiceImpl implements AuthorService {
     private final UpdateMapper<AuthorUpdateRequest, Author> authorUpdateRequestToAuthorMapper;
 
     @Autowired
-    public AuthorServiceImpl(RepresentationModelAssemblerSupport<Author, AuthorModel> authorModelAssembler, AuthorRepository authorRepository, Mapper<AuthorCreateRequest, Author> authorCreateRequestToAuthorMapper, UpdateMapper<AuthorUpdateRequest, Author> authorUpdateRequestToAuthorMapper) {
+    public AuthorServiceImpl(RepresentationModelAssemblerSupport<Author, AuthorModel> authorModelAssembler, AuthorRepository authorRepository,
+                             Mapper<AuthorCreateRequest, Author> authorCreateRequestToAuthorMapper,
+                             UpdateMapper<AuthorUpdateRequest, Author> authorUpdateRequestToAuthorMapper) {
         this.authorModelAssembler = authorModelAssembler;
         this.authorRepository = authorRepository;
         this.authorCreateRequestToAuthorMapper = authorCreateRequestToAuthorMapper;
@@ -42,36 +43,36 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException, GenericDatabaseException {
+    public AuthorModel getAuthor(@NonNull String id) throws DataDoesNotExistException {
+        LOG.debug("Searching author with id [{}]", id);
+
         try {
-            Author author = authorRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Author with given username does not exists: " + id));
+            Author author = authorRepository.findById(id)
+                    .orElseThrow(() -> new DataDoesNotExistException("Author with given username does not exists: " + id));
 
             return authorModelAssembler.toModel(author);
         } catch (DataDoesNotExistException e) {
             LOG.error("Author with id [{}] does not exists", id);
             throw e;
-        } catch (Exception e) {
-            LOG.error("Error while fetching author by id [{}]", id, e);
-            throw new GenericDatabaseException(e);
         }
     }
 
     @Override
-    public AuthorModel createAuthor(@NonNull AuthorCreateRequest request) throws GenericDatabaseException {
-        try {
-            Author author = authorRepository.save(authorCreateRequestToAuthorMapper.map(request));
+    public AuthorModel createAuthor(@NonNull AuthorCreateRequest request) {
+        LOG.debug("Saving new author [{}]", request);
 
-            return authorModelAssembler.toModel(author);
-        } catch (Exception e) {
-            LOG.error("Error while saving author. {}", request, e);
-            throw new GenericDatabaseException(e);
-        }
+        Author author = authorRepository.save(authorCreateRequestToAuthorMapper.map(request));
+
+        return authorModelAssembler.toModel(author);
     }
 
     @Override
-    public AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException, GenericDatabaseException {
+    public AuthorModel updateAuthor(@NonNull String id, @NonNull AuthorUpdateRequest request) throws DataDoesNotExistException {
+        LOG.debug("Updating author [{}] with data [{}]", id, request);
+
         try {
-            Author author = authorRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Author with given username does not exists: " + id));
+            Author author = authorRepository.findById(id)
+                    .orElseThrow(() -> new DataDoesNotExistException("Author with given username does not exists: " + id));
 
             authorUpdateRequestToAuthorMapper.update(request, author);
 
@@ -79,9 +80,6 @@ public class AuthorServiceImpl implements AuthorService {
         } catch (DataDoesNotExistException e) {
             LOG.error("Author with id [{}] does not exists", id);
             throw e;
-        } catch (Exception e) {
-            LOG.error("Error while updating author. {}", request, e);
-            throw new GenericDatabaseException(e);
         }
     }
 }

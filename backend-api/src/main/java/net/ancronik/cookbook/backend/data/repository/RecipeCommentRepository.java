@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecipeCommentRepository extends CassandraRepository<RecipeComment, RecipeCommentPK> {
 
-    Slice<RecipeComment> findAllByRecipeId(Long recipeId, Pageable pageable);
+    Slice<RecipeComment> findAllByRecipeCommentPKRecipeId(Long recipeId, Pageable pageable);
 
 }

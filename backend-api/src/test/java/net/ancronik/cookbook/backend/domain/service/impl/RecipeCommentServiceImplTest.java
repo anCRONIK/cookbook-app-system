@@ -84,14 +84,14 @@ public class RecipeCommentServiceImplTest {
         Long id = 22L;
         Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
         when(mockRecipeRepository.existsById(id)).thenReturn(true);
-        when(mockRecipeCommentRepository.findAllByRecipeId(id, pageable)).thenReturn(new SliceImpl<>(RecipeCommentMockData.generateRandomMockData(10), pageable, true));
+        when(mockRecipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable)).thenReturn(new SliceImpl<>(RecipeCommentMockData.generateRandomMockData(10), pageable, true));
 
         Slice<RecipeCommentModel> data = recipeCommentService.getCommentsForRecipe(id, pageable);
 
         assertNotNull(data);
         assertEquals(10, data.getNumberOfElements());
 
-        verify(mockRecipeCommentRepository).findAllByRecipeId(id, pageable);
+        verify(mockRecipeCommentRepository).findAllByRecipeCommentPKRecipeId(id, pageable);
         verifyNoMoreInteractions(mockRecipeCommentRepository);
         verify(mockRecipeRepository).existsById(id);
         verifyNoMoreInteractions(mockRecipeRepository);

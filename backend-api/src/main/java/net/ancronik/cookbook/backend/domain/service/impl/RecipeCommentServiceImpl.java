@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RecipeCommentServiceImpl implements RecipeCommentService {
 
-    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler;
+    private final RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> recipeCommentModelAssembler;
 
     private final RecipeCommentRepository recipeCommentRepository;
 
@@ -43,26 +43,33 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     private final AuthenticationService authenticationService;
 
     @Autowired
-    public RecipeCommentServiceImpl(RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> RecipeCommentModelAssembler, RecipeCommentRepository recipeCommentRepository, RecipeRepository recipeRepository, AuthenticationService authenticationService) {
-        this.RecipeCommentModelAssembler = RecipeCommentModelAssembler;
+    public RecipeCommentServiceImpl(RepresentationModelAssemblerSupport<RecipeComment, RecipeCommentModel> recipeCommentModelAssembler,
+                                    RecipeCommentRepository recipeCommentRepository, RecipeRepository recipeRepository,
+                                    AuthenticationService authenticationService) {
+        this.recipeCommentModelAssembler = recipeCommentModelAssembler;
         this.recipeCommentRepository = recipeCommentRepository;
         this.recipeRepository = recipeRepository;
         this.authenticationService = authenticationService;
     }
 
     @Override
-    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull Long id, @NonNull Pageable pageable) throws DataDoesNotExistException {
+    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull Long id, @PageableDefault Pageable pageable) throws DataDoesNotExistException {
+        LOG.debug("Searching comments for recipe [{}] with pageable [{}]", id, pageable);
+
         checkIfRecipeExists(id);
 
-        Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeId(id, pageable);
+        Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable);
 
-        List<RecipeCommentModel> dtoList = data.getContent().stream().map(RecipeCommentModelAssembler::toModel).collect(Collectors.toList());
+        List<RecipeCommentModel> dtoList = data.getContent().stream().map(recipeCommentModelAssembler::toModel).collect(Collectors.toList());
 
         return new SliceImpl<>(dtoList, data.getPageable(), data.hasNext());
     }
 
     @Override
-    public void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment) throws DataDoesNotExistException, IllegalDataInRequestException {
+    public void addCommentToRecipe(@NonNull Long id, @NonNull AddRecipeCommentRequest comment)
+            throws DataDoesNotExistException {
+        LOG.debug("Adding new comment to [{}] with data [{}]", id, comment);
+
         checkIfRecipeExists(id);
 
         String username = authenticationService.getAuthenticatedUsername();
