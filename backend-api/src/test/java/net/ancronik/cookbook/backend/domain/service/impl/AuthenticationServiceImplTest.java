@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(TestTypes.UNIT)
 public class AuthenticationServiceImplTest {
@@ -14,6 +15,11 @@ public class AuthenticationServiceImplTest {
     @Test
     public void getAuthenticatedUsername_ReturnMockData() {
         assertEquals("testUser", authenticationService.getAuthenticatedUsername());
+    }
+
+    @Test
+    public void isGivenUserTheRequester_ReturnMockData() {
+        assertTrue(authenticationService.isGivenUserTheRequester("roki"));
     }
 
 }

@@ -2,6 +2,8 @@ package net.ancronik.cookbook.backend.domain.service;
 
 import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 
+import javax.annotation.Nullable;
+
 /**
  * Service that handles all things regarding in app authentication.
  *
@@ -19,4 +21,12 @@ public interface AuthenticationService {
      */
     String getAuthenticatedUsername() throws EmptyDataException;
 
+    /**
+     * Method checks if given username corresponds to the authenticated user which made the request.
+     *
+     * @param username username to check, can be even null
+     * @return {@literal true} if username corresponds, otherwise false
+     * @throws EmptyDataException in case of error while checking authenticated user
+     */
+    boolean isGivenUserTheRequester(@Nullable String username) throws EmptyDataException;
 }
