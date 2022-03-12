@@ -3,6 +3,7 @@ package net.ancronik.cookbook.backend.domain.service;
 import lombok.NonNull;
 import net.ancronik.cookbook.backend.application.exceptions.CdnException;
 import net.ancronik.cookbook.backend.web.dto.UploadImageResponse;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -19,6 +20,7 @@ public interface CdnService {
      * @param file            image file, not null
      * @return response
      */
+    @Transactional
     UploadImageResponse uploadImage(boolean createThumbnail, @NonNull MultipartFile file) throws CdnException;
 
 }

@@ -21,6 +21,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,6 +96,7 @@ public class RecipeServiceImpl implements RecipeService {
         return new SliceImpl<>(dtoList, data.getPageable(), data.hasNext());
     }
 
+    @Transactional
     @Override
     public RecipeModel createRecipe(@NonNull RecipeCreateRequest request) throws IllegalDataInRequestException {
         LOG.debug("Creating new recipe [{}]", request);
@@ -104,6 +106,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeModelAssembler.toModel(recipe);
     }
 
+    @Transactional
     @Override
     public void deleteRecipe(@NonNull Long id) throws DataDoesNotExistException {
         LOG.debug("Deleting recipe with id: [{}]", id);
@@ -121,6 +124,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
+    @Transactional
     @Override
     public RecipeModel updateRecipe(@NonNull Long id, @NonNull RecipeUpdateRequest request)
             throws DataDoesNotExistException, IllegalDataInRequestException {

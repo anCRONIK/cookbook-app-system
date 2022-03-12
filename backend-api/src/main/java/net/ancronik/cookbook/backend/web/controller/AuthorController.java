@@ -13,6 +13,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,7 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAuthor(id));
     }
 
+    @Transactional
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     // TODO secure this endpoint so that only user auth app can all it
     public ResponseEntity<AuthorModel> createAuthor(@RequestBody AuthorCreateRequest request)
@@ -59,6 +61,7 @@ public class AuthorController {
         return ResponseEntity.created(response.getLink(IanaLinkRelations.SELF).orElseThrow().toUri()).body(response);
     }
 
+    @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     // TODO secure this endpoint so that only user can update this
     public ResponseEntity<AuthorModel> updateAuthor(@PathVariable String id, @RequestBody AuthorUpdateRequest request)

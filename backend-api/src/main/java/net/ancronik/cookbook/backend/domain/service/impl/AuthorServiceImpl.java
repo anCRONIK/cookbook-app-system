@@ -11,14 +11,16 @@ import net.ancronik.cookbook.backend.domain.service.AuthorService;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;
+import org.hibernate.validator.constraints.CodePointLength;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Implementation of {@link AuthorService}.
@@ -49,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel getAuthor(@NonNull @Size(min = 2, max = 12) String id) throws DataDoesNotExistException {
+    public AuthorModel getAuthor(@NonNull @NotBlank  @CodePointLength(min = 2, max = 12) String id) throws DataDoesNotExistException, ConstraintViolationException {
         LOG.debug("Searching author with id [{}]", id);
 
         try {
@@ -63,8 +65,9 @@ public class AuthorServiceImpl implements AuthorService {
         }
     }
 
+    @Transactional
     @Override
-    public AuthorModel createAuthor(@NonNull @Valid AuthorCreateRequest request) {
+    public AuthorModel createAuthor(@NonNull @Valid AuthorCreateRequest request) throws ConstraintViolationException {
         LOG.debug("Saving new author [{}]", request);
 
         Author author = authorRepository.save(authorCreateRequestToAuthorMapper.map(request));
@@ -72,9 +75,10 @@ public class AuthorServiceImpl implements AuthorService {
         return authorModelAssembler.toModel(author);
     }
 
+    @Transactional
     @Override
-    public AuthorModel updateAuthor(@NonNull @Size(min = 2, max = 12) String id, @NonNull @Valid AuthorUpdateRequest request)
-            throws DataDoesNotExistException {
+    public AuthorModel updateAuthor(@NonNull @NotBlank @CodePointLength(min = 2, max = 12) String id, @NonNull @Valid AuthorUpdateRequest request)
+            throws DataDoesNotExistException, ConstraintViolationException {
         LOG.debug("Updating author [{}] with data [{}]", id, request);
 
         try {

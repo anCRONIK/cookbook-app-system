@@ -27,6 +27,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -95,6 +96,7 @@ public class RecipeController {
         return checkAndConvertSliceToModel(recipeCommentService.getCommentsForRecipe(id, pageable));
     }
 
+    @Transactional
     @PostMapping(value = "", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
     public ResponseEntity<RecipeModel> createRecipe(@Valid @RequestBody RecipeCreateRequest request) throws IllegalDataInRequestException {
@@ -105,6 +107,7 @@ public class RecipeController {
         return ResponseEntity.created(response.getLink(IanaLinkRelations.SELF).orElseThrow().toUri()).body(response);
     }
 
+    @Transactional
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
     public ResponseEntity<String> addCommentToRecipe(@PathVariable Long id, @RequestBody AddRecipeCommentRequest request)
@@ -116,6 +119,7 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
     @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint and it is the author of given recipe
     public ResponseEntity<RecipeModel> updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateRequest request)
@@ -125,6 +129,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.updateRecipe(id, request));
     }
 
+    @Transactional
     @DeleteMapping(value = "/{id}")
     //TODO add security to make user authorized and it is the author of given recipe
     public ResponseEntity<String> deleteRecipe(@PathVariable Long id) throws DataDoesNotExistException {

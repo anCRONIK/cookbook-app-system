@@ -3,13 +3,13 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.data.model.RecipeComment;
 import net.ancronik.cookbook.backend.data.model.RecipeCommentPK;
 import net.ancronik.cookbook.backend.data.repository.RecipeCommentRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
+import net.ancronik.cookbook.backend.validation.annotation.PageableConstraint;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.hibernate.validator.constraints.Range;
@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -57,10 +57,9 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     }
 
     @Override
-    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull @Range(min = 1L) Long id, @PageableDefault Pageable pageable) throws DataDoesNotExistException {
+    public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @PageableConstraint Pageable pageable)
+            throws ConstraintViolationException {
         LOG.debug("Searching comments for recipe [{}] with pageable [{}]", id, pageable);
-
-        checkIfRecipeExists(id);
 
         Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable);
 
@@ -71,7 +70,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
 
     @Override
     public void addCommentToRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @Valid AddRecipeCommentRequest comment)
-            throws DataDoesNotExistException {
+            throws DataDoesNotExistException, ConstraintViolationException {
         LOG.debug("Adding new comment to [{}] with data [{}]", id, comment);
 
         checkIfRecipeExists(id);

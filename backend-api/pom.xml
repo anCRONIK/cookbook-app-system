@@ -43,7 +43,6 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <maven-checkstyle.version>2.17</maven-checkstyle.version>
-        <maven-liquibase.version>4.8.0</maven-liquibase.version>
         <maven-jacoco.version>0.8.7</maven-jacoco.version>
     </properties>
 
@@ -119,10 +118,7 @@
         </dependency>
 
         <!-- Database -->
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-        </dependency>
+
 
         <!-- Testing -->
         <dependency>
@@ -135,19 +131,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.cassandraunit</groupId>
-            <artifactId>cassandra-unit-spring</artifactId>
-            <version>${cassandra-unit-spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!--        they use junit4 dependecy-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.testcontainers</groupId>-->
-        <!--            <artifactId>junit-jupiter</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-
 
         <!-- Provided-->
         <dependency>
@@ -243,15 +226,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war-plugin.version}</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${maven-liquibase.version}</version>
-                <configuration>
-                    <propertyFile>src/main/resources/liquibase/liquibase.properties</propertyFile>
-                </configuration>
             </plugin>
 
             <plugin>

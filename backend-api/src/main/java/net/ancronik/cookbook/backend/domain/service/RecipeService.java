@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,7 @@ public interface RecipeService {
      * @return newly created recipe
      * @throws IllegalDataInRequestException if request is not properly populated
      */
+    @Transactional
     RecipeModel createRecipe(@NotNull @Valid RecipeCreateRequest request) throws IllegalDataInRequestException;
 
     /**
@@ -63,6 +65,7 @@ public interface RecipeService {
      * @param id recipe id, can't be null and must be greater than 1
      * @throws DataDoesNotExistException if recipe with given id does not exist in database
      */
+    @Transactional
     void deleteRecipe(@NotNull @Range(min = 1) Long id) throws DataDoesNotExistException;
 
     /**
@@ -74,6 +77,7 @@ public interface RecipeService {
      * @throws DataDoesNotExistException     if recipe with given id does not exist in database
      * @throws IllegalDataInRequestException if request is not properly populated
      */
+    @Transactional
     RecipeModel updateRecipe(@NotNull @Range(min = 1) Long id, @NotNull @Valid RecipeUpdateRequest request) throws DataDoesNotExistException,
             IllegalDataInRequestException;
 }
