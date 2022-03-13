@@ -3,6 +3,8 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
+import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedActionException;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.data.model.RecipeMockData;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
@@ -13,6 +15,7 @@ import net.ancronik.cookbook.backend.domain.mapper.RecipeCreateRequestToRecipeMa
 import net.ancronik.cookbook.backend.domain.mapper.RecipeUpdateRequestRecipeUpdateMapper;
 import net.ancronik.cookbook.backend.domain.mapper.UpdateMapper;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
+import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeModel;
@@ -65,6 +68,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAll(PageRequest.of(0, 10));
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -76,6 +80,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAll(pageable);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -88,6 +93,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAll(pageable);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -95,6 +101,7 @@ public class RecipeServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> recipeService.getRecipe(null));
 
         verifyNoInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -105,6 +112,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findById(any());
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -115,6 +123,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findById(11L);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @SneakyThrows
@@ -126,6 +135,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findById(11L);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -133,6 +143,7 @@ public class RecipeServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> recipeService.getRecipesForCategory(null, Pageable.ofSize(10)));
 
         verifyNoInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -143,6 +154,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAllByCategory(any(), eq(PageRequest.of(0, 10)));
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -155,6 +167,7 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAllByCategory(category, pageable);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
     }
 
     @Test
@@ -168,5 +181,183 @@ public class RecipeServiceImplTest {
 
         verify(mockRecipeRepository).findAllByCategory(category, pageable);
         verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void createRecipe_RepositoryThrowsException_PropagateException() {
+        when(mockRecipeRepository.save(any())).thenThrow(new ConcurrencyFailureException("test"));
+
+        assertThrows(DataAccessException.class, () -> recipeService.createRecipe(DtoMockData.generateRandomMockDataForRecipeCreateRequest()));
+
+        verify(mockRecipeRepository).save(any());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void createRecipe_SaveSuccessful_ReturnModel() {
+        when(mockRecipeRepository.save(any())).thenReturn(RecipeMockData.generateRandomMockData(1).get(0));
+
+        assertNotNull(recipeService.createRecipe(DtoMockData.generateRandomMockDataForRecipeCreateRequest()));
+
+        verify(mockRecipeRepository).save(any());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_NullGiven_ThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> recipeService.deleteRecipe(null));
+
+        verifyNoInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_RepositoryThrowsException_PropagateException() {
+        when(mockRecipeRepository.findById(any())).thenThrow(new ConcurrencyFailureException("test"));
+
+        assertThrows(DataAccessException.class, () -> recipeService.deleteRecipe(19L));
+
+        verify(mockRecipeRepository).findById(any());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_RepositoryReturnsEmpty_ThrowDataDoesNotExistsException() {
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.empty());
+
+        assertThrows(DataDoesNotExistException.class, () -> recipeService.deleteRecipe(11L));
+
+        verify(mockRecipeRepository).findById(11L);
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_AuthenticationServiceThrowsException_PropagateException() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenThrow(new EmptyDataException("test"));
+
+        assertThrows(EmptyDataException.class, () -> recipeService.deleteRecipe(11L));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_UserIsNotTheAuthorOfRecipe_ThrowUnauthorizedActionException() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenReturn(false);
+
+        assertThrows(UnauthorizedActionException.class, () -> recipeService.deleteRecipe(11L));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verify(mockAuthenticationService).getAuthenticatedUsername();
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void deleteRecipe_DeleteSuccessful() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenReturn(true);
+
+        assertDoesNotThrow(() -> recipeService.deleteRecipe(11L));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockRecipeRepository).deleteById(11L);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void updateRecipe_NullGiven_ThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> recipeService.updateRecipe(null, DtoMockData.generateRandomMockDataForRecipeUpdateRequest()));
+        assertThrows(IllegalArgumentException.class, () -> recipeService.updateRecipe(1L, null));
+
+        verifyNoInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void updateRecipe_RepositoryThrowsException_PropagateException() {
+        when(mockRecipeRepository.findById(any())).thenThrow(new ConcurrencyFailureException("test"));
+
+        assertThrows(DataAccessException.class, () -> recipeService.updateRecipe(19L, DtoMockData.generateRandomMockDataForRecipeUpdateRequest()));
+
+        verify(mockRecipeRepository).findById(any());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void updateRecipe_RepositoryReturnsEmpty_ThrowDataDoesNotExistsException() {
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.empty());
+
+        assertThrows(DataDoesNotExistException.class, () -> recipeService.updateRecipe(11L, DtoMockData.generateRandomMockDataForRecipeUpdateRequest()));
+
+        verify(mockRecipeRepository).findById(11L);
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void updateRecipe_AuthenticationServiceThrowsException_PropagateException() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenThrow(new EmptyDataException("test"));
+
+        assertThrows(EmptyDataException.class, () -> recipeService.updateRecipe(11L, DtoMockData.generateRandomMockDataForRecipeUpdateRequest()));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    public void updateRecipe_UserIsNotTheAuthorOfRecipe_ThrowUnauthorizedActionException() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenReturn(false);
+
+        assertThrows(UnauthorizedActionException.class, () -> recipeService.updateRecipe(11L, DtoMockData.generateRandomMockDataForRecipeUpdateRequest()));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verify(mockAuthenticationService).getAuthenticatedUsername();
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateRecipe_UpdateSuccessful_ReturnModel() {
+        Recipe recipe = RecipeMockData.generateRandomMockData(1).get(0);
+        RecipeUpdateRequest updateRequest = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
+
+        updateRequestRecipeUpdateMapper.update(updateRequest, recipe);
+
+        when(mockRecipeRepository.findById(11L)).thenReturn(Optional.of(recipe));
+        when(mockRecipeRepository.save(recipe)).thenReturn(recipe);
+        when(mockAuthenticationService.isGivenUserTheRequester(recipe.getAuthorId())).thenReturn(true);
+
+        assertNotNull(recipeService.updateRecipe(11L, updateRequest));
+
+        verify(mockRecipeRepository).findById(11L);
+        verify(mockRecipeRepository).save(recipe);
+        verify(mockAuthenticationService).isGivenUserTheRequester(recipe.getAuthorId());
+        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoMoreInteractions(mockAuthenticationService);
     }
 }

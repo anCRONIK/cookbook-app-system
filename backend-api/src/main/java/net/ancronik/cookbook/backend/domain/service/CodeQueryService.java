@@ -5,6 +5,7 @@ import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
+import org.hibernate.validator.constraints.CodePointLength;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -44,5 +45,5 @@ public interface CodeQueryService {
      * @param category category, can not be null or empty
      * @return {@literal true} if valid, otherwise {@literal false}
      */
-    boolean isRecipeCategoryValid(@NonNull @NotBlank String category);
+    boolean isRecipeCategoryValid(@NonNull @NotBlank @CodePointLength(max = 50) String category);
 }

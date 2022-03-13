@@ -2,7 +2,7 @@ package net.ancronik.cookbook.backend.domain.service;
 
 import lombok.NonNull;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedException;
+import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedActionException;
 import net.ancronik.cookbook.backend.validation.annotation.PageableConstraint;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
@@ -11,7 +11,6 @@ import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
@@ -73,10 +72,10 @@ public interface RecipeService {
      * @param id recipe id, can't be null and must be greater than 1
      * @throws DataDoesNotExistException    if recipe with given id does not exist in database
      * @throws ConstraintViolationException if id is not in valid range
-     * @throws UnauthorizedException        if user is not the author of given recipe
+     * @throws UnauthorizedActionException        if user is not the author of given recipe
      */
     @Transactional
-    void deleteRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException, UnauthorizedException;
+    void deleteRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException, UnauthorizedActionException;
 
     /**
      * Method for updating specific recipe using id.
@@ -86,9 +85,9 @@ public interface RecipeService {
      * @return updated recipe
      * @throws DataDoesNotExistException    if recipe with given id does not exist in database
      * @throws ConstraintViolationException if id is not in valid range or request is not valid
-     * @throws UnauthorizedException        if user is not the author of given recipe
+     * @throws UnauthorizedActionException        if user is not the author of given recipe
      */
     @Transactional
     RecipeModel updateRecipe(@NonNull @NotNull @Range(min = 1) Long id, @NonNull @NotNull @Valid RecipeUpdateRequest request)
-            throws DataDoesNotExistException, ConstraintViolationException, UnauthorizedException;
+            throws DataDoesNotExistException, ConstraintViolationException, UnauthorizedActionException;
 }

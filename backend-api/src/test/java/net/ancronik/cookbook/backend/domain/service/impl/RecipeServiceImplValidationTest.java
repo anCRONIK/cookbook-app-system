@@ -1,11 +1,8 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
-import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestConfigurationForUnitTesting;
 import net.ancronik.cookbook.backend.TestTypes;
-import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
-import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestConfigurationForUnitTesting.class)
 @Tag(TestTypes.UNIT)
-public class RecipeServiceImplValidationTest {
+public class RecipeServiceImplValidationTest { //TODO finish me
 
     @Autowired
     private RecipeService recipeService;

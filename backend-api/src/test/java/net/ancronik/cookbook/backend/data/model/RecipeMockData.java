@@ -30,7 +30,7 @@ public class RecipeMockData {
                     random.nextBoolean() ? LocalDateTime.now() : null,
                     random.nextInt(5) + 1,
                     new RecipeCategory(StringTestUtils.getRandomStringInLowerCase(6)+1),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(10)+1)
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(10)+2)
             );
 
             data.add(entity);

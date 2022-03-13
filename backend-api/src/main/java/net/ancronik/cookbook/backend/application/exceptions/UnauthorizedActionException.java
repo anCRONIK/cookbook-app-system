@@ -5,14 +5,14 @@ package net.ancronik.cookbook.backend.application.exceptions;
  *
  * @author Nikola Presecki
  */
-public class UnauthorizedException extends RuntimeException {
+public class UnauthorizedActionException extends RuntimeException {
 
     /**
      * Constructor with message.
      *
      * @param message message
      */
-    public UnauthorizedException(String message) {
+    public UnauthorizedActionException(String message) {
         super(message);
     }
 

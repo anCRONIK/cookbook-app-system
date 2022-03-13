@@ -3,7 +3,7 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedException;
+import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedActionException;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
 import net.ancronik.cookbook.backend.domain.mapper.Mapper;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,7 +118,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public void deleteRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException,
-            UnauthorizedException {
+            UnauthorizedActionException {
         LOG.info("Deleting recipe with id: [{}]", id);
 
         try {
@@ -128,7 +127,7 @@ public class RecipeServiceImpl implements RecipeService {
                 recipeRepository.deleteById(id);
             } else {
                 LOG.info("User [{}] is not authorized to delete recipe [{}]. Incident!", authenticationService.getAuthenticatedUsername(), id);
-                throw new UnauthorizedException("User is not authorized to delete recipe: " + id);
+                throw new UnauthorizedActionException("User is not authorized to delete recipe: " + id);
             }
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);
@@ -139,15 +138,15 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public RecipeModel updateRecipe(@NonNull @NotNull @Range(min = 1) Long id, @NonNull @NotNull @Valid RecipeUpdateRequest request) throws DataDoesNotExistException,
-            ConstraintViolationException, UnauthorizedException {
+            ConstraintViolationException, UnauthorizedActionException {
         try {
             Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id));
-            if (authenticationService.getAuthenticatedUsername().equalsIgnoreCase(recipe.getAuthorId())) {
+            if (authenticationService.isGivenUserTheRequester(recipe.getAuthorId())) {
                 updateRequestRecipeUpdateMapper.update(request, recipe);
                 return recipeModelAssembler.toModel(recipeRepository.save(recipe));
             } else {
                 LOG.info("User [{}] is not authorized to update recipe [{}]. Incident!", authenticationService.getAuthenticatedUsername(), id);
-                throw new UnauthorizedException("User is not authorized to update recipe: " + id);
+                throw new UnauthorizedActionException("User is not authorized to update recipe: " + id);
             }
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);

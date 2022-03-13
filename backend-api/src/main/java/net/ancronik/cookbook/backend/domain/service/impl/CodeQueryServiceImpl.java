@@ -8,9 +8,9 @@ import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
+import org.hibernate.validator.constraints.CodePointLength;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataAccessException;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -46,12 +46,7 @@ public class CodeQueryServiceImpl implements CodeQueryService {
     public List<MeasurementUnitModel> getMeasurementUnits() {
         LOG.info("Fetching all measurement units");
 
-        try {
-            return measurementUnitRepository.findAll().stream().map(measurementUnitModelAssembler::toModel).collect(Collectors.toList());
-        } catch (DataAccessException e) {
-            LOG.error("Error while fetching measurement units from database", e);
-            throw e;
-        }
+        return measurementUnitRepository.findAll().stream().map(measurementUnitModelAssembler::toModel).collect(Collectors.toList());
     }
 
     @Cacheable(value = "measurement_units", key = "unit")
@@ -59,33 +54,18 @@ public class CodeQueryServiceImpl implements CodeQueryService {
     public boolean isMeasurementUnitValid(@NonNull String unit) {
         LOG.info("Checking if measurement unit is valid");
 
-        try {
-            return unit.isEmpty() || measurementUnitRepository.existsById(unit);
-        } catch (DataAccessException e) {
-            LOG.error("Error while checking if unit exists [{}]", unit, e);
-            throw e;
-        }
+        return unit.isEmpty() || measurementUnitRepository.existsById(unit);
     }
 
     @Cacheable(value = "recipe_categories")
     @Override
     public List<RecipeCategoryModel> getRecipeCategories() {
-        try {
-            return recipeCategoryRepository.findAll().stream().map(c -> new RecipeCategoryModel(c.getCategory())).collect(Collectors.toList());
-        } catch (DataAccessException e) {
-            LOG.error("Error while fetching recipe categories from database", e);
-            throw e;
-        }
+        return recipeCategoryRepository.findAll().stream().map(c -> new RecipeCategoryModel(c.getCategory())).collect(Collectors.toList());
     }
 
     @Cacheable(value = "recipe_categories", key = "category")
     @Override
-    public boolean isRecipeCategoryValid(@NonNull @NotBlank String category) {
-        try {
-            return recipeCategoryRepository.existsById(category);
-        } catch (DataAccessException e) {
-            LOG.error("Error while checking if category exists [{}]", category, e);
-            throw e;
-        }
+    public boolean isRecipeCategoryValid(@NonNull @NotBlank @CodePointLength(max = 50) String category) {
+        return recipeCategoryRepository.existsById(category);
     }
 }
