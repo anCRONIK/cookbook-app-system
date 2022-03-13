@@ -5,12 +5,19 @@ import net.ancronik.cookbook.backend.TestConfigurationForUnitTesting;
 import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
+import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.validation.ConstraintViolationException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestConfigurationForUnitTesting.class)
@@ -20,14 +27,23 @@ public class RecipeServiceImplValidationTest {
     @Autowired
     private RecipeService recipeService;
 
-    @Autowired
-    private RecipeCommentService recipeCommentService;
 
     @Test
-    @SneakyThrows
-    public void getRecipeById_NegativeRecipeId_ReturnValidationError() {
-        recipeService.getRecipe(-1L);
+    public void getRecipes_InvalidPageableGiven_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeService.getRecipes(Pageable.unpaged()));
+        assertEquals("getRecipes.pageable: Pageable can not be null, un paged or value greater than 50", t.getMessage());
+
+        t = assertThrows(ConstraintViolationException.class, () -> recipeService.getRecipes(Pageable.ofSize(110)));
+        assertEquals("getRecipes.pageable: Pageable can not be null, un paged or value greater than 50", t.getMessage());
     }
+
+    @Test
+    public void getRecipe_NegativeRecipeId_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeService.getRecipe(-1L));
+        assertEquals("getRecipe.id: must be between 1 and 9223372036854775807", t.getMessage());
+    }
+
+
 //
 //    @SneakyThrows
 //    @Test

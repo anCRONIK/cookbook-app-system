@@ -59,7 +59,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     @Override
     public Slice<RecipeCommentModel> getCommentsForRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @PageableConstraint Pageable pageable)
             throws ConstraintViolationException {
-        LOG.debug("Searching comments for recipe [{}] with pageable [{}]", id, pageable);
+        LOG.info("Searching comments for recipe [{}] with pageable [{}]", id, pageable);
 
         Slice<RecipeComment> data = recipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable);
 
@@ -71,7 +71,7 @@ public class RecipeCommentServiceImpl implements RecipeCommentService {
     @Override
     public void addCommentToRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @Valid AddRecipeCommentRequest comment)
             throws DataDoesNotExistException, ConstraintViolationException {
-        LOG.debug("Adding new comment to [{}] with data [{}]", id, comment);
+        LOG.info("Adding new comment to [{}] with data [{}]", id, comment);
 
         checkIfRecipeExists(id);
 

@@ -44,6 +44,8 @@ public class CodeQueryServiceImpl implements CodeQueryService {
     @Cacheable(value = "measurement_units")
     @Override
     public List<MeasurementUnitModel> getMeasurementUnits() {
+        LOG.info("Fetching all measurement units");
+
         try {
             return measurementUnitRepository.findAll().stream().map(measurementUnitModelAssembler::toModel).collect(Collectors.toList());
         } catch (DataAccessException e) {
@@ -54,9 +56,11 @@ public class CodeQueryServiceImpl implements CodeQueryService {
 
     @Cacheable(value = "measurement_units", key = "unit")
     @Override
-    public boolean isMeasurementUnitValid(@NonNull @NotBlank String unit) {
+    public boolean isMeasurementUnitValid(@NonNull String unit) {
+        LOG.info("Checking if measurement unit is valid");
+
         try {
-            return measurementUnitRepository.existsById(unit);
+            return unit.isEmpty() || measurementUnitRepository.existsById(unit);
         } catch (DataAccessException e) {
             LOG.error("Error while checking if unit exists [{}]", unit, e);
             throw e;

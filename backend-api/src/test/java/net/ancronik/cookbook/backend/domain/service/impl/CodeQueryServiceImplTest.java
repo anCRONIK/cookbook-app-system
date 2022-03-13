@@ -2,7 +2,6 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestTypes;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;

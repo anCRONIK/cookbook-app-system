@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.Util;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
-import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.domain.service.RecipeCommentService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
@@ -21,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.data.domain.*;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +28,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -431,20 +432,6 @@ public class RecipeControllerTest {
 
     @Test
     @SneakyThrows
-    public void getCommentsForRecipe_ServiceThrowsNotFoundException_ReturnNotFound() {
-        when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenThrow(new DataDoesNotExistException("null"));
-
-        mockMvc.perform(MockMvcRequestBuilders.get(String.format(GET_COMMENTS_FOR_RECIPE_PATH_TEMPLATE, 1L)))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-        verify(mockRecipeCommentService).getCommentsForRecipe(anyLong(), any());
-        verifyNoInteractions(mockRecipeService);
-        verifyNoMoreInteractions(mockRecipeCommentService);
-    }
-
-    @Test
-    @SneakyThrows
     public void getCommentsForRecipe_ServiceReturnsEmptyList_ReturnDataToCaller() {
         when(mockRecipeCommentService.getCommentsForRecipe(anyLong(), any())).thenReturn(Page.empty());
 
@@ -553,7 +540,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     @Test
     public void createRecipe_NoFullDataInRequest_ServiceThrowsException_ReturnBadRequest() {
-        when(mockRecipeService.createRecipe(any())).thenThrow(new IllegalDataInRequestException("no data"));
+        when(mockRecipeService.createRecipe(any())).thenThrow(new ConstraintViolationException("no data", new HashSet<>()));
 
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_RECIPE_PATH)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -625,7 +612,7 @@ public class RecipeControllerTest {
     public void addCommentToRecipe_IllegalDataInRequest_ReturnBadRequest() {
         AddRecipeCommentRequest request = new AddRecipeCommentRequest("dssadaskldjaskldjklas");
 
-        doThrow(new IllegalDataInRequestException("test")).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
+        doThrow(new ConstraintViolationException("test", new HashSet<>())).when(mockRecipeCommentService).addCommentToRecipe(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.post(String.format(ADD_COMMENT_TO_RECIPE_PATH_TEMPLATE, 123))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -701,7 +688,7 @@ public class RecipeControllerTest {
     @Test
     public void updateRecipe_UpdateDataInvalid_ReturnBadRequest() {
         RecipeUpdateRequest request = DtoMockData.generateRandomMockDataForRecipeUpdateRequest();
-        doThrow(new IllegalDataInRequestException("random")).when(mockRecipeService).updateRecipe(anyLong(), any());
+        doThrow(new ConstraintViolationException("random", new HashSet<>())).when(mockRecipeService).updateRecipe(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_RECIPE_PATH_PREFIX + "231")
                         .content(objectMapper.writeValueAsBytes(request))
@@ -781,7 +768,7 @@ public class RecipeControllerTest {
     @SneakyThrows
     @Test
     public void getRecipeCategories_ServiceThrowsGenericDatabaseException_ReturnInternalServerError() {
-        when(mockCodeQueryService.getRecipeCategories()).thenThrow(new GenericDatabaseException("test"));
+        when(mockCodeQueryService.getRecipeCategories()).thenThrow(new ConcurrencyFailureException("test"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(GET_RECIPES_CATEGORIES_PATH))
                 .andExpect(status().isInternalServerError())

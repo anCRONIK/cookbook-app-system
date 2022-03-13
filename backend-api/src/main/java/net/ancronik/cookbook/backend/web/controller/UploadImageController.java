@@ -41,7 +41,7 @@ public class UploadImageController {
     //Secure only authorized user
     public UploadImageResponse uploadImage(@RequestParam(required = false) boolean createThumbnail,
                                            @RequestParam("imageFile") @NotNull MultipartFile file) throws CdnException {
-        LOG.info("Uploading new image");
+        LOG.debug("Uploading new image");
 
         return cdnService.uploadImage(createThumbnail, file);
     }

@@ -2,7 +2,6 @@ package net.ancronik.cookbook.backend.web.controller;
 
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestTypes;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import org.junit.jupiter.api.Tag;
@@ -12,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +35,7 @@ public class MeasurementUnitControllerTest {
     @SneakyThrows
     @Test
     public void getMeasurementUnits_ServiceThrowsGenericDatabaseException_ReturnInternalServerError() {
-        when(mockCodeQueryService.getMeasurementUnits()).thenThrow(new GenericDatabaseException("test"));
+        when(mockCodeQueryService.getMeasurementUnits()).thenThrow(new ConcurrencyFailureException("test"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(MeasurementUnitController.DEFAULT_MAPPING))
                 .andExpect(status().isInternalServerError())

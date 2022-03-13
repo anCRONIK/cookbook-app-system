@@ -9,7 +9,6 @@ import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
@@ -29,14 +28,12 @@ public class RecipeCommentServiceImplValidationTest {
     private RecipeCommentService recipeCommentService;
 
     @Test
-    @SneakyThrows
     public void getCommentsForRecipe_NegativeRecipeId_ThrowValidationException() {
         Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.getCommentsForRecipe(-1L, Pageable.ofSize(10)));
         assertEquals("getCommentsForRecipe.id: must be between 1 and 9223372036854775807", t.getMessage());
     }
 
     @Test
-    @SneakyThrows
     public void getCommentsForRecipe_InvalidPageableGiven_ThrowValidationException() {
         Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.getCommentsForRecipe(2L, Pageable.unpaged()));
         assertEquals("getCommentsForRecipe.pageable: Pageable can not be null, un paged or value greater than 50", t.getMessage());
@@ -46,14 +43,12 @@ public class RecipeCommentServiceImplValidationTest {
     }
 
     @Test
-    @SneakyThrows
     public void addCommentToRecipe_NegativeRecipeId_ThrowValidationException() {
         Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(-231L, new AddRecipeCommentRequest("valid text")));
         assertEquals("addCommentToRecipe.id: must be between 1 and 9223372036854775807", t.getMessage());
     }
 
     @Test
-    @SneakyThrows
     public void addCommentToRecipe_InvalidComment_ThrowValidationException() {
         Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest("")));
         assertEquals("addCommentToRecipe.comment.text: must not be blank", t.getMessage());

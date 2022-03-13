@@ -3,17 +3,19 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
+import net.ancronik.cookbook.backend.application.exceptions.UnauthorizedException;
 import net.ancronik.cookbook.backend.data.model.Recipe;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
 import net.ancronik.cookbook.backend.domain.mapper.Mapper;
 import net.ancronik.cookbook.backend.domain.mapper.UpdateMapper;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.domain.service.RecipeService;
+import net.ancronik.cookbook.backend.validation.annotation.PageableConstraint;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeUpdateRequest;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,7 +24,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@Validated
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
@@ -63,8 +72,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Slice<RecipeBasicInfoModel> getRecipes(@PageableDefault Pageable pageable) {
-        LOG.debug("Searching recipes with pageable [{}]", pageable);
+    public Slice<RecipeBasicInfoModel> getRecipes(@NonNull @PageableConstraint Pageable pageable) throws ConstraintViolationException {
+        LOG.info("Searching recipes with pageable [{}]", pageable);
         Slice<Recipe> data = recipeRepository.findAll(pageable);
 
         List<RecipeBasicInfoModel> dtoList = data.getContent().stream().map(recipeBasicInfoModelAssembler::toModel).collect(Collectors.toList());
@@ -73,8 +82,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeModel getRecipe(@NonNull Long id) throws DataDoesNotExistException {
-        LOG.debug("Searching recipe with id [{}]", id);
+    public RecipeModel getRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException {
+        LOG.info("Searching recipe with id [{}]", id);
 
         try {
             return recipeModelAssembler.toModel(
@@ -86,8 +95,9 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Slice<RecipeBasicInfoModel> getRecipesForCategory(@NonNull String category, @PageableDefault Pageable pageable) {
-        LOG.debug("Searching recipes in category [{}] with pageable [{}]", category, pageable);
+    public Slice<RecipeBasicInfoModel> getRecipesForCategory(@NonNull @NotBlank @Size(min = 1, max = 50) String category,
+                                                             @NonNull @PageableConstraint Pageable pageable) throws ConstraintViolationException {
+        LOG.info("Searching recipes in category [{}] with pageable [{}]", category, pageable);
 
         Slice<Recipe> data = recipeRepository.findAllByCategory(category, pageable);
 
@@ -96,27 +106,29 @@ public class RecipeServiceImpl implements RecipeService {
         return new SliceImpl<>(dtoList, data.getPageable(), data.hasNext());
     }
 
-    @Transactional
     @Override
-    public RecipeModel createRecipe(@NonNull RecipeCreateRequest request) throws IllegalDataInRequestException {
-        LOG.debug("Creating new recipe [{}]", request);
+    @Transactional
+    public RecipeModel createRecipe(@NonNull @NotNull @Valid RecipeCreateRequest request) throws ConstraintViolationException {
+        LOG.info("Creating new recipe [{}]", request);
 
         Recipe recipe = recipeRepository.save(createRequestRecipeMapper.map(request));
 
         return recipeModelAssembler.toModel(recipe);
     }
 
-    @Transactional
     @Override
-    public void deleteRecipe(@NonNull Long id) throws DataDoesNotExistException {
-        LOG.debug("Deleting recipe with id: [{}]", id);
+    @Transactional
+    public void deleteRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException,
+            UnauthorizedException {
+        LOG.info("Deleting recipe with id: [{}]", id);
 
         try {
             Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id));
-            if (authenticationService.getAuthenticatedUsername().equalsIgnoreCase(recipe.getAuthorId())) {
+            if (authenticationService.isGivenUserTheRequester(recipe.getAuthorId())) {
                 recipeRepository.deleteById(id);
             } else {
-                //TODO throws some exeption
+                LOG.info("User [{}] is not authorized to delete recipe [{}]. Incident!", authenticationService.getAuthenticatedUsername(), id);
+                throw new UnauthorizedException("User is not authorized to delete recipe: " + id);
             }
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);
@@ -124,22 +136,23 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
-    @Transactional
     @Override
-    public RecipeModel updateRecipe(@NonNull Long id, @NonNull RecipeUpdateRequest request)
-            throws DataDoesNotExistException, IllegalDataInRequestException {
+    @Transactional
+    public RecipeModel updateRecipe(@NonNull @NotNull @Range(min = 1) Long id, @NonNull @NotNull @Valid RecipeUpdateRequest request) throws DataDoesNotExistException,
+            ConstraintViolationException, UnauthorizedException {
         try {
             Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id));
             if (authenticationService.getAuthenticatedUsername().equalsIgnoreCase(recipe.getAuthorId())) {
                 updateRequestRecipeUpdateMapper.update(request, recipe);
                 return recipeModelAssembler.toModel(recipeRepository.save(recipe));
             } else {
-                //TODO throws some exeption
-                throw new UnsupportedOperationException("bla");
+                LOG.info("User [{}] is not authorized to update recipe [{}]. Incident!", authenticationService.getAuthenticatedUsername(), id);
+                throw new UnauthorizedException("User is not authorized to update recipe: " + id);
             }
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);
             throw e;
         }
     }
+
 }

@@ -54,28 +54,16 @@ public class RecipeCommentServiceImplTest {
     @Test
     @SneakyThrows
     public void getCommentsForRecipe_RepositoryThrowsException_PropagateException() {
-        when(mockRecipeRepository.existsById(1L)).thenThrow(new ConcurrencyFailureException("bla"));
+        when(mockRecipeCommentRepository.findAllByRecipeCommentPKRecipeId(any(), any())).thenThrow(new ConcurrencyFailureException("bla"));
 
-        assertThrows(DataAccessException.class, () -> recipeCommentService.getCommentsForRecipe(1L, Pageable.unpaged()));
+        assertThrows(DataAccessException.class, () -> recipeCommentService.getCommentsForRecipe(1L, Pageable.ofSize(12)));
 
-        verifyNoInteractions(mockRecipeCommentRepository);
-        verify(mockRecipeRepository).existsById(1L);
-        verifyNoMoreInteractions(mockRecipeRepository);
+        verify(mockRecipeCommentRepository).findAllByRecipeCommentPKRecipeId(any(), any());
+        verifyNoMoreInteractions(mockRecipeCommentRepository);
+        verifyNoInteractions(mockRecipeRepository);
         verifyNoInteractions(mockAuthenticationService);
     }
 
-    @Test
-    @SneakyThrows
-    public void getCommentsForRecipe_RecipeWithGivenIdDoesNotExist_ThrowException() {
-        when(mockRecipeRepository.existsById(1L)).thenReturn(false);
-
-        assertThrows(DataDoesNotExistException.class, () -> recipeCommentService.getCommentsForRecipe(1L, Pageable.unpaged()));
-
-        verifyNoInteractions(mockRecipeCommentRepository);
-        verify(mockRecipeRepository).existsById(1L);
-        verifyNoMoreInteractions(mockRecipeRepository);
-        verifyNoInteractions(mockAuthenticationService);
-    }
 
     @Test
     @SneakyThrows
@@ -92,8 +80,7 @@ public class RecipeCommentServiceImplTest {
 
         verify(mockRecipeCommentRepository).findAllByRecipeCommentPKRecipeId(id, pageable);
         verifyNoMoreInteractions(mockRecipeCommentRepository);
-        verify(mockRecipeRepository).existsById(id);
-        verifyNoMoreInteractions(mockRecipeRepository);
+        verifyNoInteractions(mockRecipeRepository);
         verifyNoInteractions(mockAuthenticationService);
     }
 

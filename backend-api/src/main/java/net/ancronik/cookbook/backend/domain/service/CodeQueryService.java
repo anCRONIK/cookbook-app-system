@@ -1,7 +1,6 @@
 package net.ancronik.cookbook.backend.domain.service;
 
 import lombok.NonNull;
-import net.ancronik.cookbook.backend.application.exceptions.GenericDatabaseException;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnit;
 import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
@@ -27,10 +26,10 @@ public interface CodeQueryService {
     /**
      * Method for checking if given measurement unit code is valid.
      *
-     * @param unit unit, can not be null or empty
+     * @param unit unit, can not be null, but can be emtpy
      * @return {@literal true} if valid, otherwise {@literal false}
      */
-    boolean isMeasurementUnitValid(@NonNull @NotBlank String unit);
+    boolean isMeasurementUnitValid(@NonNull String unit);
 
     /**
      * Method for fetching all {@link RecipeCategory} as string;

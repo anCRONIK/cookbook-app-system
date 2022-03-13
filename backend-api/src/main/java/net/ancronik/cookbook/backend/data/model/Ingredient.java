@@ -28,7 +28,7 @@ public class Ingredient implements Serializable {
     @Pattern(regexp = "^\\d+[/.]?\\d*$")
     private String quantity;
 
-    @Size(min = 1, max = 8)
+    @Size(max = 8)
     private String measurementUnit;
 
 }

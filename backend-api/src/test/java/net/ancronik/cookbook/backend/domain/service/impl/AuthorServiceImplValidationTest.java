@@ -14,11 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.validation.ConstraintViolationException;
-
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestConfigurationForUnitTesting.class)
@@ -34,7 +34,7 @@ public class AuthorServiceImplValidationTest {
         assertEquals("getAuthor.id: must not be blank", t.getMessage());
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.getAuthor(""));
-        assertEquals("getAuthor.id: must not be blank, getAuthor.id: length must be between 2 and 12", t.getMessage());
+        assertTrue(t.getMessage().startsWith("getAuthor.id:"));
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.getAuthor("   \t   \r"));
         assertEquals("getAuthor.id: must not be blank", t.getMessage());
@@ -52,7 +52,7 @@ public class AuthorServiceImplValidationTest {
         assertEquals("createAuthor.request.username: must not be blank", t.getMessage());
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.createAuthor(new AuthorCreateRequest("")));
-        assertEquals("createAuthor.request.username: must not be blank, createAuthor.request.username: length must be between 2 and 12", t.getMessage());
+        assertTrue(t.getMessage().startsWith("createAuthor.request.username:"));
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.createAuthor(new AuthorCreateRequest("   \t   \r")));
         assertEquals("createAuthor.request.username: must not be blank", t.getMessage());
@@ -71,19 +71,19 @@ public class AuthorServiceImplValidationTest {
         authorUpdateRequest.setFullName("new name");
 
         Throwable t = assertThrows(ConstraintViolationException.class, () -> authorService.updateAuthor(null, authorUpdateRequest));
-        assertEquals("getAuthor.id: must not be blank", t.getMessage());
+        assertEquals("updateAuthor.id: must not be blank", t.getMessage());
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.updateAuthor("", authorUpdateRequest));
-        assertEquals("getAuthor.id: must not be blank, getAuthor.id: length must be between 2 and 12", t.getMessage());
+        assertTrue(t.getMessage().startsWith("updateAuthor.id:"));
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.updateAuthor("   \t   \r", authorUpdateRequest));
-        assertEquals("getAuthor.id: must not be blank", t.getMessage());
+        assertEquals("updateAuthor.id: must not be blank", t.getMessage());
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.updateAuthor("a", authorUpdateRequest));
-        assertEquals("getAuthor.id: length must be between 2 and 12", t.getMessage());
+        assertEquals("updateAuthor.id: length must be between 2 and 12", t.getMessage());
 
         t = assertThrows(ConstraintViolationException.class, () -> authorService.updateAuthor(StringTestUtils.getRandomStringInLowerCase(13), authorUpdateRequest));
-        assertEquals("getAuthor.id: length must be between 2 and 12", t.getMessage());
+        assertEquals("updateAuthor.id: length must be between 2 and 12", t.getMessage());
     }
 
     AuthorUpdateRequest authorUpdateRequest = new AuthorUpdateRequest();

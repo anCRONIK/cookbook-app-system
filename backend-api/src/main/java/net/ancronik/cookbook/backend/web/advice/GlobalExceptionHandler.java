@@ -2,7 +2,9 @@ package net.ancronik.cookbook.backend.web.advice;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.ancronik.cookbook.backend.application.exceptions.*;
+import net.ancronik.cookbook.backend.application.exceptions.CdnException;
+import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
+import net.ancronik.cookbook.backend.application.exceptions.EmptyDataException;
 import net.ancronik.cookbook.backend.web.dto.ApiErrorResponse;
 import net.ancronik.cookbook.backend.web.dto.ValidationFailedResponse;
 import org.springframework.dao.DataAccessException;
@@ -34,24 +36,6 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
-     * Method for handling all general exceptions with bad request response.
-     *
-     * @param e       exception
-     * @param request request
-     * @return bad request with provided data
-     */
-    @ExceptionHandler({IllegalDataInRequestException.class})
-    public ResponseEntity<ApiErrorResponse> badRequestHandler(Exception e, WebRequest request) {
-        LOG.error("Bad request found {}", request, e);
-
-        return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                e.getMessage(),
-                e instanceof IllegalDataInRequestException ? ((IllegalDataInRequestException) e).getInvalidFieldsAsString() : e.getMessage(),
-                LocalDateTime.now(ZoneId.of("UTC"))
-        ));
-    }
-
-    /**
      * Handler for exceptions thrown when requested data does not exist.
      *
      * @return not found
@@ -69,7 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request request
      * @return api error response
      */
-    @ExceptionHandler({EmptyDataException.class, GenericDatabaseException.class, DataAccessException.class})
+    @ExceptionHandler({EmptyDataException.class, DataAccessException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiErrorResponse> databaseExceptionsHandler(Exception e, WebRequest request) {
         LOG.error("Database error occurred {}", request, e);

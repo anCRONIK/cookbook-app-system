@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.StringTestUtils;
 import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.application.exceptions.DataDoesNotExistException;
-import net.ancronik.cookbook.backend.application.exceptions.IllegalDataInRequestException;
 import net.ancronik.cookbook.backend.domain.service.AuthorService;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
@@ -101,17 +100,6 @@ public class AuthorControllerTest {
         verifyNoMoreInteractions(mockAuthorService);
     }
 
-    @Test
-    @SneakyThrows
-    public void getAuthorById_IdTooLong_ThrowValidationError() {
-        mockMvc.perform(MockMvcRequestBuilders.get(GET_AUTHOR_BY_ID_PATH_PREFIX + StringTestUtils.getRandomStringInLowerCase(21)))
-                .andExpect(status().isBadRequest())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.['errors'].['id']").isNotEmpty())
-                .andReturn();
-
-        verifyNoInteractions(mockAuthorService);
-    }
 
     @SneakyThrows
     @Test
@@ -147,22 +135,6 @@ public class AuthorControllerTest {
 
     @SneakyThrows
     @Test
-    public void updateAuthor_IdTooLongReturnValidationError() {
-        AuthorUpdateRequest request = new AuthorUpdateRequest("NovoIme", null, "Super opis", StringTestUtils.generateRandomUrl());
-
-        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_AUTHOR_PATH_PREFIX + StringTestUtils.getRandomStringInLowerCase(14))
-                        .content(objectMapper.writeValueAsBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.['errors'].['id']").isNotEmpty())
-                .andReturn();
-
-        verifyNoInteractions(mockAuthorService);
-    }
-
-    @SneakyThrows
-    @Test
     public void updateAuthor_ServiceThrowsRuntimeException_ReturnInternalServerError() {
         AuthorUpdateRequest request = new AuthorUpdateRequest("NovoIme", null, "Super opis", StringTestUtils.generateRandomUrl());
         doThrow(new RuntimeException("random")).when(mockAuthorService).updateAuthor(anyString(), any());
@@ -194,45 +166,6 @@ public class AuthorControllerTest {
 
         verify(mockAuthorService).updateAuthor(eq("testUser"), eq(request));
         verifyNoMoreInteractions(mockAuthorService);
-    }
-
-    @SneakyThrows
-    @Test
-    public void updateAuthor_UpdateDataInvalid_ReturnBadRequest() {
-        AuthorUpdateRequest request = new AuthorUpdateRequest("NovoIme dfsdf dsf dsfsd fsd fsd fsd fsd f sdf sdf sdf sdf sdf sdf sdfds fsdf sdf sd fsdf s fsd fsd fds fsd ds f dsf sdf sd",
-                null, "Super opis", "not_url");
-
-        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_AUTHOR_PATH_PREFIX + "testUser")
-                        .content(objectMapper.writeValueAsBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath("$.errors.fullName").isNotEmpty())
-                .andExpect(jsonPath("$.errors.imageUrl").isNotEmpty())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andReturn();
-
-        verifyNoInteractions(mockAuthorService);
-    }
-
-    @SneakyThrows
-    @Test
-    public void updateAuthor_UpdateDataInvalid2_ReturnBadRequest() {
-        AuthorUpdateRequest request = new AuthorUpdateRequest("NovoIme",
-                null, StringTestUtils.getRandomStringInLowerCase(2001), null);
-
-        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_AUTHOR_PATH_PREFIX + "testUser")
-                        .content(objectMapper.writeValueAsBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath("$.errors.bio").isNotEmpty())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andReturn();
-
-        verifyNoInteractions(mockAuthorService);
     }
 
     @SneakyThrows
