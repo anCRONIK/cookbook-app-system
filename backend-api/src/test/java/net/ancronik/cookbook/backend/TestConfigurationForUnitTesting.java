@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend;
 
+import net.ancronik.cookbook.backend.config.CacheConfig;
 import net.ancronik.cookbook.backend.data.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
 @EnableAutoConfiguration(exclude = {
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
         CassandraDataAutoConfiguration.class
 })
 @ComponentScan(basePackages = {"net.ancronik.cookbook.backend.domain"})
+@Import(CacheConfig.class)
 public class TestConfigurationForUnitTesting {
 
     @MockBean

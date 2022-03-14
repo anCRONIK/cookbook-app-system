@@ -49,10 +49,10 @@ public class CodeQueryServiceImpl implements CodeQueryService {
         return measurementUnitRepository.findAll().stream().map(measurementUnitModelAssembler::toModel).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "measurement_units", key = "unit")
+    @Cacheable(value = "measurement_units")
     @Override
     public boolean isMeasurementUnitValid(@NonNull String unit) {
-        LOG.info("Checking if measurement unit is valid");
+        LOG.info("Checking if measurement unit is valid [{}]", unit);
 
         return unit.isEmpty() || measurementUnitRepository.existsById(unit);
     }
@@ -63,9 +63,11 @@ public class CodeQueryServiceImpl implements CodeQueryService {
         return recipeCategoryRepository.findAll().stream().map(c -> new RecipeCategoryModel(c.getCategory())).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "recipe_categories", key = "category")
+    @Cacheable(value = "recipe_categories")
     @Override
     public boolean isRecipeCategoryValid(@NonNull @NotBlank @CodePointLength(max = 50) String category) {
+        LOG.info("Checking if category is valid [{}]", category);
+
         return recipeCategoryRepository.existsById(category);
     }
 }

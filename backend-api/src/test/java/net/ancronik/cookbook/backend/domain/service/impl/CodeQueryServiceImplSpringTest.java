@@ -3,17 +3,20 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 import net.ancronik.cookbook.backend.TestConfigurationForUnitTesting;
 import net.ancronik.cookbook.backend.TestTypes;
 import net.ancronik.cookbook.backend.data.model.MeasurementUnitMockData;
+import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
-import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitModelAssembler;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.validation.ConstraintViolationException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -21,23 +24,72 @@ import static org.mockito.Mockito.*;
 @Tag(TestTypes.UNIT)
 public class CodeQueryServiceImplSpringTest {
 
-    private final MeasurementUnitRepository mockMeasurementUnitRepository = Mockito.mock(MeasurementUnitRepository.class);
+    @Autowired
+    private MeasurementUnitRepository mockMeasurementUnitRepository;
 
-    private final RecipeCategoryRepository mockRecipeCategoryRepository = Mockito.mock(RecipeCategoryRepository.class);
+    @Autowired
+    private RecipeCategoryRepository mockRecipeCategoryRepository;
 
-    private final MeasurementUnitModelAssembler measurementUnitModelAssembler = new MeasurementUnitModelAssembler(new ModelMapper());
-
-    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitModelAssembler);
+    @Autowired
+    private CodeQueryServiceImpl service;
 
     @Test
-    public void getMeasurementUnits_TestCacheable() {
+    public void getMeasurementUnitsSAndIsMeasurementUnitValid_TestCacheable() {
+        String unit1 = "";
+        String unit2 = "spoon";
+        String unit3 = "none";
+        when(mockMeasurementUnitRepository.existsById(unit1)).thenThrow(new RuntimeException("this shouldn't happen"));
+        when(mockMeasurementUnitRepository.existsById(unit2)).thenReturn(true);
+        when(mockMeasurementUnitRepository.existsById(unit3)).thenReturn(false);
         when(mockMeasurementUnitRepository.findAll()).thenReturn(MeasurementUnitMockData.generateRandomMockData(10));
 
         service.getMeasurementUnits();
+
+        assertTrue(service.isMeasurementUnitValid(unit1));
+        assertTrue(service.isMeasurementUnitValid(unit2));
         service.getMeasurementUnits();
-//TODO
-//        verify(mockMeasurementUnitRepository).findAll();
-  //      verifyNoMoreInteractions(mockMeasurementUnitRepository);
+        assertFalse(service.isMeasurementUnitValid(unit3));
+        assertFalse(service.isMeasurementUnitValid(unit3));
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        service.getMeasurementUnits();
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        assertTrue(service.isMeasurementUnitValid(unit1));
+
+        verify(mockMeasurementUnitRepository).existsById(unit2);
+        verify(mockMeasurementUnitRepository).existsById(unit3);
+
+        verify(mockMeasurementUnitRepository).findAll();
+        verifyNoMoreInteractions(mockMeasurementUnitRepository);
+    }
+
+    @Test
+    public void getRecipeCategoriesAndIsRecipeCategoryValid_TestCacheable() {
+        String category1 = "";
+        String category2 = "entree";
+        String category3 = "random";
+        when(mockRecipeCategoryRepository.existsById(category1)).thenReturn(false);
+        when(mockRecipeCategoryRepository.existsById(category2)).thenReturn(true);
+        when(mockRecipeCategoryRepository.existsById(category3)).thenReturn(false);
+        when(mockRecipeCategoryRepository.findAll()).thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
+
+        service.getRecipeCategories();
+
+        assertTrue(service.isRecipeCategoryValid(category2));
+        assertThrows(ConstraintViolationException.class, () -> service.isRecipeCategoryValid(category1));
+        assertFalse(service.isRecipeCategoryValid(category3));
+        service.getRecipeCategories();
+        assertFalse(service.isRecipeCategoryValid(category3));
+        assertTrue(service.isRecipeCategoryValid(category2));
+        service.getRecipeCategories();
+        assertTrue(service.isRecipeCategoryValid(category2));
+        assertTrue(service.isRecipeCategoryValid(category2));
+
+        verify(mockRecipeCategoryRepository).existsById(category2);
+        verify(mockRecipeCategoryRepository).existsById(category3);
+
+        verify(mockRecipeCategoryRepository).findAll();
+        verifyNoMoreInteractions(mockRecipeCategoryRepository);
     }
 
 }
