@@ -15,6 +15,7 @@ import net.ancronik.cookbook.backend.domain.mapper.RecipeCreateRequestToRecipeMa
 import net.ancronik.cookbook.backend.domain.mapper.RecipeUpdateRequestRecipeUpdateMapper;
 import net.ancronik.cookbook.backend.domain.mapper.UpdateMapper;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
+import net.ancronik.cookbook.backend.domain.service.impl.RecipeServiceImpl;
 import net.ancronik.cookbook.backend.web.dto.DtoMockData;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeBasicInfoModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCreateRequest;

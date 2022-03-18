@@ -3,6 +3,7 @@ package net.ancronik.cookbook.backend.data.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 
@@ -25,7 +26,7 @@ public class RecipeCommentPK implements Serializable {
 
     @NotNull
     @Size
-    @PrimaryKeyColumn("recipe_id")
+    @PrimaryKeyColumn(value = "recipe_id", type = PrimaryKeyType.PARTITIONED)
     private Long recipeId;
 
     @NotBlank

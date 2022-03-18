@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
 import net.ancronik.cookbook.backend.TestTypes;
+import net.ancronik.cookbook.backend.domain.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

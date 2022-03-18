@@ -16,9 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestConfigurationForUnitTesting.class)

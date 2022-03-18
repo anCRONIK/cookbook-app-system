@@ -1,6 +1,5 @@
 package net.ancronik.cookbook.backend.domain.service.impl;
 
-import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.StringTestUtils;
 import net.ancronik.cookbook.backend.TestConfigurationForUnitTesting;
 import net.ancronik.cookbook.backend.TestTypes;

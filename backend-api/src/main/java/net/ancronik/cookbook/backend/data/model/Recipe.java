@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CodePointLength;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
@@ -88,6 +89,7 @@ public class Recipe implements Serializable {
     @Column(value = "difficulty")
     private Integer difficulty;
 
+    @CassandraType(type = CassandraType.Name.VARCHAR)
     @NotNull
     private RecipeCategory category;
 

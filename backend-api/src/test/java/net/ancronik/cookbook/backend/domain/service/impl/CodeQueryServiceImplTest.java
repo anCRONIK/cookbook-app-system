@@ -7,6 +7,7 @@ import net.ancronik.cookbook.backend.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.data.repository.MeasurementUnitRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeCategoryRepository;
 import net.ancronik.cookbook.backend.domain.assembler.MeasurementUnitModelAssembler;
+import net.ancronik.cookbook.backend.domain.service.impl.CodeQueryServiceImpl;
 import net.ancronik.cookbook.backend.web.dto.recipe.MeasurementUnitModel;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCategoryModel;
 import org.junit.jupiter.api.Tag;

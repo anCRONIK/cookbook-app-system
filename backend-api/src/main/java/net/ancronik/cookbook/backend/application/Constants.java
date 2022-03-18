@@ -5,7 +5,7 @@ package net.ancronik.cookbook.backend.application;
  *
  * @author Nikola Presecki
  */
-public class Constants {
+public abstract class Constants {
 
     /**
      * Name of HTTP header that will contain request id
@@ -16,9 +16,5 @@ public class Constants {
      * Key in logging context for CLID.
      */
     public static final String LOGGING_CLID = "clid";
-
-    private Constants() {
-        //util
-    }
 
 }

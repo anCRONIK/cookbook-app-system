@@ -12,10 +12,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
 @EnableAutoConfiguration(exclude = {
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
@@ -23,7 +21,9 @@ import org.springframework.context.annotation.Import;
         CassandraAutoConfiguration.class,
         CassandraDataAutoConfiguration.class
 })
-@ComponentScan(basePackages = {"net.ancronik.cookbook.backend.domain"})
+@ComponentScan(
+        basePackages = {"net.ancronik.cookbook.backend.domain"}
+)
 @Import(CacheConfig.class)
 public class TestConfigurationForUnitTesting {
 

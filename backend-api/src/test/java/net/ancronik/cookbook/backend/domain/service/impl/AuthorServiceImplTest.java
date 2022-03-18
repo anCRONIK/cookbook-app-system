@@ -9,6 +9,7 @@ import net.ancronik.cookbook.backend.data.repository.AuthorRepository;
 import net.ancronik.cookbook.backend.domain.assembler.AuthorModelAssembler;
 import net.ancronik.cookbook.backend.domain.mapper.AuthorCreateRequestToAuthorMapper;
 import net.ancronik.cookbook.backend.domain.mapper.AuthorUpdateRequestAuthorUpdateMapper;
+import net.ancronik.cookbook.backend.domain.service.impl.AuthorServiceImpl;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorCreateRequest;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorModel;
 import net.ancronik.cookbook.backend.web.dto.author.AuthorUpdateRequest;

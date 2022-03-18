@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestConfigurationForUnitTesting.class)
 @Tag(TestTypes.UNIT)
-public class CodeQueryServiceImplSpringTest {
+public class CodeQueryServiceImplCacheableTest {
 
     @Autowired
     private MeasurementUnitRepository mockMeasurementUnitRepository;

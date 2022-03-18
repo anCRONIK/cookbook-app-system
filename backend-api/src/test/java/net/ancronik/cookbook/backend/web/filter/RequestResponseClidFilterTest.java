@@ -6,7 +6,6 @@ import net.ancronik.cookbook.backend.application.Constants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -15,7 +14,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @Tag(TestTypes.UNIT)
 public class RequestResponseClidFilterTest {

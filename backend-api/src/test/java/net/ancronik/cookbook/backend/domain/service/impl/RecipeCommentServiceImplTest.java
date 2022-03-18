@@ -10,6 +10,7 @@ import net.ancronik.cookbook.backend.data.repository.RecipeCommentRepository;
 import net.ancronik.cookbook.backend.data.repository.RecipeRepository;
 import net.ancronik.cookbook.backend.domain.assembler.RecipeCommentModelAssembler;
 import net.ancronik.cookbook.backend.domain.service.AuthenticationService;
+import net.ancronik.cookbook.backend.domain.service.impl.RecipeCommentServiceImpl;
 import net.ancronik.cookbook.backend.web.dto.recipe.AddRecipeCommentRequest;
 import net.ancronik.cookbook.backend.web.dto.recipe.RecipeCommentModel;
 import org.junit.jupiter.api.Tag;

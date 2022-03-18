@@ -2,6 +2,7 @@ package net.ancronik.cookbook.backend.domain.service.impl;
 
 import lombok.SneakyThrows;
 import net.ancronik.cookbook.backend.TestTypes;
+import net.ancronik.cookbook.backend.domain.service.impl.CdnServiceMockImpl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;

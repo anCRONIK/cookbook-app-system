@@ -8,7 +8,7 @@ CREATE KEYSPACE IF NOT EXISTS cookbook WITH REPLICATION = { 'class' : 'SimpleStr
 CREATE TYPE cookbook.ingredient (
    name VARCHAR,
    quantity VARCHAR,
-   measurement_unit VARCHAR,
+   measurement_unit VARCHAR
 );
 
 -- Create authors table
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS cookbook.authors (
     full_name VARCHAR,
     date_of_birth DATE,
     bio TEXT,
-    image_url VARCHAR,
+    image_url VARCHAR
 );
 
 -- Create recipes table
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS cookbook.recipes (
     difficulty TINYINT,
     category VARCHAR,
     rating FLOAT,
-    author_username VARCHAR,
+    author_username VARCHAR
 );
 
 -- Create recipe categories table
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS cookbook.recipe_comments (
     username VARCHAR,
     text TEXT,
     date_created TIMESTAMP,
-    PRIMARY KEY (recipe_id, username, date_created)
-) WITH CLUSTERING ORDER BY (date_created DESC);
+    PRIMARY KEY (recipe_id, date_created, username)
+) WITH CLUSTERING ORDER BY (date_created DESC, username ASC);
 
 -- Create measurement units table
 CREATE TABLE IF NOT EXISTS cookbook.measurement_units (

@@ -2,6 +2,7 @@ package net.ancronik.cookbook.backend.data.model;
 
 import lombok.*;
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class MeasurementUnit implements Serializable {
 
     private String name;
 
+    @PrimaryKey
     private String code;
 
     private String category;
