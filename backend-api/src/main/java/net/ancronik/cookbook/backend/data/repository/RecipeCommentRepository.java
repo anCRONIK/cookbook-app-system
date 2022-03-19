@@ -17,4 +17,8 @@ public interface RecipeCommentRepository extends CassandraRepository<RecipeComme
 
     Slice<RecipeComment> findAllByRecipeCommentPKRecipeId(Long recipeId, Pageable pageable);
 
+    @Override
+    default void deleteAll() {
+        throw new UnsupportedOperationException("not supported for this repository");
+    }
 }

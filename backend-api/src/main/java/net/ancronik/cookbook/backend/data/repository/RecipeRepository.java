@@ -16,4 +16,8 @@ public interface RecipeRepository extends CassandraRepository<Recipe, Long> {
 
     Slice<Recipe> findAllByCategory(String category, Pageable pageable);
 
+    @Override
+    default void deleteAll() {
+        throw new UnsupportedOperationException("not supported for this repository");
+    }
 }

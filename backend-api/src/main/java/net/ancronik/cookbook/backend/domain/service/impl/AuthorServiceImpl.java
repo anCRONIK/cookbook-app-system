@@ -87,7 +87,7 @@ public class AuthorServiceImpl implements AuthorService {
 
             authorUpdateRequestToAuthorMapper.update(request, author);
 
-            return authorModelAssembler.toModel(authorRepository.save(author));
+            return authorModelAssembler.toModel(authorRepository.save(author)); //TODO will EM handle this and we don't need to save because transactional, not sure for cassandra db?
         } catch (DataDoesNotExistException e) {
             LOG.error("Author with id [{}] does not exists", id);
             throw e;

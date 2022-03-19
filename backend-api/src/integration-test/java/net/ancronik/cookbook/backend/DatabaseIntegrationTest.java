@@ -5,6 +5,7 @@ import com.datastax.driver.core.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,18 +39,18 @@ public abstract class DatabaseIntegrationTest {
 
     @Container
     public static final CassandraContainer cassandra = (CassandraContainer) new CassandraContainer("cassandra:3.11.2")
-            .withExposedPorts(CASSANDRA_PORT).withReuse(true);
+            .withExposedPorts(CASSANDRA_PORT);
 
 
     @DynamicPropertySource
     static void setupCassandraConnectionProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.cassandra.keyspace-name", ()-> KEYSPACE_NAME);
+        registry.add("spring.data.cassandra.keyspace-name", () -> KEYSPACE_NAME);
         registry.add("spring.data.cassandra.contact-points", cassandra::getContainerIpAddress);
-        registry.add("spring.data.cassandra.port", ()-> String.valueOf(cassandra.getMappedPort(9042)));
+        registry.add("spring.data.cassandra.port", () -> String.valueOf(cassandra.getMappedPort(9042)));
     }
 
     @BeforeAll
-    static void init(){
+    static void init() {
         createKeyspace(cassandra.getCluster());
         setupDatabase(cassandra.getCluster());
     }
@@ -59,6 +60,7 @@ public abstract class DatabaseIntegrationTest {
             session.execute("CREATE KEYSPACE IF NOT EXISTS " + KEYSPACE_NAME + " WITH replication = {'class':'SimpleStrategy','replication_factor':'1'};");
         }
     }
+
 
     @SneakyThrows
     private static void setupDatabase(Cluster cluster) {
@@ -83,6 +85,7 @@ public abstract class DatabaseIntegrationTest {
     }
 
 
+    @Order(0)
     @Test
     void givenCassandraContainer_SpringContextIsBootstrapped_ContainerIsRunningWithNoExceptions() {
         assertThat(cassandra.isRunning()).isTrue();

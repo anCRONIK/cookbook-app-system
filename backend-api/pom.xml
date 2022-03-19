@@ -333,17 +333,23 @@
                                 <rule>
                                     <element>CLASS</element>
                                     <excludes>
+                                        <!-- Tested with integration tests -->
                                         <exclude>net.ancronik.cookbook.backend.config.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.application.exceptions.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.application.Constants</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.application.Util</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.hateoas.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.domain.entity.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.domain.mapper.Mapper</exclude>
                                         <exclude>net.ancronik.cookbook.backend.data.model.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.data.repository.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.data.codec.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.web.dto.*</exclude>
+
+                                        <!-- False report -->
                                         <exclude>net.ancronik.cookbook.backend.web.advice.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.domain.mapper.Mapper</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.application.Constants</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.application.Util</exclude>
+
+                                        <!-- Does not need coverage -->
+                                        <exclude>net.ancronik.cookbook.backend.hateoas.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.application.exceptions.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.ServletInitializer</exclude>
                                         <exclude>net.ancronik.cookbook.backend.CookbookSpringBootApp</exclude>
                                     </excludes>
