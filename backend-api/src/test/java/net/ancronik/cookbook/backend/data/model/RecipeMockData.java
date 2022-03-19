@@ -21,7 +21,7 @@ public class RecipeMockData {
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)),
                     random.nextBoolean() ? StringTestUtils.generateRandomUrl() : null,
                     random.nextBoolean() ? StringTestUtils.generateRandomUrl() : null,
-                    IngredientMockData.generateRandomMockData(random.nextInt(20)),
+                    IngredientMockData.generateRandomMockData(random.nextInt(20)+1),
                     random.nextInt(300),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
                     random.nextInt(600),
