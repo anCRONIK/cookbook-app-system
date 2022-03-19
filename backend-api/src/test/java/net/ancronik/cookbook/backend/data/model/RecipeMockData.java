@@ -17,14 +17,14 @@ public class RecipeMockData {
         for (int i = 0; i < size; ++i) {
             Recipe entity = new Recipe(
                     (long) random.nextInt(Integer.MAX_VALUE),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(100)),
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(100)+1),
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)),
                     random.nextBoolean() ? StringTestUtils.generateRandomUrl() : null,
                     random.nextBoolean() ? StringTestUtils.generateRandomUrl() : null,
                     IngredientMockData.generateRandomMockData(random.nextInt(20)+1),
-                    random.nextInt(300),
-                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)),
-                    random.nextInt(600),
+                    random.nextInt(300)+1,
+                    StringTestUtils.getRandomStringInLowerCase(random.nextInt(1000)+1),
+                    random.nextInt(600)+1,
                     StringTestUtils.getRandomStringInLowerCase(random.nextInt(200)+2),
                     LocalDateTime.now().minusDays(random.nextInt(100) + 1),
                     random.nextBoolean() ? LocalDateTime.now() : null,
