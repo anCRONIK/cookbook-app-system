@@ -757,7 +757,7 @@ public class RecipeControllerTest {
         doNothing().when(mockRecipeService).deleteRecipe(anyLong());
 
         mockMvc.perform(MockMvcRequestBuilders.delete(DELETE_RECIPE_PATH_PREFIX + "231"))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andReturn();
 
         verify(mockRecipeService).deleteRecipe(anyLong());

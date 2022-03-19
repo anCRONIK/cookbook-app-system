@@ -2,9 +2,54 @@
 
 Backend application for cookbook app
 
-not using relational database because NoSql databases are better for this purpose as we have only two entities and if we
-would use tables, the one for ingredients would be huge (can be separated into few table depending on recipe type (
-desert, main course, appetizer, etc))
+# Intro
+
+Application provides basic endpoints which are going to be used by frontend applications. Current API version is _1_. In
+the future, in case of some API changes, that API should be accessible with new version number, while the older versions
+are still going to be supported.
+
+# Response format
+
+All endpoint responses are in JSON format. Response format follows HAL principle, so you can expect the content type
+as `application/hal+json`. In case of some error, response is going to have content type `application/hal+json`. But do
+not rely on this, future implementation can be changed.
+
+# Dependencies
+
+Application uses Apache Cassandra and the authentication application as major dependencies.
+
+## Apache Cassandra
+
+It is used as main database for writing/reading data. If database is not available, application will stop running.
+
+## Authentication application
+
+It is used for two purposes:
+
+- JWT validation
+- it creates authors using `AuthorController` endpoint when the user is successfully registered in our system
+
+## Memcache
+
+TODO
+
+## CDN
+
+It is used for uploading images that are used for thumbnails, covers and profiles.
+
+TODO
+
+# API documentation
+
+TODO: swagger doc
+
+# Security
+
+jwt ...
+
+# Rate limits
+
+TODO... define them etc
 
 # Tests
 
