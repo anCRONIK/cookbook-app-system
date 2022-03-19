@@ -1,14 +1,6 @@
 name: "Test And Build"
 
-on:
-  push:
-    branches:
-      - main
-      - release/*
-  pull_request:
-    branches:
-      - main
-      - release/*
+on: push
 
 jobs:
   build:
@@ -24,7 +16,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Verify backend-api
+      - name: backend-api Unit testing
         run: |
           cd backend-api
-          mvn verify
+          mvn clean verify
+
+      - name: backend-api Integration testing
+        run: |
+          cd backend-api
+          mvn clean verify -P integration-test
