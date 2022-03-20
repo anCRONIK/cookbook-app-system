@@ -3,7 +3,7 @@ version: '3.9'
 services:
   cassandra-cookbook:
     container_name: cassandra-cookbook
-    image: cassandra:4.0.3
+    image: cassandra:latest #using the latest version always to check for compatibility with our app when runing acceptance tests
     ports:
       - "9042:9042"
     environment:
