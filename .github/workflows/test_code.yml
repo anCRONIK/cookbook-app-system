@@ -25,3 +25,13 @@ jobs:
         run: |
           cd backend-api
           mvn clean verify -P integration-test
+
+      - name: backend-auth-user Unit testing
+        run: |
+          cd backend-auth-user
+          mvn clean verify
+
+      - name: backend-auth-user Integration testing
+        run: |
+          cd backend-auth-user
+          mvn clean verify -P integration-test

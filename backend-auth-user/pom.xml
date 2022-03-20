@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.ancronik.cookbook</groupId>
-    <artifactId>backend-api</artifactId>
+    <artifactId>backend-auth-user</artifactId>
     <version>${revision}${sha1}${changelist}</version>
     <packaging>war</packaging>
 
-    <name>cookbook-backend-api</name>
-    <description>Backend API application for cookbook</description>
+    <name>cookbook-backend-auth-user</name>
+    <description>Backend authentication application for cookbook</description>
 
     <developers>
         <developer>
@@ -32,7 +32,6 @@
         <spring.version>>5.3.16</spring.version>
         <spring-boot.version>2.6.4</spring-boot.version>
         <spring-security.version>5.6.2</spring-security.version>
-        <model-mapper.version>3.0.0</model-mapper.version>
 
         <logback.version>1.2.10</logback.version>
 
@@ -73,7 +72,8 @@
             <properties>
                 <jacoco.skip>true</jacoco.skip>
                 <skip.integration.tests>false</skip.integration.tests>
-                <integration-test.groups>!IntegrationTest &amp; !UnitTest</integration-test.groups> <!-- TODO investigate why we can just use acceptancetest group -->
+                <integration-test.groups>!IntegrationTest &amp; !UnitTest
+                </integration-test.groups> <!-- TODO investigate why we can just use acceptancetest group -->
                 <skip.unit.tests>true</skip.unit.tests>
                 <cucumber.junit-platform.naming-strategy>long</cucumber.junit-platform.naming-strategy>
             </properties>
@@ -105,12 +105,8 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-cassandra</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -120,24 +116,15 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-starter-security</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
         <!-- General -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>${model-mapper.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -160,7 +147,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>cassandra</artifactId>
+            <artifactId>postgresql</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
@@ -201,6 +188,11 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
 
         <!-- Runtime and optional -->
@@ -228,7 +220,7 @@
     </dependencies>
 
     <build>
-        <finalName>cookbook-backend-api</finalName>
+        <finalName>cookbook-backend-auth-user</finalName>
 
         <resources>
             <resource>
@@ -372,24 +364,10 @@
                                     <element>CLASS</element>
                                     <excludes>
                                         <!-- Tested with integration tests -->
-                                        <exclude>net.ancronik.cookbook.backend.api.config.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.domain.entity.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.data.model.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.data.repository.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.data.codec.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.web.dto.*</exclude>
 
                                         <!-- False report -->
-                                        <exclude>net.ancronik.cookbook.backend.api.web.advice.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.domain.mapper.Mapper</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.application.Constants</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.application.Util</exclude>
 
                                         <!-- Does not need coverage -->
-                                        <exclude>net.ancronik.cookbook.backend.api.hateoas.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.application.exceptions.*</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.ServletInitializer</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.CookbookSpringBootApp</exclude>
                                     </excludes>
                                     <limits>
                                         <limit>
