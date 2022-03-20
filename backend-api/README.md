@@ -51,6 +51,13 @@ jwt ...
 
 TODO... define them etc
 
+# Local setup
+
+There is `docker-compose.yml` file in the project root directory. That file depends on the `liquibase` project which is
+expected to be in the same hierarchy as this project (this means that _backend-api_ and _liquibase_ project should be in
+the same directory). Docker compose will start Apache Cassandra the Wiremock for all other dependencies. After Cassandra
+is "alive", keypoint will be created and liquibase will create needed tables and initial data.
+
 # Tests
 
 By default, only unit test are running in maven lifecycle. Integration and acceptance tests are separated from that
@@ -93,8 +100,8 @@ To run acceptance tests, you need to provide following system properties:
 
 ### Local setup
 
-To set up environment locally for acceptance tests, just run _docker-compose_ in `support` directory. After all
-containers are up, use following table for property values:
+To set up environment locally for acceptance tests, read chapter about _Local setup_  and after that setup,
+run ` docker-compose up -d` in project root. After all containers are up, use following table for property values:
 
 | property           | value     |
 |--------------------|-----------|

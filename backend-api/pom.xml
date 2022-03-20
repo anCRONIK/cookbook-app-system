@@ -39,7 +39,7 @@
 
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <maven-checkstyle.version>2.17</maven-checkstyle.version>
@@ -71,7 +71,7 @@
             <properties>
                 <jacoco.skip>true</jacoco.skip>
                 <skip.integration.tests>false</skip.integration.tests>
-                <integration-test.groups>AcceptanceTest</integration-test.groups>
+                <integration-test.groups>!IntegrationTest &amp; !UnitTest</integration-test.groups> <!-- TODO investigate why we can just use acceptancetest group -->
                 <skip.unit.tests>true</skip.unit.tests>
                 <cucumber.junit-platform.naming-strategy>long</cucumber.junit-platform.naming-strategy>
             </properties>

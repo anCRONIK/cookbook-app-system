@@ -1,0 +1,2 @@
+CREATE KEYSPACE cookbook WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};
+CREATE TABLE cookbook.databasechangelog (id text, author text, comments text, contexts text, dateexecuted timestamp, deployment_id text, description text, exectype text , filename text, labels text, liquibase text, md5sum text, orderexecuted int, tag text, PRIMARY KEY((id), author, filename));

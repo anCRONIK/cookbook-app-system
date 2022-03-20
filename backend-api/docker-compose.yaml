@@ -1,0 +1,72 @@
+version: '3.9'
+
+services:
+  cassandra-cookbook:
+    container_name: cassandra-cookbook
+    image: cassandra:4.0.3
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=c_cookbook
+    healthcheck:
+      test:
+        - "CMD"
+        - "cqlsh"
+        - "-u cassandra"
+        - "-p cassandra"
+        - "-e describe keyspaces"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    networks:
+      - cookbook-api-net
+  cassandra-cookbook-load-keyspace:
+    container_name: cassandra-load-keyspace
+    image: cassandra
+    depends_on:
+      cassandra-cookbook:
+        condition: service_healthy
+    volumes:
+      - ../liquibase/src/main/resources/init_cassandra.cql:/init_cassandra.cql
+    command:
+      - "/bin/bash"
+      - "-c"
+      - "cqlsh cassandra-cookbook -f /init_cassandra.cql"
+    networks:
+      - cookbook-api-net
+  liquibase-cookbook:
+    container_name: liquibase-cookbook
+    image: liquibase/liquibase
+    depends_on:
+      cassandra-cookbook-load-keyspace:
+        condition: service_completed_successfully
+    command:
+      - --url=jdbc:cassandra://cassandra-cookbook:9042;DefaultKeyspace=cookbook
+      - --username=cassandra
+      - --password=cassandra
+      - --changeLogFile=changelog/db.changelog-master.yml
+      - --classpath=/liquibase/changelog:/liquibase/classpath/CassandraJDBC42.jar:/liquibase/classpath/liquibase-cassandra-4.8.0.jar
+      - --driver=com.simba.cassandra.jdbc42.Driver
+      - --defaultSchemaName=cookbook
+      - --liquibase-tablespace-name=cookbook
+      - --log-level=DEBUG
+      - update
+    volumes:
+      - ../liquibase/src/main/resources/db/changelog/:/liquibase/changelog/
+      - ../liquibase/drivers:/liquibase/classpath
+    networks:
+      - cookbook-api-net
+  wiremock-cookbook-api:
+    container_name: wiremock-cookbook-api
+    image: wiremock/wiremock
+    ports:
+      - "8888:8080"
+    command:
+      - --verbose
+      - --record-mappings
+    networks:
+      - cookbook-api-net
+
+networks:
+  cookbook-api-net:
