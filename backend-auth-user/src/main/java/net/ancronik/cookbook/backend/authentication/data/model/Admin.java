@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.authentication.data.model;
+package net.ancronik.cookbook.backend.authentication.data.model;
 
 import lombok.*;
 
@@ -13,7 +13,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "admins")
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

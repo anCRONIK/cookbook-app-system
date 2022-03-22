@@ -1,11 +1,12 @@
-package net.ancronik.cookbook.backend.api.authentication.domain.service;
+package net.ancronik.cookbook.backend.authentication.domain.service;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.ancronik.cookbook.backend.api.authentication.data.model.BasicUser;
-import net.ancronik.cookbook.backend.api.authentication.data.model.User;
-import net.ancronik.cookbook.backend.api.authentication.data.repository.AdminRepository;
-import net.ancronik.cookbook.backend.api.authentication.data.repository.UserRepository;
-import net.ancronik.cookbook.backend.api.authentication.domain.mapper.Mapper;
+import net.ancronik.cookbook.backend.authentication.data.model.BasicUser;
+import net.ancronik.cookbook.backend.authentication.data.model.User;
+import net.ancronik.cookbook.backend.authentication.data.repository.AdminRepository;
+import net.ancronik.cookbook.backend.authentication.data.repository.UserRepository;
+import net.ancronik.cookbook.backend.authentication.domain.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,9 +45,12 @@ public class SecurityUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+        if (username.isBlank()) {
+            throw new UsernameNotFoundException("username is blank");
+        }
         LOG.debug("Searching for user {}", username);
-        BasicUser basicUser = null;
+        BasicUser basicUser;
         Optional<User> user = userRepository.findUserByUsername(username);
 
         if (user.isEmpty()) {

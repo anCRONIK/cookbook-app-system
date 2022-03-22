@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.authentication.domain.mapper;
+package net.ancronik.cookbook.backend.authentication.domain.mapper;
 
 import lombok.NonNull;
 

@@ -1,11 +1,9 @@
-package net.ancronik.cookbook.backend.api.authentication.data.model;
+package net.ancronik.cookbook.backend.authentication.data.model;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.CodePointLength;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 

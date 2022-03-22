@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api;
+package net.ancronik.cookbook.backend.authentication;
 
 public class TestTypes {
 

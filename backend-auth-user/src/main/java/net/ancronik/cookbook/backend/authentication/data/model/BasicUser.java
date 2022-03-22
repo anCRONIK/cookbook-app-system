@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.authentication.data.model;
+package net.ancronik.cookbook.backend.authentication.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

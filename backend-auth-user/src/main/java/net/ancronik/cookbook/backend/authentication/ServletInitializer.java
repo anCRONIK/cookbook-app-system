@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.authentication;
+package net.ancronik.cookbook.backend.authentication;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

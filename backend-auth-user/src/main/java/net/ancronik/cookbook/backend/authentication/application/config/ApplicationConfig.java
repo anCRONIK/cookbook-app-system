@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.authentication.application.config;
+package net.ancronik.cookbook.backend.authentication.application.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
