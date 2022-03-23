@@ -9,6 +9,7 @@ Full app system will consist of:
 - backend application (Spring Boot, Spring HATEOAS (HAL structure), Cassandra, JWT for security, integration with CDN for images/videos, Memcached) : handling all operations regarding to the application
 - user auth application (Spring Boot, Spring OAUTH, Postgres) : handling user registration and authentication
 - notification application (Spring Boot, Rabbit MQ) : sends all notifications
+- internal tool for admins (Spring Boot, Postgres, React for Frontend)
 - frontend application (ReactJS)
 - mobile application (Flutter)
 - databases: Postgres, Cassandra

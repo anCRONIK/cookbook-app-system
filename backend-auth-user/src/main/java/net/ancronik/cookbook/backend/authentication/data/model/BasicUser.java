@@ -48,10 +48,13 @@ public class BasicUser implements Serializable {
     @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;
 
-    @Column(name = "locked")
+    @Column(name = "is_locked")
     private boolean accountLocked;
 
-    @Column(name = "disabled")
+    @Column(name = "is_disabled")
     private boolean accountDisabled;
+
+    @Column(name = "require_password_reset")
+    private boolean passwordResetRequired;
 
 }

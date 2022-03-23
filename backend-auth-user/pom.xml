@@ -368,6 +368,9 @@
                                         <!-- False report -->
 
                                         <!-- Does not need coverage -->
+                                        <exclude>net.ancronik.cookbook.backend.authentication.application.config.*</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.authentication.ServletInitializer</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.authentication.UserAuthSpringBootApp</exclude>
                                     </excludes>
                                     <limits>
                                         <limit>

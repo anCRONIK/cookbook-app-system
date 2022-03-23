@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  postgres-cookbook:
+    container_name: postgres-cookbook
+    image: postgres:latest #using the latest version always to check for compatibility with our app when running acceptance tests
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cookbook
+      POSTGRES_PASSWORD: cookbook
+      POSTGRES_DB: cookbook
+    healthcheck:
+      test:
+        - "CMD"
+        - "pg_isready"
+        - "-U cookbook"
+        - "-d cookbook"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    networks:
+      - cookbook-auth-net
+  liquibase-cookbook-auth:
+    container_name: liquibase-cookbook-auth
+    image: liquibase/liquibase
+    depends_on:
+      postgres-cookbook:
+        condition: service_healthy
+    command:
+      - --url=jdbc:postgresql://postgres-cookbook:5432/cookbook
+      - --username=cookbook
+      - --password=cookbook
+      - --changeLogFile=changelog/db.changelog-master.yml
+      - --classpath=/liquibase/changelog:/liquibase/classpath/postgresql-42.3.3.jar
+      - --driver=org.postgresql.Driver
+      - --log-level=DEBUG
+      - update
+    volumes:
+      - ../liquibase/src/main/resources/postgresql/db/changelog/:/liquibase/changelog/
+      - ../liquibase/drivers/postgresql:/liquibase/classpath
+    networks:
+      - cookbook-auth-net
+  wiremock-cookbook-auth:
+    container_name: wiremock-cookbook-auth
+    image: wiremock/wiremock
+    ports:
+      - "8887:8080"
+    command:
+      - --verbose
+      - --record-mappings
+    networks:
+      - cookbook-auth-net
+
+networks:
+  cookbook-auth-net:

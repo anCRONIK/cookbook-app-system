@@ -21,9 +21,13 @@ public class LoginAttempts implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true, updatable = false, nullable = false)
+    @Column(name = "user_id",unique = true, updatable = false)
     @NotNull
     private Long userId;
+
+    @Column(name = "admin_id" ,unique = true, updatable = false)
+    @NotNull
+    private Long adminId;
 
     @Column(name = "attempt_counter")
     @Range(max = 10)

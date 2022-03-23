@@ -23,6 +23,7 @@ public class BasicUserToUserDetailsMapper implements Mapper<BasicUser, UserDetai
                 .password("")
                 .disabled(user.isAccountDisabled())
                 .accountLocked(user.isAccountLocked())
+                .credentialsExpired(user.isPasswordResetRequired())
                 .roles(SecurityAuthorities.getRolesForUser(user).toArray(String[]::new)).build();
     }
 }

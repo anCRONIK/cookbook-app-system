@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag(TestTypes.UNIT)
@@ -81,6 +83,7 @@ public class BasicUserToUserDetailsMapperTest {
         assertEquals(1, userDetails.getAuthorities().size());
 
         admin.setAccountDisabled(true);
+        admin.setPasswordResetRequired(true);
 
         userDetails = mapper.map(admin);
 
@@ -88,7 +91,23 @@ public class BasicUserToUserDetailsMapperTest {
         assertEquals(admin.isAccountLocked(), !userDetails.isAccountNonLocked());
         assertEquals(admin.isAccountDisabled(), !userDetails.isEnabled());
         assertTrue(userDetails.isAccountNonExpired());
-        assertTrue(userDetails.isCredentialsNonExpired());
+        assertFalse(userDetails.isCredentialsNonExpired());
+    }
+
+    @Test
+    public void map_ListGiven_ReturnValidUserDetails() {
+        Admin admin = new Admin();
+        admin.setUsername("testAdmin");
+        admin.setEmail("test-admin@gmail.com");
+
+        User user = new User();
+        user.setUsername("testUser");
+        user.setEmail("test-user@gmail.com");
+
+        List<UserDetails> userDetails = mapper.mapList(List.of(admin, user));
+
+
+        assertEquals(2, userDetails.size());
     }
 
 }
