@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Application configuration with security settings.
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author Nikola Presecki
  */
 @Configuration
+@EnableTransactionManagement
 public class ApplicationConfig extends WebSecurityConfigurerAdapter {
 
     @Bean

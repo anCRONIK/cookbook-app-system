@@ -35,7 +35,7 @@ public abstract class DatabaseIntegrationTest {
 
     public static final int CASSANDRA_PORT = 9042;
 
-    private static final String DB_INIT_SQL_FILENAME = "/setupDb.sql";
+    private static final String DB_INIT_SQL_FILENAME = "/setup_db.sql";
 
     @Container
     public static final CassandraContainer cassandra = (CassandraContainer) new CassandraContainer("cassandra:3.11.2")
