@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CodePointLength;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ public class BasicUser implements Serializable {
 
     @NotBlank
     @CodePointLength(min = 4, max = 30)
+    @Email
     @Column(name = "email", unique = true, updatable = false)
     private String email;
 

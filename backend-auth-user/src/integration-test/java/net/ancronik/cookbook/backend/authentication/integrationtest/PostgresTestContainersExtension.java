@@ -14,10 +14,6 @@ public class PostgresTestContainersExtension implements BeforeAllCallback {
                 started = true;
 
                 CustomPostgresqlContainer.getInstance().start();
-
-                context.getRoot()
-                        .getStore(ExtensionContext.Namespace.GLOBAL)
-                        .put("TestContainersExtension-started", this);
             }
         }
     }

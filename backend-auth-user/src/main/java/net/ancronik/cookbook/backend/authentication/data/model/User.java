@@ -3,6 +3,7 @@ package net.ancronik.cookbook.backend.authentication.data.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Model representing user.
@@ -11,12 +12,15 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class User extends BasicUser {
+
+    @Transient
+    @OneToOne(mappedBy = "user_id")
+    private LoginAttempts loginAttempts;
 
     @Column(name = "is_editor")
     protected boolean isEditor;

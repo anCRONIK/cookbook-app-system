@@ -45,11 +45,11 @@ public class SecurityUserDetailsServiceTest {
     public void loadUserByUsername_UserRepositoryThrowsException_PropagateException() {
         String username = "User1";
 
-        when(mockUserRepository.findUserByUsername(username)).thenThrow(new ConcurrencyFailureException("test"));
+        when(mockUserRepository.findByUsername(username)).thenThrow(new ConcurrencyFailureException("test"));
 
         assertThrows(DataAccessException.class, () -> securityUserDetailsService.loadUserByUsername(username));
 
-        verify(mockUserRepository).findUserByUsername(username);
+        verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
         verifyNoInteractions(mockAdminRepository);
     }
@@ -60,11 +60,11 @@ public class SecurityUserDetailsServiceTest {
         User user = new User();
         user.setUsername(username);
 
-        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         assertNotNull(securityUserDetailsService.loadUserByUsername(username));
 
-        verify(mockUserRepository).findUserByUsername(username);
+        verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
         verifyNoInteractions(mockAdminRepository);
     }
@@ -73,13 +73,13 @@ public class SecurityUserDetailsServiceTest {
     public void loadUserByUsername_UserNotInUserRepositoryAdminRepositoryThrowsException_PropagateException() {
         String username = "User1";
 
-        when(mockAdminRepository.findAdminByUsername(username)).thenThrow(new ConcurrencyFailureException("test"));
-        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.empty());
+        when(mockAdminRepository.findByUsername(username)).thenThrow(new ConcurrencyFailureException("test"));
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(DataAccessException.class, () -> securityUserDetailsService.loadUserByUsername(username));
 
-        verify(mockUserRepository).findUserByUsername(username);
-        verify(mockAdminRepository).findAdminByUsername(username);
+        verify(mockUserRepository).findByUsername(username);
+        verify(mockAdminRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository, mockAdminRepository);
     }
 
@@ -87,13 +87,13 @@ public class SecurityUserDetailsServiceTest {
     public void loadUserByUsername_UserNotInUserRepositoryNorAdminRepository_ThrowException() {
         String username = "User1";
 
-        when(mockAdminRepository.findAdminByUsername(username)).thenReturn(Optional.empty());
-        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.empty());
+        when(mockAdminRepository.findByUsername(username)).thenReturn(Optional.empty());
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> securityUserDetailsService.loadUserByUsername(username));
 
-        verify(mockUserRepository).findUserByUsername(username);
-        verify(mockAdminRepository).findAdminByUsername(username);
+        verify(mockUserRepository).findByUsername(username);
+        verify(mockAdminRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository, mockAdminRepository);
     }
 
@@ -103,13 +103,13 @@ public class SecurityUserDetailsServiceTest {
         Admin admin = new Admin();
         admin.setUsername(username);
 
-        when(mockAdminRepository.findAdminByUsername(username)).thenReturn(Optional.of(admin));
-        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.empty());
+        when(mockAdminRepository.findByUsername(username)).thenReturn(Optional.of(admin));
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         assertNotNull(securityUserDetailsService.loadUserByUsername(username));
 
-        verify(mockUserRepository).findUserByUsername(username);
-        verify(mockAdminRepository).findAdminByUsername(username);
+        verify(mockUserRepository).findByUsername(username);
+        verify(mockAdminRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository, mockAdminRepository);
     }
 

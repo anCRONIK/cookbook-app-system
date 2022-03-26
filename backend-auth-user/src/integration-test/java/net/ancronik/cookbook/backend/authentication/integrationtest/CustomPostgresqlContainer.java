@@ -1,15 +1,6 @@
 package net.ancronik.cookbook.backend.authentication.integrationtest;
 
-import lombok.SneakyThrows;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.util.StringUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
-
-import javax.sql.DataSource;
-import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
 
 public class CustomPostgresqlContainer extends PostgreSQLContainer<CustomPostgresqlContainer> {
 

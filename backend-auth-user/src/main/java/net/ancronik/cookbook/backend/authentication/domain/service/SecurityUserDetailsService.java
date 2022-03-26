@@ -51,11 +51,11 @@ public class SecurityUserDetailsService implements UserDetailsService {
         }
         LOG.debug("Searching for user {}", username);
         BasicUser basicUser;
-        Optional<User> user = userRepository.findUserByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isEmpty()) {
             LOG.info("User not found in table, checking admins");
-            basicUser = adminRepository.findAdminByUsername(username)
+            basicUser = adminRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not present"));
         } else {
             basicUser = user.get();
