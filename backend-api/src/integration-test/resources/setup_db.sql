@@ -1,3 +1,5 @@
+CREATE KEYSPACE IF NOT EXISTS cookbook WITH replication = {'class':'SimpleStrategy','replication_factor':'1'};
+
 -- create user types
 CREATE TYPE cookbook.ingredient (
    name VARCHAR,

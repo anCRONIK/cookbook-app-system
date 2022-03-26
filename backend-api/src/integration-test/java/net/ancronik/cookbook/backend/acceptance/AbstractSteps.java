@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.acceptance;
+package net.ancronik.cookbook.backend.acceptance;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;

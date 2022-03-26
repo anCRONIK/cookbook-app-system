@@ -1,7 +1,8 @@
-package net.ancronik.cookbook.backend.api.acceptance;
+package net.ancronik.cookbook.backend.acceptance;
 
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp;
 import net.ancronik.cookbook.backend.api.TestTypes;
 import org.junit.jupiter.api.Tag;
 import org.junit.platform.suite.api.ConfigurationParameter;
@@ -17,7 +18,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @SelectClasspathResource("acceptance/features")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "net.ancronik.cookbook.backend")
 @CucumberContextConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CookbookBackendApiSpringBootApp.class)
 @Tag(TestTypes.ACCEPTANCE)
 public class AcceptanceTestRunner {
 

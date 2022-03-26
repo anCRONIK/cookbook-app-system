@@ -1,15 +1,28 @@
-package net.ancronik.cookbook.backend.api.data.repository;
+package net.ancronik.cookbook.backend.integrationtest.data.repository;
 
-import net.ancronik.cookbook.backend.api.DatabaseIntegrationTest;
+import net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp;
+import net.ancronik.cookbook.backend.integrationtest.CassandraTestContainersExtension;
+import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.data.model.MeasurementUnit;
+import net.ancronik.cookbook.backend.api.data.repository.MeasurementUnitRepository;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MeasurementUnitRepositoryIT extends DatabaseIntegrationTest {
+@SpringBootTest(classes = CookbookBackendApiSpringBootApp.class)
+@ExtendWith({SpringExtension.class, CassandraTestContainersExtension.class})
+@Tag(TestTypes.INTEGRATION)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class MeasurementUnitRepositoryIT {
 
     @Autowired
     MeasurementUnitRepository measurementUnitRepository;

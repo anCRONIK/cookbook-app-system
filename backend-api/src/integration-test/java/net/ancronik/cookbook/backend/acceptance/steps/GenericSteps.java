@@ -1,11 +1,11 @@
-package net.ancronik.cookbook.backend.api.acceptance.steps;
+package net.ancronik.cookbook.backend.acceptance.steps;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import net.ancronik.cookbook.backend.api.acceptance.AbstractSteps;
-import net.ancronik.cookbook.backend.api.acceptance.HeaderSettingRequestCallback;
-import net.ancronik.cookbook.backend.api.acceptance.ResponseResultErrorHandler;
-import net.ancronik.cookbook.backend.api.acceptance.ResponseResults;
+import net.ancronik.cookbook.backend.acceptance.AbstractSteps;
+import net.ancronik.cookbook.backend.acceptance.HeaderSettingRequestCallback;
+import net.ancronik.cookbook.backend.acceptance.ResponseResultErrorHandler;
+import net.ancronik.cookbook.backend.acceptance.ResponseResults;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 

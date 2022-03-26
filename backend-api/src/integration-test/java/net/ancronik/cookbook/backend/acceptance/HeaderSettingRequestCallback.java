@@ -1,4 +1,4 @@
-package net.ancronik.cookbook.backend.api.acceptance;
+package net.ancronik.cookbook.backend.acceptance;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequest;

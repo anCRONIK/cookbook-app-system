@@ -1,7 +1,7 @@
-package net.ancronik.cookbook.backend.api.acceptance.steps;
+package net.ancronik.cookbook.backend.acceptance.steps;
 
 import io.cucumber.java.en.And;
-import net.ancronik.cookbook.backend.api.acceptance.AbstractSteps;
+import net.ancronik.cookbook.backend.acceptance.AbstractSteps;
 
 public class MeasurementUnitControllerSteps extends AbstractSteps {
 

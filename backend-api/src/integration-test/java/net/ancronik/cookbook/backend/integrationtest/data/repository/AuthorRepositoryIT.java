@@ -1,16 +1,19 @@
-package net.ancronik.cookbook.backend.api.data.repository;
+package net.ancronik.cookbook.backend.integrationtest.data.repository;
 
-import net.ancronik.cookbook.backend.api.DatabaseIntegrationTest;
+import net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp;
+import net.ancronik.cookbook.backend.integrationtest.CassandraTestContainersExtension;
+import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.data.model.Author;
 import net.ancronik.cookbook.backend.api.data.model.AuthorMockData;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import net.ancronik.cookbook.backend.api.data.repository.AuthorRepository;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
@@ -18,8 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
+@SpringBootTest(classes = CookbookBackendApiSpringBootApp.class)
+@ExtendWith({SpringExtension.class, CassandraTestContainersExtension.class})
+@Tag(TestTypes.INTEGRATION)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthorRepositoryIT extends DatabaseIntegrationTest {
+public class AuthorRepositoryIT {
 
     @Autowired
     AuthorRepository authorRepository;

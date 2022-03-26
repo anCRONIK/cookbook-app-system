@@ -389,7 +389,7 @@
                                         <exclude>net.ancronik.cookbook.backend.api.hateoas.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.api.application.exceptions.*</exclude>
                                         <exclude>net.ancronik.cookbook.backend.api.ServletInitializer</exclude>
-                                        <exclude>net.ancronik.cookbook.backend.api.CookbookSpringBootApp</exclude>
+                                        <exclude>net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp</exclude>
                                     </excludes>
                                     <limits>
                                         <limit>
