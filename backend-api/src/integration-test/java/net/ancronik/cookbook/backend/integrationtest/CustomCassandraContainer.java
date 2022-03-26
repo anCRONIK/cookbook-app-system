@@ -4,7 +4,7 @@ import org.testcontainers.containers.CassandraContainer;
 
 public class CustomCassandraContainer extends CassandraContainer<CustomCassandraContainer> {
 
-    private static final String IMAGE_VERSION = "cassandra:latest";
+    private static final String IMAGE_VERSION = "cassandra:4.0.3";
 
     public static final int CASSANDRA_PORT = 9042;
 
