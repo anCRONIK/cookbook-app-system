@@ -15,10 +15,10 @@ CREATE TABLE cookbook.users (
     email VARCHAR(30) NOT NULL UNIQUE,
     password_hash VARCHAR NOT NULL UNIQUE,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_locked BOOLEAN,
-    is_disabled BOOLEAN,
-    is_editor BOOLEAN,
-    require_password_reset BOOLEAN
+    is_locked BOOLEAN DEFAULT FALSE,
+    is_disabled BOOLEAN DEFAULT FALSE,
+    is_editor BOOLEAN DEFAULT FALSE,
+    require_password_reset BOOLEAN DEFAULT FALSE
 );
 
 -- Create admins table
@@ -28,9 +28,9 @@ CREATE TABLE cookbook.admins (
     email VARCHAR(30) NOT NULL UNIQUE,
     password_hash VARCHAR NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_locked BOOLEAN,
-    is_disabled BOOLEAN,
-    require_password_reset BOOLEAN
+    is_locked BOOLEAN DEFAULT FALSE,
+    is_disabled BOOLEAN DEFAULT FALSE,
+    require_password_reset BOOLEAN DEFAULT FALSE
 );
 
 -- Create login_attempts table

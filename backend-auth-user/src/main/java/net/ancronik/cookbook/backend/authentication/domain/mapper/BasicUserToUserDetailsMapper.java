@@ -20,7 +20,7 @@ public class BasicUserToUserDetailsMapper implements Mapper<BasicUser, UserDetai
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
-                .password("")
+                .password(user.getPasswordHash())
                 .disabled(user.isAccountDisabled())
                 .accountLocked(user.isAccountLocked())
                 .credentialsExpired(user.isPasswordResetRequired())

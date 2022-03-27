@@ -31,13 +31,32 @@ TODO: swagger doc
 
 jwt ...
 
+## Get access token using Postman
+
+To get access token, under _Authorization_ select _Oauth 2.0_ and then configure values according to the client you are
+using and press _Get New Access Token_. Following image shows some example values:
+
+![img](support/documentation/images/postman_settings_for_access_token.png "Postman settings for access token")
+
 # Rate limits
 
 TODO... define them etc
 
 # Local setup
 
+To run application locally, firstly you need to setup environment. For that, there is _docker-compose.yml_ in the root
+project.
 
+You need Tomcat 9 with Postgres driver in its _lib_ folder.
+
+Create new Tomcat Configuration in idea. Copy following to VM parameters:
+
+```
+-ea -Dcookbook_database_schema=cookbook -Dcookbook_postgres_jdbc_url=jdbc:postgresql://localhost:5432/cookbook -Dcookbook_postgres_username=cookbook -Dcookbook_postgres_password=cookbook
+-Doauth2_database_schema=oauth2 -Doauth2_postgres_jdbc_url=jdbc:postgresql://localhost:5432/cookbook -Doauth2_postgres_username=cookbook -Doauth2_postgres_password=cookbook
+```
+
+Tomcat port should be set to `9000`.
 
 # Tests
 
@@ -69,7 +88,7 @@ add it to the jaccoco exclusion list.
 
 - in separate directory called `integration-test` under package `acceptance`
 - Cucumber as testing framework
-- run with `mvn clean verify -P acceptance-test -Dcassandra_host=...`
+- run with `mvn clean verify -P acceptance-test -Dpostgres_jdbc_url=...`
 - to run them from IDEA you need to use `AcceptanceTestRunner` class and provide needed VM variables.
 
 To run acceptance tests, you need to provide following system properties:

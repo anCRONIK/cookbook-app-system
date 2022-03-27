@@ -4,5 +4,9 @@ databaseChangeLog:
       author: Nikola Presecki
 
   - includeAll:
-      path: ddl
+      path: cookbook
+      relativeToChangelogFile: true
+
+  - includeAll:
+      path: oauth
       relativeToChangelogFile: true
