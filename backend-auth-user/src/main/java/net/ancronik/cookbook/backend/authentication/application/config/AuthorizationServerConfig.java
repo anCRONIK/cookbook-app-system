@@ -4,6 +4,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import net.ancronik.cookbook.backend.authentication.application.security.FederatedIdentityConfigurer;
+import net.ancronik.cookbook.backend.authentication.application.security.FederatedIdentityIdTokenCustomizer;
 import net.ancronik.cookbook.backend.authentication.application.security.Jwks;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,25 +13,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.*;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import java.util.UUID;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * Configuration with security settings for authorization server.
@@ -43,11 +44,22 @@ public class AuthorizationServerConfig {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        return http.formLogin(withDefaults()).build(); //TODO
+        http.apply(new FederatedIdentityConfigurer());
+        return http.formLogin(Customizer.withDefaults()).build();
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(@Qualifier("oauth2JdbcTemplate") JdbcTemplate jdbcTemplate) {
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new SavedRequestAwareAuthenticationSuccessHandler();
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
+        return new FederatedIdentityIdTokenCustomizer();
+    }
+
+    @Bean
+    public RegisteredClientRepository registeredClientRepository(@Qualifier("oauth2JdbcTemplate") JdbcTemplate jdbcTemplate, TokenSettings tokenSettings) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("backend-api")
                 .clientSecret("{noop}secret")
@@ -61,6 +73,7 @@ public class AuthorizationServerConfig {
                 .scope("message.read")
                 .scope("message.write")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .tokenSettings(tokenSettings)
                 .build();
 
         JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
@@ -90,6 +103,6 @@ public class AuthorizationServerConfig {
 
     @Bean
     public ProviderSettings providerSettings() {
-        return ProviderSettings.builder().issuer("http://localhost:9000").build();
+        return ProviderSettings.builder().issuer("http://localhost:9000").build(); //FIXME extract to properties
     }
 }

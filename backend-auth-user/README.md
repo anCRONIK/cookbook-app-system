@@ -52,8 +52,9 @@ You need Tomcat 9 with Postgres driver in its _lib_ folder.
 Create new Tomcat Configuration in idea. Copy following to VM parameters:
 
 ```
--ea -Dcookbook_database_schema=cookbook -Dcookbook_postgres_jdbc_url=jdbc:postgresql://localhost:5432/cookbook -Dcookbook_postgres_username=cookbook -Dcookbook_postgres_password=cookbook
--Doauth2_database_schema=oauth2 -Doauth2_postgres_jdbc_url=jdbc:postgresql://localhost:5432/cookbook -Doauth2_postgres_username=cookbook -Doauth2_postgres_password=cookbook
+-ea -DCOOKBOOK_DATABASE_SCHEMA=cookbook -DCOOKBOOK_POSTGRES_JDBC_URL=jdbc:postgresql://localhost:5432/cookbook -DCOOKBOOK_POSTGRES_USERNAME=cookbook -DCOOKBOOK_POSTGRES_PASSWORD=cookbook
+-DOAUTH2_DATABASE_SCHEMA=oauth2 -DOAUTH2_POSTGRES_JDBC_URL=jdbc:postgresql://localhost:5432/cookbook -DOAUTH2_POSTGRES_USERNAME=cookbook -DOAUTH2_POSTGRES_PASSWORD=cookbook
+-DGOOGLE_CLIENT_ID=<generated_id> -DGOOGLE_CLIENT_SECRET=<generated_secret>
 ```
 
 Tomcat port should be set to `9000`.

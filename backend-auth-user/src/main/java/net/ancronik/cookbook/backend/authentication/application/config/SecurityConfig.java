@@ -15,7 +15,10 @@
  */
 package net.ancronik.cookbook.backend.authentication.application.config;
 
+import net.ancronik.cookbook.backend.authentication.application.security.FederatedIdentityConfigurer;
+import net.ancronik.cookbook.backend.authentication.application.security.Oauth2UserConsumer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,12 +52,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        FederatedIdentityConfigurer federatedIdentityConfigurer = new FederatedIdentityConfigurer()
+                .oauth2UserHandler(new Oauth2UserConsumer());
         http
                 .authorizeRequests(authorizeRequests ->
-                        authorizeRequests.anyRequest().authenticated()
+                        authorizeRequests
+                                .mvcMatchers("/assets/**", "/webjars/**", "/login").permitAll()
+                                .anyRequest().authenticated()
                 )
-                .formLogin(withDefaults());
+                .formLogin(Customizer.withDefaults())
+                .apply(federatedIdentityConfigurer);
         return http.build();
     }
 }
