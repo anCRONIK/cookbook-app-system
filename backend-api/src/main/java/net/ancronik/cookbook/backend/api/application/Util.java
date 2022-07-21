@@ -5,11 +5,6 @@ import java.time.format.DateTimeFormatter;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-/**
- * General utility class.
- *
- * @author Nikola Presecki
- */
 public abstract class Util {
 
     /**

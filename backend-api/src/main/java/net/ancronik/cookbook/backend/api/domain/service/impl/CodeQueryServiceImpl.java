@@ -1,5 +1,6 @@
 package net.ancronik.cookbook.backend.api.domain.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.api.data.model.MeasurementUnit;
@@ -9,7 +10,6 @@ import net.ancronik.cookbook.backend.api.domain.service.CodeQueryService;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.MeasurementUnitModel;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeCategoryModel;
 import org.hibernate.validator.constraints.CodePointLength;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,10 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Implementation of {@link CodeQueryService}.
- */
 @Service
 @Slf4j
 @Validated
+@AllArgsConstructor
 public class CodeQueryServiceImpl implements CodeQueryService {
 
     private final MeasurementUnitRepository measurementUnitRepository;
@@ -32,14 +30,6 @@ public class CodeQueryServiceImpl implements CodeQueryService {
     private final RecipeCategoryRepository recipeCategoryRepository;
 
     private final RepresentationModelAssemblerSupport<MeasurementUnit, MeasurementUnitModel> measurementUnitModelAssembler;
-
-    @Autowired
-    public CodeQueryServiceImpl(MeasurementUnitRepository measurementUnitRepository, RecipeCategoryRepository recipeCategoryRepository,
-                                RepresentationModelAssemblerSupport<MeasurementUnit, MeasurementUnitModel> measurementUnitModelAssembler) {
-        this.measurementUnitRepository = measurementUnitRepository;
-        this.recipeCategoryRepository = recipeCategoryRepository;
-        this.measurementUnitModelAssembler = measurementUnitModelAssembler;
-    }
 
     @Cacheable(value = "measurement_units")
     @Override

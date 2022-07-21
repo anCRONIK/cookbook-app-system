@@ -18,11 +18,6 @@ import org.springframework.data.cassandra.core.mapping.SimpleUserTypeResolver;
 import org.springframework.data.cassandra.core.mapping.UserTypeResolver;
 import org.springframework.data.convert.CustomConversions;
 
-/**
- * Configuration for Cassandra database.
- *
- * @author Nikola Presecki
- */
 @Configuration
 public class CassandraConfiguration extends AbstractCassandraConfiguration {
 
@@ -70,8 +65,8 @@ public class CassandraConfiguration extends AbstractCassandraConfiguration {
         CodecRegistry codecRegistry = cqlSession.getContext().getCodecRegistry();
 
         UserDefinedType ingredientUdt = cqlSession.getMetadata()
-                .getKeyspace(getKeyspaceName())
-                .flatMap(keyspaceMetadata -> keyspaceMetadata.getUserDefinedType("ingredient")).orElseThrow();
+            .getKeyspace(getKeyspaceName())
+            .flatMap(keyspaceMetadata -> keyspaceMetadata.getUserDefinedType("ingredient")).orElseThrow();
 
         TypeCodec<UdtValue> innerCodec = codecRegistry.codecFor(ingredientUdt);
         ((MutableCodecRegistry) codecRegistry).register(new IngredientCodec(innerCodec));

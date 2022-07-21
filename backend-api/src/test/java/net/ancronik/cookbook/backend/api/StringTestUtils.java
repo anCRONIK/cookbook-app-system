@@ -13,19 +13,20 @@ public class StringTestUtils {
 
     public static String getRandomStringInLowerCase(int length) {
         return random.ints(LOWERCASE_A, LOWERCASE_Z + 1)
-                .limit(length)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+            .limit(length)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
     public static String generateRandomUrl() {
-        return String.format("%s://%s.%s/%s/%s.%s",
-                WEB_PROTOCOLS[random.nextInt(WEB_PROTOCOLS.length)],
-                getRandomStringInLowerCase(random.nextInt(20) + 5),
-                WEB_DOMAINS[random.nextInt(WEB_DOMAINS.length)],
-                getRandomStringInLowerCase(random.nextInt(10) + 2),
-                getRandomStringInLowerCase(random.nextInt(8) + 2),
-                IMG_EXTENSIONS[random.nextInt(IMG_EXTENSIONS.length)]
+        return String.format(
+            "%s://%s.%s/%s/%s.%s",
+            WEB_PROTOCOLS[random.nextInt(WEB_PROTOCOLS.length)],
+            getRandomStringInLowerCase(random.nextInt(20) + 5),
+            WEB_DOMAINS[random.nextInt(WEB_DOMAINS.length)],
+            getRandomStringInLowerCase(random.nextInt(10) + 2),
+            getRandomStringInLowerCase(random.nextInt(8) + 2),
+            IMG_EXTENSIONS[random.nextInt(IMG_EXTENSIONS.length)]
         );
     }
 

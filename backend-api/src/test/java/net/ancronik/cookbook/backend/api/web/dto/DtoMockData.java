@@ -44,33 +44,33 @@ public class DtoMockData {
 
     public static RecipeCreateRequest generateRandomMockDataForRecipeCreateRequest() {
         return new RecipeCreateRequest(
-                StringTestUtils.getRandomStringInLowerCase(20),
-                StringTestUtils.getRandomStringInLowerCase(200),
-                StringTestUtils.generateRandomUrl(),
-                StringTestUtils.generateRandomUrl(),
-                generateRandomMockDataForIngredientDto(random.nextInt(10)),
-                random.nextInt(600),
-                StringTestUtils.getRandomStringInLowerCase(2000),
-                random.nextInt(600),
-                StringTestUtils.getRandomStringInLowerCase(2000),
-                random.nextInt(5) + 1,
-                getRandomStringInLowerCase(6)
+            StringTestUtils.getRandomStringInLowerCase(20),
+            StringTestUtils.getRandomStringInLowerCase(200),
+            StringTestUtils.generateRandomUrl(),
+            StringTestUtils.generateRandomUrl(),
+            generateRandomMockDataForIngredientDto(random.nextInt(10)),
+            random.nextInt(600),
+            StringTestUtils.getRandomStringInLowerCase(2000),
+            random.nextInt(600),
+            StringTestUtils.getRandomStringInLowerCase(2000),
+            random.nextInt(5) + 1,
+            getRandomStringInLowerCase(6)
         );
     }
 
     public static RecipeUpdateRequest generateRandomMockDataForRecipeUpdateRequest() {
         return new RecipeUpdateRequest(
-                StringTestUtils.getRandomStringInLowerCase(20),
-                StringTestUtils.getRandomStringInLowerCase(200),
-                StringTestUtils.generateRandomUrl(),
-                StringTestUtils.generateRandomUrl(),
-                generateRandomMockDataForIngredientDto(random.nextInt(10)),
-                random.nextInt(600),
-                StringTestUtils.getRandomStringInLowerCase(2000),
-                random.nextInt(600),
-                StringTestUtils.getRandomStringInLowerCase(2000),
-                random.nextInt(5) + 1,
-                getRandomStringInLowerCase(6)
+            StringTestUtils.getRandomStringInLowerCase(20),
+            StringTestUtils.getRandomStringInLowerCase(200),
+            StringTestUtils.generateRandomUrl(),
+            StringTestUtils.generateRandomUrl(),
+            generateRandomMockDataForIngredientDto(random.nextInt(10)),
+            random.nextInt(600),
+            StringTestUtils.getRandomStringInLowerCase(2000),
+            random.nextInt(600),
+            StringTestUtils.getRandomStringInLowerCase(2000),
+            random.nextInt(5) + 1,
+            getRandomStringInLowerCase(6)
         );
     }
 
@@ -82,9 +82,9 @@ public class DtoMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new IngredientDto(
-                    getRandomStringInLowerCase(random.nextInt(100)),
-                    "" + random.nextInt(100),
-                    getRandomStringInLowerCase(4)
+                getRandomStringInLowerCase(random.nextInt(100)),
+                "" + random.nextInt(100),
+                getRandomStringInLowerCase(4)
             ));
         }
 

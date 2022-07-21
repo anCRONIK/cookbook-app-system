@@ -14,11 +14,6 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * Assembler for {@link RecipeBasicInfoModel} from {@link Recipe}.
- *
- * @author Nikola Presecki
- */
 @Component
 public class RecipeBasicInfoModelAssembler extends RepresentationModelAssemblerSupport<Recipe, RecipeBasicInfoModel> {
 

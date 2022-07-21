@@ -96,7 +96,7 @@ public class RecipeController {
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint
     public ResponseEntity<String> addCommentToRecipe(@PathVariable Long id, @RequestBody AddRecipeCommentRequest request)
-            throws DataDoesNotExistException {
+        throws DataDoesNotExistException {
         LOG.debug("Adding new comment to recipe [{}]", id);
 
         recipeCommentService.addCommentToRecipe(id, request);
@@ -108,7 +108,7 @@ public class RecipeController {
     @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     //TODO add security to make user authorized and can't spam this endpoint and it is the author of given recipe
     public ResponseEntity<RecipeModel> updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateRequest request)
-            throws DataDoesNotExistException {
+        throws DataDoesNotExistException {
         LOG.debug("Updating recipe with id [{}]: [{}]", id, request);
 
         return ResponseEntity.ok(recipeService.updateRecipe(id, request));

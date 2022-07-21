@@ -10,11 +10,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-/**
- * Class representing recipe ingredient.
- *
- * @author Nikola Presecki
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

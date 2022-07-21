@@ -10,11 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-/**
- * Assembler for {@link AuthorModel} from {@link Author}.
- *
- * @author Nikola Presecki
- */
 @Component
 public class AuthorModelAssembler extends RepresentationModelAssemblerSupport<Author, AuthorModel> {
 

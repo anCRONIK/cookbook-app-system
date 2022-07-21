@@ -17,11 +17,12 @@ public class AuthorMockData {
 
         for (int i = 0; i < size; ++i) {
             data.add(new Author(
-                    getRandomStringInLowerCase(random.nextInt(10)+2),
-                    getRandomStringInLowerCase(random.nextInt(20)),
-                    LocalDate.now().minusMonths(random.nextInt(100)),
-                    getRandomStringInLowerCase(random.nextInt(20)),
-                    generateRandomUrl())
+                         getRandomStringInLowerCase(random.nextInt(10) + 2),
+                         getRandomStringInLowerCase(random.nextInt(20)),
+                         LocalDate.now().minusMonths(random.nextInt(100)),
+                         getRandomStringInLowerCase(random.nextInt(20)),
+                         generateRandomUrl()
+                     )
             );
         }
 

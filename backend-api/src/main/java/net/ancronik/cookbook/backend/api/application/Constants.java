@@ -1,10 +1,6 @@
 package net.ancronik.cookbook.backend.api.application;
 
-/**
- * All constants that application needs.
- *
- * @author Nikola Presecki
- */
+
 public abstract class Constants {
 
     /**

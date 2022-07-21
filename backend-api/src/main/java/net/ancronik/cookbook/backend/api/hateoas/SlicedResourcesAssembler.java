@@ -208,7 +208,7 @@ public class SlicedResourcesAssembler<T> implements RepresentationModelAssembler
         }
 
         Link selfLink = link.map(Link::withSelfRel)//
-                .orElseGet(() -> createLink(base, slice.getPageable(), IanaLinkRelations.SELF));
+            .orElseGet(() -> createLink(base, slice.getPageable(), IanaLinkRelations.SELF));
 
         resources.add(selfLink);
 

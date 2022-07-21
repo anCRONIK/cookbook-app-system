@@ -7,11 +7,6 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-/**
- * Global application configuration class.
- *
- * @author Nikola Presecki
- */
 @Configuration
 @EnableTransactionManagement
 @EnableWebMvc

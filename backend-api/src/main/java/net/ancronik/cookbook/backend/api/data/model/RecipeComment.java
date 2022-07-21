@@ -11,11 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-/**
- * Database model for comments that users leave on the recipes.
- *
- * @author Nikola Presecki
- */
 @Table("recipe_comments")
 @Data
 @NoArgsConstructor

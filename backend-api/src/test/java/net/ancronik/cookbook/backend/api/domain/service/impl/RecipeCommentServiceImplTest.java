@@ -1,6 +1,7 @@
 package net.ancronik.cookbook.backend.api.domain.service.impl;
 
 import lombok.SneakyThrows;
+import net.ancronik.cookbook.backend.api.StringTestUtils;
 import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.api.data.model.RecipeComment;
@@ -22,6 +23,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -39,11 +41,16 @@ public class RecipeCommentServiceImplTest {
 
     private final RecipeRepository mockRecipeRepository = Mockito.mock(RecipeRepository.class);
 
-    private final RecipeCommentServiceImpl recipeCommentService = new RecipeCommentServiceImpl(RecipeCommentModelAssembler, mockRecipeCommentRepository, mockRecipeRepository, mockAuthenticationService);
+    private final RecipeCommentServiceImpl recipeCommentService = new RecipeCommentServiceImpl(
+        RecipeCommentModelAssembler,
+        mockRecipeCommentRepository,
+        mockRecipeRepository,
+        mockAuthenticationService
+    );
 
     @Test
     @SneakyThrows
-    public void getCommentsForRecipe_NullGiven_ThrowException() {
+    void getCommentsForRecipe_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> recipeCommentService.getCommentsForRecipe(null, Pageable.unpaged()));
 
         verifyNoInteractions(mockRecipeCommentRepository);
@@ -53,7 +60,7 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void getCommentsForRecipe_RepositoryThrowsException_PropagateException() {
+    void getCommentsForRecipe_RepositoryThrowsException_PropagateException() {
         when(mockRecipeCommentRepository.findAllByRecipeCommentPKRecipeId(any(), any())).thenThrow(new ConcurrencyFailureException("bla"));
 
         assertThrows(DataAccessException.class, () -> recipeCommentService.getCommentsForRecipe(1L, Pageable.ofSize(12)));
@@ -67,11 +74,15 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void getCommentsForRecipe_RepositoryReturnsData_ReturnProperData() {
+    void getCommentsForRecipe_RepositoryReturnsData_ReturnProperData() {
         Long id = 22L;
         Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
         when(mockRecipeRepository.existsById(id)).thenReturn(true);
-        when(mockRecipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable)).thenReturn(new SliceImpl<>(RecipeCommentMockData.generateRandomMockData(10), pageable, true));
+        when(mockRecipeCommentRepository.findAllByRecipeCommentPKRecipeId(id, pageable)).thenReturn(new SliceImpl<>(
+            RecipeCommentMockData.generateRandomMockData(10),
+            pageable,
+            true
+        ));
 
         Slice<RecipeCommentModel> data = recipeCommentService.getCommentsForRecipe(id, pageable);
 
@@ -87,7 +98,7 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void addCommentToRecipe_NullGiven_ThrowException() {
+    void addCommentToRecipe_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> recipeCommentService.addCommentToRecipe(null, new AddRecipeCommentRequest("text")));
         assertThrows(IllegalArgumentException.class, () -> recipeCommentService.addCommentToRecipe(1L, null));
 
@@ -98,7 +109,7 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void addCommentToRecipe_RepositoryThrowsException_PropagateException() {
+    void addCommentToRecipe_RepositoryThrowsException_PropagateException() {
         when(mockRecipeRepository.existsById(1L)).thenThrow(new ConcurrencyFailureException("bla"));
 
         assertThrows(DataAccessException.class, () -> recipeCommentService.addCommentToRecipe(1L, new AddRecipeCommentRequest("text")));
@@ -112,7 +123,7 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void addCommentToRecipe_RecipeWithGivenIdDoesNotExist_ThrowException() {
+    void addCommentToRecipe_RecipeWithGivenIdDoesNotExist_ThrowException() {
         when(mockRecipeRepository.existsById(1L)).thenReturn(false);
 
         assertThrows(DataDoesNotExistException.class, () -> recipeCommentService.addCommentToRecipe(1L, new AddRecipeCommentRequest("text")));
@@ -125,7 +136,7 @@ public class RecipeCommentServiceImplTest {
 
     @Test
     @SneakyThrows
-    public void addCommentToRecipe_RepositoryReturnsData_ReturnProperData() {
+    void addCommentToRecipe_RepositoryReturnsData_ReturnProperData() {
         ArgumentCaptor<RecipeComment> recipeCommentCaptor = ArgumentCaptor.forClass(RecipeComment.class);
         Long id = 22L;
         String text = "Awesome text";
@@ -154,5 +165,47 @@ public class RecipeCommentServiceImplTest {
 
         verify(mockAuthenticationService).getAuthenticatedUsername();
         verifyNoMoreInteractions(mockAuthenticationService);
+    }
+
+    @Test
+    void getCommentsForRecipe_NegativeRecipeId_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.getCommentsForRecipe(-1L, Pageable.ofSize(10)));
+        assertEquals("getCommentsForRecipe.id: must be between 1 and 9223372036854775807", t.getMessage());
+    }
+
+    @Test
+    void getCommentsForRecipe_InvalidPageableGiven_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.getCommentsForRecipe(2L, Pageable.unpaged()));
+        assertEquals("getCommentsForRecipe.pageable: Pageable can not be null, un paged or value greater than 50", t.getMessage());
+
+        t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.getCommentsForRecipe(2L, Pageable.ofSize(110)));
+        assertEquals("getCommentsForRecipe.pageable: Pageable can not be null, un paged or value greater than 50", t.getMessage());
+    }
+
+    @Test
+    void addCommentToRecipe_NegativeRecipeId_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(-231L, new AddRecipeCommentRequest("valid text")));
+        assertEquals("addCommentToRecipe.id: must be between 1 and 9223372036854775807", t.getMessage());
+    }
+
+    @Test
+    void addCommentToRecipe_InvalidComment_ThrowValidationException() {
+        Throwable t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest("")));
+        assertEquals("addCommentToRecipe.comment.text: must not be blank", t.getMessage());
+
+        t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest()));
+        assertEquals("addCommentToRecipe.comment.text: must not be blank", t.getMessage());
+
+        t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest("        ")));
+        assertEquals("addCommentToRecipe.comment.text: must not be blank", t.getMessage());
+
+        t = assertThrows(ConstraintViolationException.class, () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest("   \n \t  ")));
+        assertEquals("addCommentToRecipe.comment.text: must not be blank", t.getMessage());
+
+        t = assertThrows(
+            ConstraintViolationException.class,
+            () -> recipeCommentService.addCommentToRecipe(10L, new AddRecipeCommentRequest(StringTestUtils.getRandomStringInLowerCase(21312321)))
+        );
+        assertEquals("addCommentToRecipe.comment.text: length must be between 0 and 10000", t.getMessage());
     }
 }

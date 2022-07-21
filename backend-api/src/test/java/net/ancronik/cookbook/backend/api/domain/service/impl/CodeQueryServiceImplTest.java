@@ -11,11 +11,14 @@ import net.ancronik.cookbook.backend.api.web.dto.recipe.MeasurementUnitModel;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeCategoryModel;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.modelmapper.ModelMapper;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataAccessException;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,19 +26,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 @Tag(TestTypes.UNIT)
-public class CodeQueryServiceImplTest {
+class CodeQueryServiceImplTest {
 
-    private final MeasurementUnitRepository mockMeasurementUnitRepository = Mockito.mock(MeasurementUnitRepository.class);
-
-    private final RecipeCategoryRepository mockRecipeCategoryRepository = Mockito.mock(RecipeCategoryRepository.class);
-
-    private final MeasurementUnitModelAssembler measurementUnitModelAssembler = new MeasurementUnitModelAssembler(new ModelMapper());
-
-    private final CodeQueryServiceImpl service = new CodeQueryServiceImpl(mockMeasurementUnitRepository, mockRecipeCategoryRepository, measurementUnitModelAssembler);
+    @Mock
+    private MeasurementUnitRepository mockMeasurementUnitRepository;
+    @Mock
+    private RecipeCategoryRepository mockRecipeCategoryRepository;
+    @Mock
+    private MeasurementUnitModelAssembler measurementUnitModelAssembler;
+    @InjectMocks
+    private CodeQueryServiceImpl service;
 
     @Test
-    public void getMeasurementUnits_RepositoryThrowsException_PropagateException() {
+    void getMeasurementUnits_RepositoryThrowsException_PropagateException() {
         doThrow(new ConcurrencyFailureException("test")).when(mockMeasurementUnitRepository).findAll();
 
         assertThrows(DataAccessException.class, service::getMeasurementUnits);
@@ -47,7 +52,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_RepositoryReturnsEmptyList_ReturnEmptyList() {
+    void getMeasurementUnits_RepositoryReturnsEmptyList_ReturnEmptyList() {
         when(mockMeasurementUnitRepository.findAll()).thenReturn(new ArrayList<>());
 
         assertTrue(service.getMeasurementUnits().isEmpty());
@@ -59,7 +64,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_RepositoryReturnsList_ReturnData() {
+    void getMeasurementUnits_RepositoryReturnsList_ReturnData() {
         when(mockMeasurementUnitRepository.findAll()).thenReturn(MeasurementUnitMockData.generateRandomMockData(10));
 
         List<MeasurementUnitModel> data = service.getMeasurementUnits();
@@ -73,7 +78,7 @@ public class CodeQueryServiceImplTest {
     }
 
     @Test
-    public void isMeasurementUnitValid_NullGiven_ThrowIllegalArgumentException() {
+    void isMeasurementUnitValid_NullGiven_ThrowIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> service.isMeasurementUnitValid(null));
 
         verifyNoInteractions(mockMeasurementUnitRepository);
@@ -81,7 +86,7 @@ public class CodeQueryServiceImplTest {
     }
 
     @Test
-    public void isMeasurementUnitValid_EmptyStringGiven_ReturnTrueAndDoNotUseRepository() {
+    void isMeasurementUnitValid_EmptyStringGiven_ReturnTrueAndDoNotUseRepository() {
         assertTrue(service.isMeasurementUnitValid(""));
 
         verifyNoInteractions(mockMeasurementUnitRepository);
@@ -89,7 +94,7 @@ public class CodeQueryServiceImplTest {
     }
 
     @Test
-    public void isMeasurementUnitValid_RepositoryThrowsException_PropagateException() {
+    void isMeasurementUnitValid_RepositoryThrowsException_PropagateException() {
         doThrow(new ConcurrencyFailureException("test")).when(mockMeasurementUnitRepository).existsById(anyString());
 
         assertThrows(DataAccessException.class, () -> service.isMeasurementUnitValid("uiodsa"));
@@ -101,7 +106,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isMeasurementUnitValid_UnitDoesNotExists_ReturnFalse() {
+    void isMeasurementUnitValid_UnitDoesNotExists_ReturnFalse() {
         when(mockMeasurementUnitRepository.existsById(anyString())).thenReturn(false);
 
         assertFalse(service.isMeasurementUnitValid("kgsa"));
@@ -113,7 +118,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isMeasurementUnitValid_UnitExists_ReturnTrue() {
+    void isMeasurementUnitValid_UnitExists_ReturnTrue() {
         when(mockMeasurementUnitRepository.existsById(anyString())).thenReturn(true);
 
         assertTrue(service.isMeasurementUnitValid("kg"));
@@ -125,7 +130,7 @@ public class CodeQueryServiceImplTest {
 
 
     @Test
-    public void getRecipeCategories_RepositoryThrowsException_PropagateException() {
+    void getRecipeCategories_RepositoryThrowsException_PropagateException() {
         doThrow(new ConcurrencyFailureException("test")).when(mockRecipeCategoryRepository).findAll();
 
         assertThrows(DataAccessException.class, service::getRecipeCategories);
@@ -137,7 +142,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getRecipeCategories_RepositoryReturnsEmptyList_ReturnEmptyList() {
+    void getRecipeCategories_RepositoryReturnsEmptyList_ReturnEmptyList() {
         when(mockRecipeCategoryRepository.findAll()).thenReturn(new ArrayList<>());
 
         assertTrue(service.getRecipeCategories().isEmpty());
@@ -149,9 +154,9 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void getRecipeCategories_RepositoryReturnsList_ReturnData() {
+    void getRecipeCategories_RepositoryReturnsList_ReturnData() {
         when(mockRecipeCategoryRepository.findAll())
-                .thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
+            .thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
 
         List<RecipeCategoryModel> data = service.getRecipeCategories();
 
@@ -165,7 +170,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isRecipeCategoryValid_NullGiven_ThrowIllegalArgumentException() {
+    void isRecipeCategoryValid_NullGiven_ThrowIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> service.isRecipeCategoryValid(null));
 
         verifyNoInteractions(mockRecipeCategoryRepository);
@@ -174,7 +179,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isRecipeCategoryValid_RepositoryThrowsException_PropagateException() {
+    void isRecipeCategoryValid_RepositoryThrowsException_PropagateException() {
         doThrow(new ConcurrencyFailureException("test")).when(mockRecipeCategoryRepository).existsById(anyString());
 
         assertThrows(DataAccessException.class, () -> service.isRecipeCategoryValid("uiodsa"));
@@ -186,7 +191,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isRecipeCategoryValid_UnitDoesNotExists_ReturnFalse() {
+    void isRecipeCategoryValid_UnitDoesNotExists_ReturnFalse() {
         when(mockRecipeCategoryRepository.existsById(anyString())).thenReturn(false);
 
         assertFalse(service.isRecipeCategoryValid("kgsa"));
@@ -198,7 +203,7 @@ public class CodeQueryServiceImplTest {
 
     @SneakyThrows
     @Test
-    public void isRecipeCategoryValid_UnitExists_ReturnTrue() {
+    void isRecipeCategoryValid_UnitExists_ReturnTrue() {
         when(mockRecipeCategoryRepository.existsById(anyString())).thenReturn(true);
 
         assertTrue(service.isRecipeCategoryValid("entree"));
@@ -208,4 +213,62 @@ public class CodeQueryServiceImplTest {
         verifyNoInteractions(mockMeasurementUnitRepository);
     }
 
+    @Test
+    void getMeasurementUnitsSAndIsMeasurementUnitValid_TestCacheable() {
+        String unit1 = "";
+        String unit2 = "spoon";
+        String unit3 = "none";
+        when(mockMeasurementUnitRepository.existsById(unit1)).thenThrow(new RuntimeException("this shouldn't happen"));
+        when(mockMeasurementUnitRepository.existsById(unit2)).thenReturn(true);
+        when(mockMeasurementUnitRepository.existsById(unit3)).thenReturn(false);
+        when(mockMeasurementUnitRepository.findAll()).thenReturn(MeasurementUnitMockData.generateRandomMockData(10));
+
+        service.getMeasurementUnits();
+
+        assertTrue(service.isMeasurementUnitValid(unit1));
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        service.getMeasurementUnits();
+        assertFalse(service.isMeasurementUnitValid(unit3));
+        assertFalse(service.isMeasurementUnitValid(unit3));
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        service.getMeasurementUnits();
+        assertTrue(service.isMeasurementUnitValid(unit2));
+        assertTrue(service.isMeasurementUnitValid(unit1));
+
+        verify(mockMeasurementUnitRepository).existsById(unit2);
+        verify(mockMeasurementUnitRepository).existsById(unit3);
+
+        verify(mockMeasurementUnitRepository).findAll();
+        verifyNoMoreInteractions(mockMeasurementUnitRepository);
+    }
+
+    @Test
+    void getRecipeCategoriesAndIsRecipeCategoryValid_TestCacheable() {
+        String category1 = "";
+        String category2 = "entree";
+        String category3 = "random";
+        when(mockRecipeCategoryRepository.existsById(category1)).thenReturn(false);
+        when(mockRecipeCategoryRepository.existsById(category2)).thenReturn(true);
+        when(mockRecipeCategoryRepository.existsById(category3)).thenReturn(false);
+        when(mockRecipeCategoryRepository.findAll()).thenReturn(List.of(new RecipeCategory("dessert"), new RecipeCategory("entree")));
+
+        service.getRecipeCategories();
+
+        assertTrue(service.isRecipeCategoryValid(category2));
+        assertThrows(ConstraintViolationException.class, () -> service.isRecipeCategoryValid(category1));
+        assertFalse(service.isRecipeCategoryValid(category3));
+        service.getRecipeCategories();
+        assertFalse(service.isRecipeCategoryValid(category3));
+        assertTrue(service.isRecipeCategoryValid(category2));
+        service.getRecipeCategories();
+        assertTrue(service.isRecipeCategoryValid(category2));
+        assertTrue(service.isRecipeCategoryValid(category2));
+
+        verify(mockRecipeCategoryRepository).existsById(category2);
+        verify(mockRecipeCategoryRepository).existsById(category3);
+
+        verify(mockRecipeCategoryRepository).findAll();
+        verifyNoMoreInteractions(mockRecipeCategoryRepository);
+    }
 }

@@ -1,13 +1,13 @@
 package net.ancronik.cookbook.backend.api.domain.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ancronik.cookbook.backend.api.application.exceptions.DataDoesNotExistException;
 import net.ancronik.cookbook.backend.api.application.exceptions.UnauthorizedActionException;
 import net.ancronik.cookbook.backend.api.data.model.Recipe;
 import net.ancronik.cookbook.backend.api.data.repository.RecipeRepository;
-import net.ancronik.cookbook.backend.api.domain.mapper.Mapper;
-import net.ancronik.cookbook.backend.api.domain.mapper.UpdateMapper;
+import net.ancronik.cookbook.backend.api.domain.mapper.RecipeMapper;
 import net.ancronik.cookbook.backend.api.domain.service.AuthenticationService;
 import net.ancronik.cookbook.backend.api.domain.service.RecipeService;
 import net.ancronik.cookbook.backend.api.validation.annotation.PageableConstraint;
@@ -16,7 +16,6 @@ import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeCreateRequest;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeModel;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeUpdateRequest;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -33,14 +32,10 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Implementation of {@link RecipeService}
- *
- * @author Nikola Presecki
- */
 @Service
 @Slf4j
 @Validated
+@AllArgsConstructor
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
@@ -49,26 +44,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final RepresentationModelAssemblerSupport<Recipe, RecipeBasicInfoModel> recipeBasicInfoModelAssembler;
 
-    private final Mapper<RecipeCreateRequest, Recipe> createRequestRecipeMapper;
-
-    private final UpdateMapper<RecipeUpdateRequest, Recipe> updateRequestRecipeUpdateMapper;
+    private final RecipeMapper recipeMapper;
 
     private final AuthenticationService authenticationService;
-
-    @Autowired
-    public RecipeServiceImpl(RecipeRepository recipeRepository,
-                             RepresentationModelAssemblerSupport<Recipe, RecipeModel> recipeModelAssembler,
-                             RepresentationModelAssemblerSupport<Recipe, RecipeBasicInfoModel> recipeBasicInfoModelAssembler,
-                             Mapper<RecipeCreateRequest, Recipe> createRequestRecipeMapper,
-                             UpdateMapper<RecipeUpdateRequest, Recipe> updateRequestRecipeUpdateMapper,
-                             AuthenticationService authenticationService) {
-        this.recipeRepository = recipeRepository;
-        this.recipeModelAssembler = recipeModelAssembler;
-        this.recipeBasicInfoModelAssembler = recipeBasicInfoModelAssembler;
-        this.createRequestRecipeMapper = createRequestRecipeMapper;
-        this.updateRequestRecipeUpdateMapper = updateRequestRecipeUpdateMapper;
-        this.authenticationService = authenticationService;
-    }
 
     @Override
     public Slice<RecipeBasicInfoModel> getRecipes(@NonNull @PageableConstraint Pageable pageable) throws ConstraintViolationException {
@@ -86,7 +64,7 @@ public class RecipeServiceImpl implements RecipeService {
 
         try {
             return recipeModelAssembler.toModel(
-                    recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id)));
+                recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id)));
         } catch (DataDoesNotExistException e) {
             LOG.error("Recipe with id [{}] does not exists", id);
             throw e;
@@ -110,7 +88,7 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeModel createRecipe(@NonNull @NotNull @Valid RecipeCreateRequest request) throws ConstraintViolationException {
         LOG.info("Creating new recipe [{}]", request);
 
-        Recipe recipe = recipeRepository.save(createRequestRecipeMapper.map(request));
+        Recipe recipe = recipeRepository.save(recipeMapper.map(request));
 
         return recipeModelAssembler.toModel(recipe);
     }
@@ -118,7 +96,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public void deleteRecipe(@NonNull @NotNull @Range(min = 1) Long id) throws DataDoesNotExistException, ConstraintViolationException,
-            UnauthorizedActionException {
+        UnauthorizedActionException {
         LOG.info("Deleting recipe with id: [{}]", id);
 
         try {
@@ -138,11 +116,11 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public RecipeModel updateRecipe(@NonNull @NotNull @Range(min = 1) Long id, @NonNull @NotNull @Valid RecipeUpdateRequest request) throws DataDoesNotExistException,
-            ConstraintViolationException, UnauthorizedActionException {
+        ConstraintViolationException, UnauthorizedActionException {
         try {
             Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new DataDoesNotExistException("Recipe does not exits: " + id));
             if (authenticationService.isGivenUserTheRequester(recipe.getAuthorId())) {
-                updateRequestRecipeUpdateMapper.update(request, recipe);
+                recipeMapper.update(request, recipe);
                 return recipeModelAssembler.toModel(recipeRepository.save(recipe));
             } else {
                 LOG.info("User [{}] is not authorized to update recipe [{}]. Incident!", authenticationService.getAuthenticatedUsername(), id);

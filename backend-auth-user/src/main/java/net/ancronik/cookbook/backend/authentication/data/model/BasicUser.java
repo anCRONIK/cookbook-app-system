@@ -26,13 +26,14 @@ public class BasicUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @EqualsAndHashCode.Include
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
     @SequenceGenerator(name = "seq_gen", sequenceName = "user_seq", allocationSize = 1)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
+    @EqualsAndHashCode.Include
     @NotBlank
     @CodePointLength(min = 2, max = 12)
     @Column(name = "username", unique = true, updatable = false)

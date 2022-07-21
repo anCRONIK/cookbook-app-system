@@ -55,8 +55,8 @@ public class IngredientCodec extends MappingCodec<UdtValue, Ingredient> {
         }
 
         return getCqlType().newValue()
-                .setString(KEY_NAME, ingredient.getName())
-                .setString(KEY_QUANTITY, ingredient.getQuantity())
-                .setString(KEY_MEASUREMENT_UNIT, ingredient.getMeasurementUnit());
+            .setString(KEY_NAME, ingredient.getName())
+            .setString(KEY_QUANTITY, ingredient.getQuantity())
+            .setString(KEY_MEASUREMENT_UNIT, ingredient.getMeasurementUnit());
     }
 }

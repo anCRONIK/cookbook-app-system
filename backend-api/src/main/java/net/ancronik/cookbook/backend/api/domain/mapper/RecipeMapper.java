@@ -1,33 +1,30 @@
 package net.ancronik.cookbook.backend.api.domain.mapper;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import net.ancronik.cookbook.backend.api.data.model.Recipe;
 import net.ancronik.cookbook.backend.api.data.model.RecipeCategory;
 import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeCreateRequest;
+import net.ancronik.cookbook.backend.api.web.dto.recipe.RecipeUpdateRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Mapper for {@link RecipeCreateRequest} to {@link Recipe}.
- *
- * @author Nikola Presecki
- */
 @Component
-public class RecipeCreateRequestToRecipeMapper implements Mapper<RecipeCreateRequest, Recipe> {
+@AllArgsConstructor
+public class RecipeMapper {
 
     private final ModelMapper modelMapper;
 
-    @Autowired
-    public RecipeCreateRequestToRecipeMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
-    @Override
     public Recipe map(@NonNull RecipeCreateRequest request) {
         Recipe recipe = modelMapper.map(request, Recipe.class);
         recipe.setCategory(new RecipeCategory(request.getCategory()));
 
         return recipe;
     }
+
+    public void update(@NonNull RecipeUpdateRequest request, @NonNull Recipe recipe) {
+        modelMapper.map(request, recipe);
+        recipe.setCategory(new RecipeCategory(request.getCategory()));
+    }
+
 }

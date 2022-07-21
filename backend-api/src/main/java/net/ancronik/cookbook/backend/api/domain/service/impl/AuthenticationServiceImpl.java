@@ -6,11 +6,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 
-/**
- * Implementation of {@link AuthenticationService}.
- *
- * @author Nikola Presecki
- */
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 

@@ -41,6 +41,6 @@ public interface RecipeCommentService {
      */
     @Transactional
     void addCommentToRecipe(@NonNull @Range(min = 1L) Long id, @NonNull @Valid AddRecipeCommentRequest comment) throws DataDoesNotExistException,
-            ConstraintViolationException;
+        ConstraintViolationException;
 
 }

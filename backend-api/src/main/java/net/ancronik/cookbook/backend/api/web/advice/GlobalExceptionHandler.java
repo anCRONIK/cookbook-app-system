@@ -26,63 +26,40 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Advice which will handle all exceptions that are propagated from controllers.
- *
- * @author Nikola Presecki
- */
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    /**
-     * Handler for exceptions thrown when requested data does not exist.
-     *
-     * @return not found
-     */
+
     @ExceptionHandler({DataDoesNotExistException.class})
     public ResponseEntity<String> handleExceptionsWhenEntryDoesNotExistsInDatabase(Exception e, WebRequest request) {
         LOG.error("Data not found {}", request, e);
         return ResponseEntity.notFound().build();
     }
 
-    /**
-     * Database exceptions handler
-     *
-     * @param e       exception
-     * @param request request
-     * @return api error response
-     */
     @ExceptionHandler({EmptyDataException.class, DataAccessException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiErrorResponse> databaseExceptionsHandler(Exception e, WebRequest request) {
         LOG.error("Database error occurred {}", request, e);
         return ResponseEntity.internalServerError().body(
-                new ApiErrorResponse(
-                        "There is error with database", //TODO extract to messages file
-                        e.toString(),
-                        LocalDateTime.now(ZoneId.of("UTC"))
-                )
+            new ApiErrorResponse(
+                "There is error with database", //TODO extract to messages file
+                e.toString(),
+                LocalDateTime.now(ZoneId.of("UTC"))
+            )
         );
     }
 
-    /**
-     * General handler
-     *
-     * @param e       exception
-     * @param request request
-     * @return api error response
-     */
     @ExceptionHandler({CdnException.class, Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiErrorResponse> internalServerExceptionsHandler(Exception e, WebRequest request) {
         LOG.error("Unknown error occurred {}", request, e);
         return ResponseEntity.internalServerError().body(
-                new ApiErrorResponse(
-                        e.getMessage(),
-                        e.toString(),
-                        LocalDateTime.now(ZoneId.of("UTC"))
-                )
+            new ApiErrorResponse(
+                e.getMessage(),
+                e.toString(),
+                LocalDateTime.now(ZoneId.of("UTC"))
+            )
         );
     }
 
@@ -93,14 +70,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         Map<String, Object> errors = new HashMap<>();
 
-        e.getConstraintViolations().forEach(constraintViolation -> errors.putIfAbsent(constraintViolation.getPropertyPath().toString().split("\\.")[1], constraintViolation.getMessage()));
+        e.getConstraintViolations().forEach(constraintViolation -> errors.putIfAbsent(
+            constraintViolation.getPropertyPath().toString().split("\\.")[1],
+            constraintViolation.getMessage()
+        ));
 
 
         return ResponseEntity.badRequest().body(new ValidationFailedResponse(
-                "Validation error", //FIXME messages.properties, do not use ex.getMessage because it is too descriptive
-                "", //TODO can leave empty?
-                LocalDateTime.now(ZoneId.of("UTC")),
-                errors
+            "Validation error", //FIXME messages.properties, do not use ex.getMessage because it is too descriptive
+            "", //TODO can leave empty?
+            LocalDateTime.now(ZoneId.of("UTC")),
+            errors
         ));
     }
 
@@ -111,15 +91,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         Map<String, Object> errors = new HashMap<>();
 
-        e.getBindingResult().getFieldErrors().forEach(fieldError -> errors.putIfAbsent(fieldError.getField(), e.getBindingResult().getFieldErrors(fieldError.getField()).stream().map(FieldError::getDefaultMessage).collect(Collectors.toList())));
+        e.getBindingResult().getFieldErrors().forEach(fieldError -> errors.putIfAbsent(
+            fieldError.getField(),
+            e.getBindingResult().getFieldErrors(fieldError.getField()).stream().map(FieldError::getDefaultMessage).collect(Collectors.toList())
+        ));
 
         LOG.error("{}", errors);
 
         return ResponseEntity.badRequest().body(new ValidationFailedResponse(
-                "Validation error", //FIXME messages.properties, do not use ex.getMessage because it is too descriptive
-                null,
-                LocalDateTime.now(ZoneId.of("UTC")),
-                errors
+            "Validation error", //FIXME messages.properties, do not use ex.getMessage because it is too descriptive
+            null,
+            LocalDateTime.now(ZoneId.of("UTC")),
+            errors
         ));
     }
 }

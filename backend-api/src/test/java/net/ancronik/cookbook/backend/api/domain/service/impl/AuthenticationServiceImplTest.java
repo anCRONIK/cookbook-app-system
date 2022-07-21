@@ -8,17 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(TestTypes.UNIT)
-public class AuthenticationServiceImplTest {
+class AuthenticationServiceImplTest {
 
     AuthenticationServiceImpl authenticationService = new AuthenticationServiceImpl();
 
     @Test
-    public void getAuthenticatedUsername_ReturnMockData() {
+    void getAuthenticatedUsername_ReturnMockData() {
         assertEquals("testUser", authenticationService.getAuthenticatedUsername());
     }
 
     @Test
-    public void isGivenUserTheRequester_ReturnMockData() {
+    void isGivenUserTheRequester_ReturnMockData() {
         assertTrue(authenticationService.isGivenUserTheRequester("roki"));
     }
 

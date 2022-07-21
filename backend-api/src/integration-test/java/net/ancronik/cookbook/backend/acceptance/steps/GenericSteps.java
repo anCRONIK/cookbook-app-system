@@ -9,7 +9,7 @@ import net.ancronik.cookbook.backend.acceptance.ResponseResults;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GenericSteps extends AbstractSteps {
 

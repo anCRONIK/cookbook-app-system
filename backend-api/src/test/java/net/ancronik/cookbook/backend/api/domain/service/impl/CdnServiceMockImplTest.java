@@ -12,18 +12,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestTypes.UNIT)
-public class CdnServiceMockImplTest {
+class CdnServiceMockImplTest {
 
     CdnServiceMockImpl cdnServiceMock = new CdnServiceMockImpl();
 
     @Test
-    public void uploadImage_NullGiven_ThrowException() {
+    void uploadImage_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> cdnServiceMock.uploadImage(false, null));
     }
 
     @SneakyThrows
     @Test
-    public void uploadImage_MockCaseScenario() {
+    void uploadImage_MockCaseScenario() {
         assertNotNull(cdnServiceMock.uploadImage(false, new MockMultipartFile("test", "test".getBytes(StandardCharsets.UTF_8))));
     }
 }

@@ -13,11 +13,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Primary key for recipe comment
- *
- * @author Nikola Presecki
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

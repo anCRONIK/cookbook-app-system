@@ -1,19 +1,17 @@
 package net.ancronik.cookbook.backend.integrationtest.data.repository;
 
-import net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp;
-import net.ancronik.cookbook.backend.integrationtest.CassandraTestContainersExtension;
-import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.data.model.Author;
 import net.ancronik.cookbook.backend.api.data.model.AuthorMockData;
 import net.ancronik.cookbook.backend.api.data.repository.AuthorRepository;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import net.ancronik.cookbook.backend.integrationtest.BaseIntegrationTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
@@ -21,11 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@SpringBootTest(classes = CookbookBackendApiSpringBootApp.class)
-@ExtendWith({SpringExtension.class, CassandraTestContainersExtension.class})
-@Tag(TestTypes.INTEGRATION)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthorRepositoryIT {
+class AuthorRepositoryIT extends BaseIntegrationTest {
 
     @Autowired
     AuthorRepository authorRepository;
@@ -33,13 +28,13 @@ public class AuthorRepositoryIT {
 
     @Order(1)
     @Test
-    public void createAuthorMultipleAuthors() {
+    void createAuthorMultipleAuthors() {
         authorRepository.saveAll(AuthorMockData.generateRandomMockData(10));
     }
 
     @Order(2)
     @Test
-    public void readAllSavedAuthorsInDatabase_TestPageable() {
+    void readAllSavedAuthorsInDatabase_TestPageable() {
         int counter = 0;
         Slice<Author> authors = authorRepository.findAll(Pageable.ofSize(2));
         counter += authors.getNumberOfElements();
@@ -54,7 +49,7 @@ public class AuthorRepositoryIT {
 
     @Order(3)
     @Test
-    public void saveAuthorWithSameUsernameTwice() {
+    void saveAuthorWithSameUsernameTwice() {
         Author author = new Author();
         author.setUsername("testForDuplicate");
         authorRepository.save(author);
@@ -71,26 +66,18 @@ public class AuthorRepositoryIT {
 
     @Order(4)
     @Test
-    public void readAllSavedAuthorsInDatabase_CheckForDuplicate() {
+    void readAllSavedAuthorsInDatabase_CheckForDuplicate() {
         assertEquals(11, authorRepository.count());
     }
 
     @Order(5)
     @Test
-    public void saveEmptyAuthor_ThrowExceptionBecausePrimaryKey() {
+    void saveEmptyAuthor_ThrowExceptionBecausePrimaryKey() {
         final Author author = new Author();
         assertThrows(DataAccessException.class, () -> authorRepository.save(author));
         author.setUsername("");
         assertThrows(DataAccessException.class, () -> authorRepository.save(author));
     }
 
-    @Order(6)
-    @Test
-    public void testThatDeleteOperationsAreNotSupported() {
-        assertThrows(UnsupportedOperationException.class, () -> authorRepository.delete(AuthorMockData.generateRandomMockData(1).get(0)));
-        assertThrows(UnsupportedOperationException.class, () -> authorRepository.deleteAll(AuthorMockData.generateRandomMockData(3)));
-        assertThrows(UnsupportedOperationException.class, () -> authorRepository.deleteAll());
-        assertThrows(UnsupportedOperationException.class, () -> authorRepository.deleteAllById(List.of("id")));
-    }
 
 }

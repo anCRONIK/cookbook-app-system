@@ -1,31 +1,27 @@
 package net.ancronik.cookbook.backend.integrationtest.data.repository;
 
-import net.ancronik.cookbook.backend.api.CookbookBackendApiSpringBootApp;
-import net.ancronik.cookbook.backend.integrationtest.CassandraTestContainersExtension;
-import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.data.model.RecipeComment;
 import net.ancronik.cookbook.backend.api.data.model.RecipeCommentMockData;
 import net.ancronik.cookbook.backend.api.data.model.RecipeCommentPK;
 import net.ancronik.cookbook.backend.api.data.repository.RecipeCommentRepository;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import net.ancronik.cookbook.backend.integrationtest.BaseIntegrationTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = CookbookBackendApiSpringBootApp.class)
-@ExtendWith({SpringExtension.class, CassandraTestContainersExtension.class})
-@Tag(TestTypes.INTEGRATION)
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RecipeCommentRepositoryIT {
+class RecipeCommentRepositoryIT extends BaseIntegrationTest {
 
     @Autowired
     RecipeCommentRepository recipeCommentRepository;
@@ -33,13 +29,13 @@ public class RecipeCommentRepositoryIT {
 
     @Order(1)
     @Test
-    public void createMultipleComments() {
+    void createMultipleComments() {
         recipeCommentRepository.saveAll(RecipeCommentMockData.generateRandomMockData(7));
     }
 
     @Order(2)
     @Test
-    public void readAllSavedCommentsInDatabase_TestPageable() {
+    void readAllSavedCommentsInDatabase_TestPageable() {
         int counter = 0;
         Slice<RecipeComment> comments = recipeCommentRepository.findAll(Pageable.ofSize(2));
         counter += comments.getNumberOfElements();
@@ -54,7 +50,7 @@ public class RecipeCommentRepositoryIT {
 
     @Order(3)
     @Test
-    public void InvalidPrimaryKey_DatabaseThrowsException() {
+    void InvalidPrimaryKey_DatabaseThrowsException() {
         RecipeCommentPK pk = new RecipeCommentPK();
         RecipeComment comment = new RecipeComment(pk, "wuhuuuuu");
 
@@ -72,14 +68,14 @@ public class RecipeCommentRepositoryIT {
 
     @Order(4)
     @Test
-    public void deleteSpecificComment() {
+    void deleteSpecificComment() {
         recipeCommentRepository.deleteById(recipeCommentRepository.findAll().get(0).getRecipeCommentPK());
         assertEquals(7, recipeCommentRepository.count());
     }
 
     @Order(5)
     @Test
-    public void findAllByRecipeCommentPKRecipeId() {
+    void findAllByRecipeCommentPKRecipeId() {
         RecipeCommentPK pk = new RecipeCommentPK(9999999L, "testAuthor", LocalDate.now().atStartOfDay());
         RecipeComment comment = new RecipeComment(pk, "wuhuuuuu");
 
@@ -92,7 +88,7 @@ public class RecipeCommentRepositoryIT {
 
     @Order(6)
     @Test
-    public void testThatDeleteAllCommentIsNotSupported() {
+    void testThatDeleteAllCommentIsNotSupported() {
         assertThrows(UnsupportedOperationException.class, () -> recipeCommentRepository.deleteAll());
     }
 

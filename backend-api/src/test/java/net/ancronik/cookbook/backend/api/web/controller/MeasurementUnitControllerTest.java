@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(MeasurementUnitController.class)
 @Tag(TestTypes.UNIT)
-public class MeasurementUnitControllerTest {
+class MeasurementUnitControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,16 +34,16 @@ public class MeasurementUnitControllerTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_ServiceThrowsGenericDatabaseException_ReturnInternalServerError() {
+    void getMeasurementUnits_ServiceThrowsGenericDatabaseException_ReturnInternalServerError() {
         when(mockCodeQueryService.getMeasurementUnits()).thenThrow(new ConcurrencyFailureException("test"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(MeasurementUnitController.DEFAULT_MAPPING))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.description").exists())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andReturn();
+            .andExpect(status().isInternalServerError())
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
+            .andExpect(jsonPath("$.error").exists())
+            .andExpect(jsonPath("$.description").exists())
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andReturn();
 
         verify(mockCodeQueryService).getMeasurementUnits();
         verifyNoMoreInteractions(mockCodeQueryService);
@@ -52,16 +52,16 @@ public class MeasurementUnitControllerTest {
 
     @SneakyThrows
     @Test
-    public void getMeasurementUnits_ServiceReturnsData_CheckResponse() {
+    void getMeasurementUnits_ServiceReturnsData_CheckResponse() {
         when(mockCodeQueryService.getMeasurementUnits()).thenReturn(DtoMockData.generateRandomMockDataForMeasurementUnitModel(4));
 
         mockMvc.perform(MockMvcRequestBuilders.get(MeasurementUnitController.DEFAULT_MAPPING))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("$._embedded.units").isArray())
-                .andExpect(jsonPath("$._embedded.units.length()").value(4))
-                .andExpect(jsonPath("$._embedded.units").isNotEmpty())
-                .andReturn();
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+            .andExpect(jsonPath("$._embedded.units").isArray())
+            .andExpect(jsonPath("$._embedded.units.length()").value(4))
+            .andExpect(jsonPath("$._embedded.units").isNotEmpty())
+            .andReturn();
 
         verify(mockCodeQueryService).getMeasurementUnits();
         verifyNoMoreInteractions(mockCodeQueryService);

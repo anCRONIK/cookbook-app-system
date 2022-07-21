@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(UploadImageController.class)
 @Tag(TestTypes.UNIT)
-public class UploadImageControllerTest {
+class UploadImageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,19 +38,19 @@ public class UploadImageControllerTest {
 
     @SneakyThrows
     @Test
-    public void uploadImage_ServiceCdnException_ReturnInternalServerError() {
+    void uploadImage_ServiceCdnException_ReturnInternalServerError() {
         MockMultipartFile file = new MockMultipartFile("imageFile", "file.png", "text/plain", "data".getBytes(StandardCharsets.UTF_8));
 
         when(mockCdnService.uploadImage(anyBoolean(), any())).thenThrow(new CdnException("test"));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(UploadImageController.DEFAULT_MAPPING)
-                        .file(file))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.description").exists())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andReturn();
+                            .file(file))
+            .andExpect(status().isInternalServerError())
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/json"))
+            .andExpect(jsonPath("$.error").exists())
+            .andExpect(jsonPath("$.description").exists())
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andReturn();
 
         verify(mockCdnService).uploadImage(anyBoolean(), any());
         verifyNoMoreInteractions(mockCdnService);
@@ -59,18 +59,18 @@ public class UploadImageControllerTest {
 
     @SneakyThrows
     @Test
-    public void uploadImage_ServiceReturnsData_CheckResponse() {
+    void uploadImage_ServiceReturnsData_CheckResponse() {
         MockMultipartFile file = new MockMultipartFile("imageFile", "file.png", "text/plain", "data".getBytes(StandardCharsets.UTF_8));
 
         when(mockCdnService.uploadImage(anyBoolean(), any())).thenReturn(new UploadImageResponse(StringTestUtils.generateRandomUrl(), StringTestUtils.generateRandomUrl()));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(UploadImageController.DEFAULT_MAPPING)
-                        .file(file))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.image").exists())
-                .andExpect(jsonPath("$.thumbnail").exists())
-                .andReturn();
+                            .file(file))
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.image").exists())
+            .andExpect(jsonPath("$.thumbnail").exists())
+            .andReturn();
 
         verify(mockCdnService).uploadImage(anyBoolean(), any());
         verifyNoMoreInteractions(mockCdnService);

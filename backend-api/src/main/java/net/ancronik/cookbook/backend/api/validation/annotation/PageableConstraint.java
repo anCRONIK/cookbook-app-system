@@ -11,11 +11,6 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Custom annotation for validating {@link org.springframework.data.domain.Pageable}.
- *
- * @author Nikola Presecki
- */
 @Target({FIELD, CONSTRUCTOR, PARAMETER})
 @Retention(RUNTIME)
 @Documented
@@ -23,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface PageableConstraint {
 
     String message() default
-            "Pageable can not be null, un paged or value greater than " + PageableConstraintValidator.MAX_PAGE_SIZE;
+        "Pageable can not be null, un paged or value greater than " + PageableConstraintValidator.MAX_PAGE_SIZE;
 
     Class<?>[] groups() default {};
 

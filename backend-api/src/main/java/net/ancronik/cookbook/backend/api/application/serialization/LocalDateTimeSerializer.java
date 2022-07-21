@@ -9,11 +9,6 @@ import org.springframework.boot.jackson.JsonComponent;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-/**
- * Serializer for {@link LocalDateTime}.
- *
- * @author Nikola Presecki
- */
 @JsonComponent
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 

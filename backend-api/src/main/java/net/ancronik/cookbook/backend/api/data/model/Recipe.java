@@ -20,11 +20,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Database model for recipe.
- *
- * @author Nikola Presecki
- */
 @Table("recipes")
 @Data
 @NoArgsConstructor

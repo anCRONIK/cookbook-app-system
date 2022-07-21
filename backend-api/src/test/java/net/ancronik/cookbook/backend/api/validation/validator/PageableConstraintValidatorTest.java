@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(TestTypes.UNIT)
-public class PageableConstraintValidatorTest {
+class PageableConstraintValidatorTest {
 
     PageableConstraintValidator validator = new PageableConstraintValidator();
 

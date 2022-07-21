@@ -14,17 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestTypes.UNIT)
-public class RecipeCommentModelAssemblerTest {
+class RecipeCommentModelAssemblerTest {
 
     RecipeCommentModelAssembler assembler = new RecipeCommentModelAssembler(new ModelMapper());
 
     @Test
-    public void toModel_NullGiven_ThrowException() {
+    void toModel_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> assembler.toModel(null));
     }
 
     @Test
-    public void toModel_ModelWithoutIngredients_ValidDtoReturned() {
+    void toModel_ModelWithoutIngredients_ValidDtoReturned() {
         RecipeComment comment = new RecipeComment(new RecipeCommentPK(1L, "pero", LocalDateTime.of(2022, 3, 6, 16, 46)), "WOW! Awesome recipe.");
 
         RecipeCommentModel dto = assembler.toModel(comment);

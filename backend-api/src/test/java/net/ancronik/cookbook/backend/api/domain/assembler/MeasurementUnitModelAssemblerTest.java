@@ -11,18 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestTypes.UNIT)
-public class MeasurementUnitModelAssemblerTest {
+class MeasurementUnitModelAssemblerTest {
 
     MeasurementUnitModelAssembler assembler = new MeasurementUnitModelAssembler(new ModelMapper());
 
     @Test
-    public void toModel_NullGiven_ThrowException() {
+    void toModel_NullGiven_ThrowException() {
         assertThrows(IllegalArgumentException.class, () -> assembler.toModel(null));
     }
 
 
     @Test
-    public void toModel_ValidDataGiven_ValidDtoReturned() {
+    void toModel_ValidDataGiven_ValidDtoReturned() {
         MeasurementUnit unit = new MeasurementUnit("kg unit", "kg", "weight", true, false);
         MeasurementUnit unit2 = new MeasurementUnit("spoon unit", "spoon", "volume", true, true);
 

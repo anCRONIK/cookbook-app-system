@@ -96,28 +96,28 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 			authenticationEntryPoint.setAuthorizationRequestUri(this.authorizationRequestUri);
 		}
 
-		FederatedIdentityAuthenticationSuccessHandler authenticationSuccessHandler =
-			new FederatedIdentityAuthenticationSuccessHandler(delegate, userRepository);
-		if (this.oauth2UserHandler != null) {
-			authenticationSuccessHandler.setOAuth2UserHandler(this.oauth2UserHandler);
-		}
-		if (this.oidcUserHandler != null) {
-			authenticationSuccessHandler.setOidcUserHandler(this.oidcUserHandler);
-		}
-
-		http
-			.exceptionHandling(exceptionHandling ->
-				exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
-			)
-			.oauth2Login(oauth2Login -> {
-				oauth2Login.successHandler(authenticationSuccessHandler);
-				if (this.authorizationRequestUri != null) {
-					String baseUri = this.authorizationRequestUri.replace("/{registrationId}", "");
-					oauth2Login.authorizationEndpoint(authorizationEndpoint ->
-						authorizationEndpoint.baseUri(baseUri)
-					);
-				}
-			});
+//		FederatedIdentityAuthenticationSuccessHandler authenticationSuccessHandler =
+//			new FederatedIdentityAuthenticationSuccessHandler(delegate, userRepository);
+//		if (this.oauth2UserHandler != null) {
+//			authenticationSuccessHandler.setOAuth2UserHandler(this.oauth2UserHandler);
+//		}
+//		if (this.oidcUserHandler != null) {
+//			authenticationSuccessHandler.setOidcUserHandler(this.oidcUserHandler);
+//		}
+//
+//		http
+//			.exceptionHandling(exceptionHandling ->
+//				exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+//			)
+//			.oauth2Login(oauth2Login -> {
+//				oauth2Login.successHandler(authenticationSuccessHandler);
+//				if (this.authorizationRequestUri != null) {
+//					String baseUri = this.authorizationRequestUri.replace("/{registrationId}", "");
+//					oauth2Login.authorizationEndpoint(authorizationEndpoint ->
+//						authorizationEndpoint.baseUri(baseUri)
+//					);
+//				}
+//			});
 	}
 	// @formatter:on
 

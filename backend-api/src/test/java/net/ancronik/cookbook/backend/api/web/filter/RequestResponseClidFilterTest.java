@@ -5,7 +5,9 @@ import net.ancronik.cookbook.backend.api.TestTypes;
 import net.ancronik.cookbook.backend.api.application.Constants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -15,17 +17,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 
+@ExtendWith(MockitoExtension.class)
 @Tag(TestTypes.UNIT)
-public class RequestResponseClidFilterTest {
+class RequestResponseClidFilterTest {
 
     private final RequestResponseClidFilter filter = new RequestResponseClidFilter();
+    private final MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+    private final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+    @Mock
+    private FilterChain mockFilterChain;
 
     @SneakyThrows
     @Test
-    public void doFilter_ClidNotInRequest_GenerateNewOne(){
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        MockHttpServletResponse servletResponse = new MockHttpServletResponse();
-        FilterChain mockFilterChain = Mockito.mock(FilterChain.class);
+    void doFilter_ClidNotInRequest_GenerateNewOne() {
         doNothing().when(mockFilterChain).doFilter(servletRequest, servletResponse);
 
         filter.doFilter(servletRequest, servletResponse, mockFilterChain);
@@ -37,11 +41,8 @@ public class RequestResponseClidFilterTest {
 
     @SneakyThrows
     @Test
-    public void doFilter_ClidInRequest_ReturnInResponse(){
+    void doFilter_ClidInRequest_ReturnInResponse() {
         String clid = UUID.randomUUID().toString();
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        MockHttpServletResponse servletResponse = new MockHttpServletResponse();
-        FilterChain mockFilterChain = Mockito.mock(FilterChain.class);
         doNothing().when(mockFilterChain).doFilter(servletRequest, servletResponse);
 
         servletRequest.addHeader(Constants.HEADER_CLID, clid);

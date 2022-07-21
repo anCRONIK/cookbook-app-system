@@ -346,7 +346,8 @@ public class SlicedModel<T> extends CollectionModel<T> {
     @Override
     public String toString() {
         return String.format("SlicedModel { content: %s, fallbackType: %s, metadata: %s, links: %s }", //
-                getContent(), fallbackType, metadata, getLinks());
+                             getContent(), fallbackType, metadata, getLinks()
+        );
     }
 
     /*
@@ -367,7 +368,7 @@ public class SlicedModel<T> extends CollectionModel<T> {
         SlicedModel<?> that = (SlicedModel<?>) obj;
 
         return Objects.equals(this.metadata, that.metadata) //
-                && super.equals(obj);
+            && super.equals(obj);
     }
 
     /*

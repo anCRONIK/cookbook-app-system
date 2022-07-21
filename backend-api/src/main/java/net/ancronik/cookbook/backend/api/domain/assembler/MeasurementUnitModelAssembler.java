@@ -9,11 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-/**
- * Assembler for {@link MeasurementUnitModel} from {@link MeasurementUnit}.
- *
- * @author Nikola Presecki
- */
 @Component
 public class MeasurementUnitModelAssembler extends RepresentationModelAssemblerSupport<MeasurementUnit, MeasurementUnitModel> {
 

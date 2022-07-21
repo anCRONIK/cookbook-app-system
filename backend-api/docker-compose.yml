@@ -18,7 +18,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 10
-#    restart: always
+    #    restart: always
     networks:
       - cookbook-api-net
   cassandra-cookbook-load-keyspace:
